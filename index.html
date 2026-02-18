@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ניהול נכסים - זילברמינץ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #1a2332;
+            --navy-light: #2d3a4d;
+            --gold: #d4a574;
+            --gold-dark: #b8895f;
+            --gold-light: #e8c9a8;
+            --bg: #f5f7fa;
+            --white: #ffffff;
+            --text: #1a2332;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --green: #10b981;
+            --green-light: #d1fae5;
+            --red: #ef4444;
+            --red-light: #fee2e2;
+            --orange: #f59e0b;
+            --orange-light: #fef3c7;
+            --blue: #3b82f6;
+            --shadow: 0 2px 8px rgba(26,35,50,0.08);
+            --shadow-lg: 0 8px 24px rgba(26,35,50,0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: var(--navy);
+            padding: 0 2rem;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: -0.5px;
+        }
+
+        .header-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-right: 2px solid var(--gold);
+            padding-right: 1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .user-info {
+            color: var(--gold-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Navigation */
+        .nav {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-btn {
+            padding: 1rem 1.5rem;
+            border: none;
+            background: none;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            color: var(--navy);
+            background: var(--bg);
+        }
+
+        .nav-btn.active {
+            color: var(--navy);
+            border-bottom-color: var(--gold);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* Dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--gold);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--navy);
+            line-height: 1;
+        }
+
+        .stat-sub {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .stat-card.urgent {
+            border-top-color: var(--red);
+        }
+
+        .stat-card.warning {
+            border-top-color: var(--orange);
+        }
+
+        .stat-card.success {
+            border-top-color: var(--green);
+        }
+
+        /* Properties Grid */
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .property-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border-right: 4px solid var(--gold);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .property-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .property-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .property-address {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .property-stats {
+            display: flex;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .property-stat {
+            flex: 1;
+            text-align: center;
+        }
+
+        .property-stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .property-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: var(--navy);
+        }
+
+        .btn-primary:hover {
+            background: var(--gold-dark);
+        }
+
+        .btn-secondary {
+            background: var(--navy);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--navy-light);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--navy);
+        }
+
+        /* Calendar */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .calendar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .calendar-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .events-list {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .event-item {
+            padding: 1rem;
+            border-right: 4px solid var(--gold);
+            margin-bottom: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .event-item:hover {
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .event-item.urgent {
+            border-right-color: var(--red);
+        }
+
+        .event-item.warning {
+            border-right-color: var(--orange);
+        }
+
+        .event-date {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 0.25rem;
+        }
+
+        .event-property {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* Service Tickets */
+        .ticket-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border);
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--gold);
+            background: var(--bg);
+        }
+
+        .file-upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .tickets-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .ticket-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border-right: 4px solid var(--gold);
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .ticket-id {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .ticket-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .status-open {
+            background: var(--orange-light);
+            color: var(--orange);
+        }
+
+        .status-progress {
+            background: var(--blue);
+            color: white;
+        }
+
+        .status-done {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        .ticket-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .ticket-desc {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .ticket-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .toast {
+            background: var(--navy);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            min-width: 300px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.success {
+            background: var(--green);
+        }
+
+        .toast.error {
+            background: var(--red);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(1rem);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Utilities */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-urgent {
+            background: var(--red-light);
+            color: var(--red);
+        }
+
+        .badge-warning {
+            background: var(--orange-light);
+            color: var(--orange);
+        }
+
+        .badge-success {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        .file-preview {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--bg);
+            aspect-ratio: 1;
+        }
+
+        .file-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .file-preview-doc {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            height: 100%;
+            font-size: 0.8rem;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .file-remove {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            background: var(--red);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: 8px;
+            border-right: 3px solid var(--gold);
+        }
+
+        .category-delete {
+            background: var(--red-light);
+            color: var(--red);
+            border: none;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 1rem;
+                height: 60px;
+            }
+
+            .header-title {
+                display: none;
+            }
+
+            .nav {
+                padding: 0 1rem;
+                overflow-x: auto;
+            }
+
+            .main {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .properties-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+    <div class="header-brand">
+        <div class="logo">זילברמינץ</div>
+        <div class="header-title">מערכת ניהול נכסים</div>
+    </div>
+    <div class="header-actions">
+        <div class="user-info">מנהל נכסים</div>
+    </div>
+</header>
+
+<!-- Navigation -->
+<nav class="nav">
+    <button class="nav-btn active" onclick="switchView('dashboard')">🏠 דשבורד</button>
+    <button class="nav-btn" onclick="switchView('properties')">🏢 נכסים</button>
+    <button class="nav-btn" onclick="switchView('calendar')">📅 לוח שנה</button>
+    <button class="nav-btn" onclick="switchView('tickets')">🔧 קריאות שירות</button>
+</nav>
+
+<!-- Main Content -->
+<main class="main">
+    <!-- Dashboard View -->
+    <div id="dashboard" class="view active">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="color: var(--navy); margin: 0;">סקירה כללית</h2>
+            <button class="btn btn-primary" onclick="checkUpcomingEvents()">📧 הצג התראות</button>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">סה"כ נכסים</div>
+                <div class="stat-value" id="totalProperties">9</div>
+                <div class="stat-sub">פעילים</div>
+            </div>
+            <div class="stat-card urgent">
+                <div class="stat-label">דחוף השבוע</div>
+                <div class="stat-value" id="urgentCount">0</div>
+                <div class="stat-sub">בדיקות ותשלומים</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-label">החודש</div>
+                <div class="stat-value" id="monthCount">0</div>
+                <div class="stat-sub">פעולות מתוכננות</div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-label">קריאות פתוחות</div>
+                <div class="stat-value" id="openTickets">0</div>
+                <div class="stat-sub">טיפול בתהליך</div>
+            </div>
+        </div>
+
+        <div class="events-list">
+            <h2 style="margin-bottom: 1.5rem; color: var(--navy);">אירועים קרובים</h2>
+            <div id="upcomingEvents"></div>
+        </div>
+    </div>
+
+    <!-- Properties View -->
+    <div id="properties" class="view">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h1 style="color: var(--navy);">הנכסים שלנו</h1>
+        </div>
+        <div class="properties-grid" id="propertiesList"></div>
+    </div>
+
+    <!-- Calendar View -->
+    <div id="calendar" class="view">
+        <div class="calendar-header">
+            <h1 class="calendar-title">לוח שנה</h1>
+            <div class="calendar-controls">
+                <button class="btn btn-outline" onclick="filterEvents('all')">הכל</button>
+                <button class="btn btn-outline" onclick="filterEvents('inspections')">בדיקות</button>
+                <button class="btn btn-outline" onclick="filterEvents('payments')">תשלומים</button>
+                <button class="btn btn-primary" onclick="openEventModal()">+ הוסף אירוע</button>
+            </div>
+        </div>
+        <div class="events-list" id="calendarEvents"></div>
+    </div>
+
+    <!-- Tickets View -->
+    <div id="tickets" class="view">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h1 style="color: var(--navy);">קריאות שירות</h1>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-outline" onclick="openCategoriesModal()">⚙️ ניהול קטגוריות</button>
+                <button class="btn btn-primary" onclick="openTicketModal()">+ קריאה חדשה</button>
+            </div>
+        </div>
+        <div class="tickets-list" id="ticketsList"></div>
+    </div>
+</main>
+
+<!-- Event Modal -->
+<div id="eventModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">אירוע חדש</h2>
+            <button class="modal-close" onclick="closeEventModal()">×</button>
+        </div>
+        <form onsubmit="saveEvent(event)">
+            <div class="form-group">
+                <label class="form-label">נכס</label>
+                <select class="form-select" id="eventProperty" required></select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">סוג</label>
+                <select class="form-select" id="eventType" required>
+                    <option value="inspection">בדיקה</option>
+                    <option value="payment">תשלום</option>
+                    <option value="maintenance">תחזוקה</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">כותרת</label>
+                <input type="text" class="form-input" id="eventTitle" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">תאריך</label>
+                <input type="date" class="form-input" id="eventDate" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">עלות (₪)</label>
+                <input type="number" class="form-input" id="eventCost">
+            </div>
+            <div class="form-group">
+                <label class="form-label">הערות</label>
+                <textarea class="form-textarea" id="eventNotes"></textarea>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button type="button" class="btn btn-outline" onclick="closeEventModal()">ביטול</button>
+                <button type="submit" class="btn btn-primary">שמור</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Ticket Modal -->
+<div id="ticketModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">קריאת שירות חדשה</h2>
+            <button class="modal-close" onclick="closeTicketModal()">×</button>
+        </div>
+        <form onsubmit="saveTicket(event)">
+            <div class="form-group">
+                <label class="form-label">נכס</label>
+                <select class="form-select" id="ticketProperty" required></select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">סוג תקלה</label>
+                <select class="form-select" id="ticketCategory" required>
+                    <option value="מעלית">מעלית</option>
+                    <option value="מיזוג">מיזוג</option>
+                    <option value="חשמל">חשמל</option>
+                    <option value="אינסטלציה">אינסטלציה</option>
+                    <option value="אחר">אחר</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">כותרת</label>
+                <input type="text" class="form-input" id="ticketTitle" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">תיאור התקלה</label>
+                <textarea class="form-textarea" id="ticketDesc" required></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">עלות תיקון (₪)</label>
+                <input type="number" class="form-input" id="ticketCost">
+            </div>
+            <div class="form-group">
+                <label class="form-label">העלאת קבצים ותמונות</label>
+                <div class="file-upload" onclick="document.getElementById('ticketFiles').click()">
+                    <div class="file-upload-icon">📎</div>
+                    <div>לחץ להעלאת תמונות, קבלות ואחריות</div>
+                    <input type="file" id="ticketFiles" multiple accept="image/*,.pdf,.doc,.docx" style="display: none" onchange="handleFiles(this.files)">
+                </div>
+                <div id="filesList" style="margin-top: 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem;"></div>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button type="button" class="btn btn-outline" onclick="closeTicketModal()">ביטול</button>
+                <button type="submit" class="btn btn-primary">פתח קריאה</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Notifications Modal -->
+<div id="notificationsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">התראות קרובות</h2>
+            <button class="modal-close" onclick="closeNotifications()">×</button>
+        </div>
+        <div id="notificationsList" style="max-height: 400px; overflow-y: auto;"></div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+            <button class="btn btn-secondary" onclick="closeNotifications()">סגור</button>
+        </div>
+    </div>
+</div>
+
+<!-- Categories Modal -->
+<div id="categoriesModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">ניהול קטגוריות תקלות</h2>
+            <button class="modal-close" onclick="closeCategoriesModal()">×</button>
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                <input type="text" id="newCategory" class="form-input" placeholder="קטגוריה חדשה..." style="flex: 1;">
+                <button class="btn btn-primary" onclick="addCategory()">+ הוסף</button>
+            </div>
+            <div id="categoriesList" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+        </div>
+        <div style="display: flex; justify-content: flex-end;">
+            <button class="btn btn-secondary" onclick="closeCategoriesModal()">סגור</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// Data
+const properties = [
+    { id: 1, name: 'לוד', address: 'לוד' },
+    { id: 2, name: 'שלם 3 רמת גן', address: 'שלם 3, רמת גן' },
+    { id: 3, name: 'ההשכלה 5', address: 'ההשכלה 5' },
+    { id: 4, name: 'מודיעין 12', address: 'מודיעין 12' },
+    { id: 5, name: 'מודיעין', address: 'מודיעין' },
+    { id: 6, name: 'צור יצחק סנטר', address: 'צור יצחק' },
+    { id: 7, name: 'מרפאה', address: 'מרפאה' },
+    { id: 8, name: 'אור יהודה', address: 'אור יהודה' },
+    { id: 9, name: 'סגולה', address: 'סגולה' }
+];
+
+let events = JSON.parse(localStorage.getItem('events') || '[]');
+let tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
+let categories = JSON.parse(localStorage.getItem('categories') || '["מעלית","מיזוג","חשמל","אינסטלציה","אחר"]');
+let uploadedFiles = [];
+
+// Initialize
+function init() {
+    renderProperties();
+    renderEvents();
+    renderTickets();
+    updateDashboard();
+    populatePropertySelects();
+}
+
+// Navigation
+function switchView(viewName) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(viewName).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// Properties
+function renderProperties() {
+    const container = document.getElementById('propertiesList');
+    container.innerHTML = properties.map(p => {
+        const propertyTickets = tickets.filter(t => t.propertyId === p.id);
+        const propertyEvents = events.filter(e => e.propertyId === p.id);
+        return `
+            <div class="property-card" onclick="viewProperty(${p.id})">
+                <div class="property-name">${p.name}</div>
+                <div class="property-address">${p.address}</div>
+                <div class="property-stats">
+                    <div class="property-stat">
+                        <div class="property-stat-value">${propertyEvents.length}</div>
+                        <div class="property-stat-label">אירועים</div>
+                    </div>
+                    <div class="property-stat">
+                        <div class="property-stat-value">${propertyTickets.length}</div>
+                        <div class="property-stat-label">קריאות</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function viewProperty(id) {
+    const property = properties.find(p => p.id === id);
+    const propertyEvents = events.filter(e => e.propertyId === id);
+    const propertyTickets = tickets.filter(t => t.propertyId === id);
+    
+    showToast(`${property.name}: ${propertyEvents.length} אירועים, ${propertyTickets.length} קריאות`, 'success');
+}
+
+// Events
+function renderEvents() {
+    const container = document.getElementById('calendarEvents');
+    const upcomingContainer = document.getElementById('upcomingEvents');
+    
+    const sortedEvents = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const upcoming = sortedEvents.filter(e => new Date(e.date) >= new Date()).slice(0, 5);
+    
+    const renderEvent = (e) => {
+        const property = properties.find(p => p.id === e.propertyId);
+        const daysUntil = Math.ceil((new Date(e.date) - new Date()) / (1000 * 60 * 60 * 24));
+        const isUrgent = daysUntil <= 7 && daysUntil >= 0;
+        const isWarning = daysUntil <= 30 && daysUntil > 7;
+        
+        return `
+            <div class="event-item ${isUrgent ? 'urgent' : isWarning ? 'warning' : ''}">
+                <div class="event-date">${formatDate(e.date)} ${daysUntil >= 0 ? `(עוד ${daysUntil} ימים)` : ''}</div>
+                <div class="event-title">${e.title}</div>
+                <div class="event-property">📍 ${property.name} ${e.cost ? `• ${e.cost.toLocaleString()}₪` : ''}</div>
+            </div>
+        `;
+    };
+    
+    container.innerHTML = sortedEvents.map(renderEvent).join('') || '<div class="empty-state"><div class="empty-icon">📅</div><div>אין אירועים מתוכננים</div></div>';
+    upcomingContainer.innerHTML = upcoming.map(renderEvent).join('') || '<div class="empty-state"><div class="empty-icon">✨</div><div>אין אירועים קרובים</div></div>';
+}
+
+function openEventModal() {
+    document.getElementById('eventModal').classList.add('active');
+}
+
+function closeEventModal() {
+    document.getElementById('eventModal').classList.remove('active');
+}
+
+function saveEvent(e) {
+    e.preventDefault();
+    const event = {
+        id: Date.now(),
+        propertyId: parseInt(document.getElementById('eventProperty').value),
+        type: document.getElementById('eventType').value,
+        title: document.getElementById('eventTitle').value,
+        date: document.getElementById('eventDate').value,
+        cost: parseInt(document.getElementById('eventCost').value) || 0,
+        notes: document.getElementById('eventNotes').value
+    };
+    
+    events.push(event);
+    localStorage.setItem('events', JSON.stringify(events));
+    
+    closeEventModal();
+    renderEvents();
+    updateDashboard();
+    showToast('אירוע נוסף בהצלחה', 'success');
+    e.target.reset();
+}
+
+function filterEvents(type) {
+    // Implement filter logic
+    showToast(`מציג: ${type}`, 'success');
+}
+
+// Tickets
+function renderTickets() {
+    const container = document.getElementById('ticketsList');
+    container.innerHTML = tickets.map(t => {
+        const property = properties.find(p => p.id === t.propertyId);
+        return `
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <div class="ticket-id">קריאה #${t.id}</div>
+                    <div class="ticket-status status-${t.status}">${getStatusText(t.status)}</div>
+                </div>
+                <div class="ticket-title">${t.title}</div>
+                <div class="ticket-desc">${t.desc}</div>
+                <div class="ticket-meta">
+                    <span>📍 ${property.name}</span>
+                    <span>🔧 ${t.category}</span>
+                    ${t.cost ? `<span>💰 ${t.cost.toLocaleString()}₪</span>` : ''}
+                    ${t.files ? `<span>📎 ${t.files.length} קבצים</span>` : ''}
+                </div>
+            </div>
+        `;
+    }).join('') || '<div class="empty-state"><div class="empty-icon">🔧</div><div>אין קריאות שירות</div></div>';
+}
+
+function openTicketModal() {
+    document.getElementById('ticketModal').classList.add('active');
+}
+
+function closeTicketModal() {
+    document.getElementById('ticketModal').classList.remove('active');
+    uploadedFiles = [];
+    document.getElementById('filesList').innerHTML = '';
+}
+
+function saveTicket(e) {
+    e.preventDefault();
+    const ticket = {
+        id: Date.now(),
+        propertyId: parseInt(document.getElementById('ticketProperty').value),
+        category: document.getElementById('ticketCategory').value,
+        title: document.getElementById('ticketTitle').value,
+        desc: document.getElementById('ticketDesc').value,
+        cost: parseInt(document.getElementById('ticketCost').value) || 0,
+        status: 'open',
+        files: uploadedFiles,
+        createdAt: new Date().toISOString()
+    };
+    
+    tickets.push(ticket);
+    localStorage.setItem('tickets', JSON.stringify(tickets));
+    
+    closeTicketModal();
+    renderTickets();
+    updateDashboard();
+    showToast('קריאת שירות נפתחה בהצלחה', 'success');
+    e.target.reset();
+}
+
+function handleFiles(files) {
+    const filesList = document.getElementById('filesList');
+    uploadedFiles = Array.from(files);
+    
+    filesList.innerHTML = '';
+    uploadedFiles.forEach((file, index) => {
+        const div = document.createElement('div');
+        div.className = 'file-preview';
+        
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                div.innerHTML = `
+                    <img src="${e.target.result}" alt="${file.name}">
+                    <button class="file-remove" onclick="removeFile(${index})">×</button>
+                `;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            div.innerHTML = `
+                <div class="file-preview-doc">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📄</div>
+                    <div>${file.name}</div>
+                </div>
+                <button class="file-remove" onclick="removeFile(${index})">×</button>
+            `;
+        }
+        
+        filesList.appendChild(div);
+    });
+}
+
+function removeFile(index) {
+    uploadedFiles.splice(index, 1);
+    const dt = new DataTransfer();
+    uploadedFiles.forEach(file => dt.items.add(file));
+    document.getElementById('ticketFiles').files = dt.files;
+    handleFiles(uploadedFiles);
+}
+
+// Dashboard
+function updateDashboard() {
+    const today = new Date();
+    const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const monthFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+    
+    const urgentEvents = events.filter(e => {
+        const eventDate = new Date(e.date);
+        return eventDate >= today && eventDate <= weekFromNow;
+    });
+    
+    const monthEvents = events.filter(e => {
+        const eventDate = new Date(e.date);
+        return eventDate >= today && eventDate <= monthFromNow;
+    });
+    
+    const openTicketsCount = tickets.filter(t => t.status === 'open').length;
+    
+    document.getElementById('urgentCount').textContent = urgentEvents.length;
+    document.getElementById('monthCount').textContent = monthEvents.length;
+    document.getElementById('openTickets').textContent = openTicketsCount;
+}
+
+// Utilities
+function populatePropertySelects() {
+    const html = properties.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+    document.getElementById('eventProperty').innerHTML = html;
+    document.getElementById('ticketProperty').innerHTML = html;
+}
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function getStatusText(status) {
+    const statuses = {
+        open: 'פתוח',
+        progress: 'בטיפול',
+        done: 'הושלם'
+    };
+    return statuses[status] || status;
+}
+
+function showToast(message, type = '') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+
+// Simple Notifications
+function checkUpcomingEvents() {
+    const today = new Date();
+    const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const monthFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+    
+    const urgent = events.filter(e => {
+        const eventDate = new Date(e.date);
+        return eventDate >= today && eventDate <= weekFromNow;
+    });
+    
+    const warning = events.filter(e => {
+        const eventDate = new Date(e.date);
+        return eventDate > weekFromNow && eventDate <= monthFromNow;
+    });
+    
+    document.getElementById('notificationsModal').classList.add('active');
+    
+    const container = document.getElementById('notificationsList');
+    let html = '';
+    
+    if (urgent.length > 0) {
+        html += '<div style="margin-bottom: 1.5rem;"><h3 style="color: var(--red); margin-bottom: 1rem;">🔴 דחוף - עד שבוע</h3>';
+        urgent.forEach(e => {
+            const property = properties.find(p => p.id === e.propertyId);
+            const daysUntil = Math.ceil((new Date(e.date) - today) / (1000 * 60 * 60 * 24));
+            html += `
+                <div style="padding: 1rem; background: var(--red-light); border-radius: 8px; margin-bottom: 0.5rem; border-right: 4px solid var(--red);">
+                    <div style="font-weight: 700; color: var(--red); margin-bottom: 0.5rem;">${e.title}</div>
+                    <div style="font-size: 0.9rem; color: var(--text);">
+                        📍 ${property.name} • 📅 ${formatDate(e.date)} • ⏰ עוד ${daysUntil} ימים
+                        ${e.cost ? ' • 💰 ' + e.cost.toLocaleString() + '₪' : ''}
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    
+    if (warning.length > 0) {
+        html += '<div style="margin-bottom: 1.5rem;"><h3 style="color: var(--orange); margin-bottom: 1rem;">🟡 החודש</h3>';
+        warning.forEach(e => {
+            const property = properties.find(p => p.id === e.propertyId);
+            const daysUntil = Math.ceil((new Date(e.date) - today) / (1000 * 60 * 60 * 24));
+            html += `
+                <div style="padding: 1rem; background: var(--orange-light); border-radius: 8px; margin-bottom: 0.5rem; border-right: 4px solid var(--orange);">
+                    <div style="font-weight: 700; color: var(--orange); margin-bottom: 0.5rem;">${e.title}</div>
+                    <div style="font-size: 0.9rem; color: var(--text);">
+                        📍 ${property.name} • 📅 ${formatDate(e.date)} • ⏰ עוד ${daysUntil} ימים
+                        ${e.cost ? ' • 💰 ' + e.cost.toLocaleString() + '₪' : ''}
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    
+    if (urgent.length === 0 && warning.length === 0) {
+        html = '<div class="empty-state"><div class="empty-icon">✨</div><div>אין אירועים דחופים בחודש הקרוב</div></div>';
+    }
+    
+    container.innerHTML = html;
+}
+
+function closeNotifications() {
+    document.getElementById('notificationsModal').classList.remove('active');
+}
+
+// Categories Management
+function openCategoriesModal() {
+    document.getElementById('categoriesModal').classList.add('active');
+    renderCategories();
+}
+
+function closeCategoriesModal() {
+    document.getElementById('categoriesModal').classList.remove('active');
+}
+
+function renderCategories() {
+    const container = document.getElementById('categoriesList');
+    container.innerHTML = categories.map((cat, index) => `
+        <div class="category-item">
+            <span style="font-weight: 600;">${cat}</span>
+            <button class="category-delete" onclick="deleteCategory(${index})">מחק</button>
+        </div>
+    `).join('');
+    
+    updateCategorySelect();
+}
+
+function addCategory() {
+    const input = document.getElementById('newCategory');
+    const newCat = input.value.trim();
+    
+    if (!newCat) {
+        showToast('נא להזין שם קטגוריה', 'error');
+        return;
+    }
+    
+    if (categories.includes(newCat)) {
+        showToast('קטגוריה זו כבר קיימת', 'error');
+        return;
+    }
+    
+    categories.push(newCat);
+    localStorage.setItem('categories', JSON.stringify(categories));
+    input.value = '';
+    renderCategories();
+    showToast('קטגוריה נוספה בהצלחה', 'success');
+}
+
+function deleteCategory(index) {
+    const cat = categories[index];
+    if (confirm(`למחוק את הקטגוריה "${cat}"?`)) {
+        categories.splice(index, 1);
+        localStorage.setItem('categories', JSON.stringify(categories));
+        renderCategories();
+        showToast('קטגוריה נמחקה', 'success');
+    }
+}
+
+function updateCategorySelect() {
+    const select = document.getElementById('ticketCategory');
+    select.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+}
+
+// Initialize on load
+init();
+updateCategorySelect();
+</script>
+
+</body>
+</html>
