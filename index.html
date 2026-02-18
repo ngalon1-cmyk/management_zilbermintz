@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת ניהול נכסים - זילברמינץ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #1a2332;
+            --gold: #d4a574;
+            --gold-dark: #b8895f;
+            --bg: #f5f7fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: linear-gradient(135deg, var(--navy) 0%, #2d3a4d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .buttons-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: bounce 2s infinite;
+        }
+
+        .manager-card:hover .card-icon {
+            animation: none;
+        }
+
+        .tenant-card:hover .card-icon {
+            animation: none;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 1rem;
+        }
+
+        .card-desc {
+            font-size: 1rem;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .card-button {
+            margin-top: 1.5rem;
+            padding: 1rem 2rem;
+            background: var(--gold);
+            color: var(--navy);
+            border: none;
+            border-radius: 12px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .card:hover .card-button {
+            background: var(--gold-dark);
+            transform: scale(1.05);
+        }
+
+        .footer {
+            margin-top: 3rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .buttons-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .card {
+                padding: 2rem 1.5rem;
+            }
+
+            .card-icon {
+                font-size: 3rem;
+            }
+
+            .card-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">זילברמינץ</div>
+    <div class="subtitle">מערכת ניהול נכסים</div>
+
+    <div class="buttons-container">
+        <a href="manager.html" class="card manager-card">
+            <div class="card-icon">👔</div>
+            <div class="card-title">מנהלי נכסים</div>
+            <div class="card-desc">
+                ניהול מלא של כל הנכסים, בדיקות, תשלומים, קריאות שירות והיסטוריה
+            </div>
+            <div class="card-button">כניסה למערכת ניהול</div>
+        </a>
+
+        <a href="tenant.html" class="card tenant-card">
+            <div class="card-icon">🏠</div>
+            <div class="card-title">דיירים ושוכרים</div>
+            <div class="card-desc">
+                פתיחת קריאות שירות, דיווח על תקלות ומעקב אחר בקשות
+            </div>
+            <div class="card-button">פתיחת קריאת שירות</div>
+        </a>
+    </div>
+
+    <div class="footer">
+        © 2026 י. זילברמינץ ובנו בע"מ • כל הזכויות שמורות
+    </div>
+</div>
+
+</body>
+</html>
