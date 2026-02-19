@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>זילברמינץ - מערכת ניהול נכסים</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Alef:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy-deep: #0f1419;
+            --navy: #1a2332;
+            --navy-mid: #2d3a4d;
+            --navy-light: #3f4d61;
+            --gold: #d4a574;
+            --gold-light: #e8c9a8;
+            --gold-pale: #f5e8d9;
+            --white: #ffffff;
+            --off-white: #fafbfc;
+        }
+
+        body {
+            font-family: 'Heebo', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 50%, var(--navy-mid) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(circle, rgba(212, 165, 116, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -20%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(26, 35, 50, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 1100px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            margin-bottom: 4rem;
+            animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .logo-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-icon {
+            font-size: 3rem;
+            filter: drop-shadow(0 4px 12px rgba(212, 165, 116, 0.4));
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            font-family: 'Alef', 'Heebo', sans-serif;
+        }
+
+        .tagline {
+            font-size: 1.4rem;
+            color: var(--gold-light);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            opacity: 0.95;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+            border-radius: 28px;
+            padding: 3.5rem 2.5rem;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.12),
+                0 2px 8px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            animation: fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.03) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .card:hover::after {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-12px);
+            box-shadow: 
+                0 24px 48px rgba(0, 0, 0, 0.16),
+                0 8px 16px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 1);
+        }
+
+        .card-icon-wrapper {
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 2rem;
+            background: linear-gradient(135deg, var(--gold-pale) 0%, var(--gold-light) 100%);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 8px 24px rgba(212, 165, 116, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card:hover .card-icon-wrapper {
+            transform: scale(1.08) rotate(-2deg);
+            box-shadow: 
+                0 12px 32px rgba(212, 165, 116, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .card-icon {
+            font-size: 3.5rem;
+            filter: drop-shadow(0 2px 4px rgba(26, 35, 50, 0.1));
+        }
+
+        .card-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 1rem;
+            letter-spacing: -0.3px;
+        }
+
+        .card-desc {
+            font-size: 1.05rem;
+            color: var(--navy-mid);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .card-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            color: var(--navy);
+            border: none;
+            border-radius: 14px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 
+                0 4px 16px rgba(212, 165, 116, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        .card:hover .card-button {
+            transform: scale(1.05);
+            box-shadow: 
+                0 8px 24px rgba(212, 165, 116, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .card-button::after {
+            content: '←';
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-button::after {
+            transform: translateX(-4px);
+        }
+
+        .footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(212, 165, 116, 0.15);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+            font-weight: 300;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1.5rem;
+            }
+
+            .header {
+                margin-bottom: 2.5rem;
+            }
+
+            .logo-container {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1.5rem;
+            }
+
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .tagline {
+                font-size: 1.1rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .card {
+                padding: 2.5rem 2rem;
+            }
+
+            .card-icon-wrapper {
+                width: 72px;
+                height: 72px;
+            }
+
+            .card-icon {
+                font-size: 2.8rem;
+            }
+
+            .card-title {
+                font-size: 1.5rem;
+            }
+
+            .card-desc {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo-icon">🏢</div>
+            <div class="logo">זילברמינץ</div>
+        </div>
+        <div class="tagline">מערכת ניהול נכסים מתקדמת</div>
+    </header>
+
+    <div class="cards-grid">
+        <a href="manager.html" class="card">
+            <div class="card-icon-wrapper">
+                <div class="card-icon">👔</div>
+            </div>
+            <h2 class="card-title">מנהלי נכסים</h2>
+            <p class="card-desc">
+                ניהול מלא וחכם של כל הנכסים: בדיקות תקופתיות, תשלומים, קריאות שירות, מסמכים והיסטוריה מלאה
+            </p>
+            <div class="card-button">כניסה למערכת ניהול</div>
+        </a>
+
+        <a href="tenant.html" class="card">
+            <div class="card-icon-wrapper">
+                <div class="card-icon">🏠</div>
+            </div>
+            <h2 class="card-title">דיירים ושוכרים</h2>
+            <p class="card-desc">
+                פתיחת קריאות שירות מהירה וקלה, דיווח על תקלות עם תמונות, ומעקב בזמן אמת אחר הטיפול
+            </p>
+            <div class="card-button">פתיחת קריאת שירות</div>
+        </a>
+    </div>
+
+    <footer class="footer">
+        © 2026 י. זילברמינץ ובנו בע"מ • כל הזכויות שמורות
+    </footer>
+</div>
+
+</body>
+</html>
