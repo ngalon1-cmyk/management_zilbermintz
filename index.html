@@ -1,393 +1,668 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" id="html-root">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>זילברמינץ | כניסה למערכת</title>
+<title>זילברמינץ | ניהול נכסים מתקדם</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Heebo', sans-serif;
-  min-height: 100vh;
-  background: #0b1729;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  overflow: hidden;
-  direction: rtl;
+:root{
+  --navy:#0f1f3d;--navy-light:#1a3060;--gold:#c9a84c;--gold-light:#e8c97a;--gold-pale:#f5e9c8;
+  --cream:#f6f7f9;--g100:#f1f3f5;--g200:#e3e6ea;--g300:#cbd0d8;--g400:#9aa0ac;--g600:#5f6878;--g800:#2d3340;
+  --green:#1a7f5a;--orange:#c97a1a;--red:#c23b2e;--blue:#1a5f9f;
+  --sh-sm:0 2px 8px rgba(15,31,61,.07);--sh-md:0 6px 24px rgba(15,31,61,.11);--sh-lg:0 16px 48px rgba(15,31,61,.15);
+  --r:14px;--r-sm:8px;
 }
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);min-height:100vh;direction:rtl}
 
-/* BG */
-.bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
-.bg-circle { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .16; animation: float 8s ease-in-out infinite; }
-.bg-circle:nth-child(1) { width:600px;height:600px;background:#c9a84c;top:-200px;right:-200px;animation-delay:0s; }
-.bg-circle:nth-child(2) { width:500px;height:500px;background:#1a5f9f;bottom:-150px;left:-150px;animation-delay:-3s; }
-.bg-circle:nth-child(3) { width:280px;height:280px;background:#c9a84c;bottom:80px;right:80px;animation-delay:-5s;opacity:.09; }
-@keyframes float { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-28px) scale(1.04);} }
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--navy);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{text-align:center;max-width:480px;width:100%;animation:fadeIn .4s ease}
+.login-logo{width:70px;height:70px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:var(--navy);margin:0 auto 20px}
+.login-title{color:#fff;font-size:26px;font-weight:800;margin-bottom:6px}
+.login-sub{color:var(--gold);font-size:14px;margin-bottom:48px}
+.login-footer{margin-top:32px;color:rgba(255,255,255,.2);font-size:11px}
 
-.bg-grid {
-  position: fixed; inset: 0; z-index: 0;
-  background-image: linear-gradient(rgba(201,168,76,.04) 1px,transparent 1px), linear-gradient(90deg,rgba(201,168,76,.04) 1px,transparent 1px);
-  background-size: 60px 60px;
-}
+/* LAYOUT */
+.layout{display:flex;min-height:100vh}
+.sidebar{width:220px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;right:0;height:100vh;z-index:200;overflow-y:auto}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--navy);flex-shrink:0}
+.logo-text{color:#fff;font-size:15px;font-weight:800;line-height:1.1}
+.logo-sub{color:var(--gold);font-size:10px;font-weight:400}
+.nav-section{padding:12px 10px 4px;font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 8px;border-radius:9px;color:rgba(255,255,255,.55);font-size:13px;font-weight:500;cursor:pointer;transition:all .18s;border:none;background:none;font-family:'Heebo',sans-serif;width:calc(100% - 16px);text-align:right}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item.active{background:rgba(201,168,76,.18);color:var(--gold-light);font-weight:600}
+.nav-item .ni{font-size:16px;flex-shrink:0}
+.nav-item .badge-nav{margin-right:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px}
+.sidebar-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,.08)}
+.logout-btn{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);padding:8px;border-radius:8px;font-family:'Heebo',sans-serif;font-size:12px;cursor:pointer;transition:all .2s}
+.logout-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.content{margin-right:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid var(--g200);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--sh-sm)}
+.topbar-title{font-size:17px;font-weight:700;color:var(--navy)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.greeting{font-size:13px;color:var(--g400)}.greeting strong{color:var(--navy)}
+.topbar-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-light));display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
+.role-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.role-manager{background:var(--gold-pale);color:#9a6f20}
+.role-engineer{background:#e0f5ed;color:var(--green)}
+.role-tenant{background:#e3f0ff;color:var(--blue)}
 
-/* CONTENT */
-.content {
-  position: relative; z-index: 1;
-  display: flex; flex-direction: column; align-items: center;
-  width: 100%; max-width: 820px;
-}
+/* BUTTONS */
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy);border:none;padding:8px 18px;border-radius:8px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 10px rgba(201,168,76,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(201,168,76,.35)}
+.btn-ghost{background:none;border:1.5px solid var(--g200);color:var(--g600);padding:7px 16px;border-radius:8px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:var(--navy);color:var(--navy)}
+.btn-danger{background:none;border:1.5px solid #fde8e6;color:var(--red);padding:7px 16px;border-radius:8px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-danger:hover{background:#fde8e6}
 
-/* LOGO */
-.logo-wrap {
-  display: flex; align-items: center; gap: 14px;
-  margin-bottom: 12px;
-  animation: fadeDown .6s ease both;
-}
-.logo-icon {
-  width: 54px; height: 54px;
-  background: linear-gradient(135deg,#c9a84c,#e8c97a);
-  border-radius: 14px; display: flex; align-items: center; justify-content: center;
-  font-size: 24px; font-weight: 900; color: #0b1729;
-  box-shadow: 0 8px 28px rgba(201,168,76,.4);
-}
-.logo-text { color: #fff; font-size: 26px; font-weight: 800; }
-.logo-sub  { color: #c9a84c; font-size: 12px; }
-
-.tagline {
-  color: rgba(255,255,255,.4); font-size: 14px;
-  margin-bottom: 44px;
-  animation: fadeDown .6s .1s ease both;
-}
+.page{padding:28px;display:none}.page.active{display:block}
 
 /* CARDS */
-.cards {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 20px; width: 100%;
-  animation: fadeUp .6s .2s ease both;
-}
+.card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--sh-sm);overflow:hidden}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between}
+.card-head h3{font-size:14px;font-weight:700;color:var(--navy)}
+.card-body{padding:16px 18px}
 
-/* BASE CARD */
-.card {
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.09);
-  border-radius: 20px; padding: 32px 30px;
-  display: flex; flex-direction: column;
-  position: relative;
-  backdrop-filter: blur(10px);
-  transition: all .3s ease;
-}
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi-card{background:#fff;border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh-sm);border:1px solid var(--g200);position:relative}
+.kpi-icon{position:absolute;top:12px;left:12px;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.kpi-label{font-size:11px;color:var(--g400);font-weight:500;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;padding-top:2px}
+.kpi-val{font-size:24px;font-weight:800;color:var(--navy);line-height:1}
+.kpi-sub{font-size:11px;color:var(--g400);margin-top:4px}
+.ic-green{background:#e0f5ed;color:var(--green)}.ic-blue{background:#e3f0ff;color:var(--blue)}
+.ic-orange{background:#fff3e0;color:var(--orange)}.ic-red{background:#fde8e6;color:var(--red)}
 
-.card::before {
-  content: ''; position: absolute; inset: 0; border-radius: 20px;
-  opacity: 0; transition: opacity .3s;
-  pointer-events: none;
-}
-.card.manager::before { background: radial-gradient(circle at 70% 40%, rgba(201,168,76,.13), transparent 70%); }
-.card.tenant::before  { background: radial-gradient(circle at 70% 40%, rgba(26,95,159,.15), transparent 70%); }
+/* BUDGET AND CHARTS */
+.budget-progress-container{margin-top:8px}
+.progress-bar-bg{background:var(--g200);border-radius:10px;height:8px;width:100%;overflow:hidden;margin-top:4px}
+.progress-bar-fill{height:100%;background:var(--green);transition:width .4s ease, background-color .3s}
+.progress-bar-fill.warning{background:var(--orange)}
+.progress-bar-fill.danger{background:var(--red)}
 
-.card-icon-wrap {
-  width: 54px; height: 54px; border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 26px; margin-bottom: 18px; flex-shrink: 0;
-  transition: transform .3s;
-}
-.card.manager .card-icon-wrap { background:rgba(201,168,76,.15); box-shadow:0 0 0 1px rgba(201,168,76,.2); }
-.card.tenant  .card-icon-wrap { background:rgba(26,95,159,.15);  box-shadow:0 0 0 1px rgba(26,95,159,.25); }
+.chart-list{display:flex;flex-direction:column;gap:12px;padding:8px 0}
+.chart-row{display:flex;flex-direction:column;gap:4px}
+.chart-meta{display:flex;justify-content:space-between;font-size:12px;font-weight:600}
+.chart-bar-bg{background:var(--g100);height:14px;border-radius:4px;overflow:hidden;width:100%}
+.chart-bar-fill{background:var(--navy-light);height:100%;border-radius:4px;transition:width .5s ease}
 
-.card-title { color:#fff; font-size:20px; font-weight:800; margin-bottom:6px; }
-.card-desc  { color:rgba(255,255,255,.42); font-size:13px; line-height:1.65; margin-bottom:22px; }
+/* TICKETS TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{background:var(--g100);padding:9px 14px;font-size:11px;font-weight:600;color:var(--g400);text-align:right;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+.tbl tbody tr{border-bottom:1px solid var(--g200);transition:background .15s;cursor:pointer}
+.tbl tbody tr:last-child{border-bottom:none}
+.tbl tbody tr:hover{background:var(--g100)}
+.tbl tbody td{padding:12px 14px;font-size:13px;color:var(--g800);vertical-align:middle}
+.tid{font-family:monospace;color:var(--g400);font-size:11px}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.b-open{background:#fff3e0;color:var(--orange)}.b-prog{background:#e3f0ff;color:var(--blue)}
+.b-done{background:#e0f5ed;color:var(--green)}.b-urg{background:#fde8e6;color:var(--red)}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{padding:5px 13px;border-radius:20px;border:1px solid var(--g200);background:#fff;font-family:'Heebo',sans-serif;font-size:12px;color:var(--g600);cursor:pointer;transition:all .15s}
+.pill:hover,.pill.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.empty{text-align:center;padding:40px 20px;color:var(--g400)}
+.empty-icon{font-size:40px;margin-bottom:8px;opacity:.35}
+.empty-txt{font-size:14px;font-weight:500;color:var(--g600)}
 
-/* ── LOGIN FORM (manager) ── */
-.login-form { display: flex; flex-direction: column; gap: 12px; }
+/* FORMS */
+.form-wrap{background:#fff;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--sh-sm);overflow:hidden;max-width:680px;margin:0 auto}
+.form-hdr{background:linear-gradient(135deg,var(--navy),var(--navy-light));padding:22px 28px;color:#fff}
+.form-hdr h2{font-size:18px;font-weight:700;margin-bottom:3px}
+.form-hdr p{font-size:12px;color:rgba(255,255,255,.6)}
+.form-bdy{padding:28px}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:18px}
+.fg label{font-size:13px;font-weight:600;color:var(--navy)}
+.fg label .req{color:var(--red);margin-right:2px}
+.fg input,.fg select,.fg textarea{font-family:'Heebo',sans-serif;font-size:14px;padding:10px 13px;border:1.5px solid var(--g200);border-radius:var(--r-sm);color:var(--g800);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;direction:inherit;width:100%}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.fg textarea{resize:vertical;min-height:80px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.full{grid-column:1/-1}
 
-.input-wrap { position: relative; }
-.input-wrap input {
-  width: 100%; padding: 11px 14px;
-  background: rgba(255,255,255,.07);
-  border: 1.5px solid rgba(255,255,255,.12);
-  border-radius: 10px; color: #fff;
-  font-family: 'Heebo', sans-serif; font-size: 14px;
-  outline: none; transition: border-color .2s, box-shadow .2s;
-  direction: inherit;
-}
-.input-wrap input::placeholder { color: rgba(255,255,255,.28); }
-.input-wrap input:focus {
-  border-color: #c9a84c;
-  box-shadow: 0 0 0 3px rgba(201,168,76,.15);
-}
+/* TENANT PORTAL */
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.cat-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px 10px;border:2px solid var(--g200);border-radius:var(--r);background:#fff;cursor:pointer;transition:all .2s;font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;color:var(--g800)}
+.cat-btn:hover{border-color:var(--gold);background:var(--gold-pale);transform:translateY(-2px);box-shadow:var(--sh-sm)}
+.cat-btn.selected{border-color:var(--navy);background:var(--navy);color:#fff}
+.cat-btn .ci{font-size:28px}
+.cat-btn span{font-size:12px}
 
-.error-msg {
-  color: #f87171; font-size: 12px; font-weight: 500;
-  display: none; margin-top: -4px;
-}
-.error-msg.show { display: block; }
+/* MAINTENANCE / ENGINEER */
+.maint-bank-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.maint-item{border:1.5px solid var(--g200);border-radius:10px;padding:14px 14px;display:flex;align-items:flex-start;gap:10px;background:#fff;cursor:pointer;transition:all .15s;position:relative}
+.maint-item:hover{border-color:var(--gold);background:var(--gold-pale)}
+.maint-item.checked{border-color:var(--navy);background:#eef2f9}
+.maint-item input[type=checkbox]{width:17px;height:17px;flex-shrink:0;margin-top:2px;accent-color:var(--navy);cursor:pointer}
+.maint-item-label{font-size:13px;font-weight:600;color:var(--navy);line-height:1.3}
+.maint-item-sub{font-size:11px;color:var(--g400);margin-top:2px}
+.maint-item-icon{font-size:20px;flex-shrink:0}
+.add-topic-wrap{margin-bottom:20px;display:flex;gap:8px}
+.add-topic-wrap input{flex:1;font-family:'Heebo',sans-serif;font-size:13px;padding:9px 12px;border:1.5px solid var(--g200);border-radius:var(--r-sm);outline:none;transition:border-color .2s}
+.add-topic-wrap input:focus{border-color:var(--gold)}
+.selected-items-wrap{background:var(--g100);border-radius:var(--r);padding:16px;margin-bottom:20px;display:none}
+.selected-items-wrap.show{display:block}
+.selected-items-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px}
+.sel-tag{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--g200);border-radius:20px;padding:4px 10px;font-size:12px;color:var(--navy);margin:3px}
+.sel-tag button{background:none;border:none;cursor:pointer;color:var(--g400);font-size:11px;padding:0;line-height:1}
+.sel-tag button:hover{color:var(--red)}
+.file-upload-zone{border:2px dashed var(--g200);border-radius:var(--r-sm);padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--g100);display:block;margin-bottom:8px}
+.file-upload-zone:hover{border-color:var(--gold);background:var(--gold-pale)}
+.uploaded-files{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.file-chip{background:#fff;border:1px solid var(--g200);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--navy);display:flex;align-items:center;gap:5px}
+.file-chip button{background:none;border:none;cursor:pointer;color:var(--g400);font-size:11px}
 
-.btn-login {
-  width: 100%; padding: 12px;
-  background: linear-gradient(135deg, #c9a84c, #e8c97a);
-  color: #0b1729; border: none; border-radius: 10px;
-  font-family: 'Heebo', sans-serif; font-size: 14px; font-weight: 800;
-  cursor: pointer; transition: all .2s; margin-top: 4px;
-  box-shadow: 0 4px 14px rgba(201,168,76,.3);
-}
-.btn-login:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,168,76,.4); }
-.btn-login:active { transform: translateY(0); }
+/* PREVENTIVE MAINTENANCE LIST */
+.preventive-list{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px}
+.preventive-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r-sm);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--sh-sm)}
+.preventive-info{display:flex;align-items:center;gap:12px}
+.preventive-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:12px;background:var(--gold-pale);color:#9a6f20}
 
-/* ── TENANT CARD ── */
-.tenant-features {
-  display: flex; flex-direction: column; gap: 8px;
-  margin-bottom: 24px;
-}
-.feature { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,.5); }
-.fdot { width:5px;height:5px;border-radius:50%;flex-shrink:0;background:#4a9fd4; }
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(15,31,61,.55);backdrop-filter:blur(5px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.modal-ov.open{display:flex}
+.modal{background:#fff;border-radius:var(--r);width:100%;max-width:580px;box-shadow:var(--sh-lg);overflow:hidden;animation:slideUp .28s ease}
+.modal-hdr{background:var(--navy);color:#fff;padding:18px 22px;display:flex;justify-content:space-between;align-items:center}
+.modal-hdr h3{font-size:15px;font-weight:700}
+.modal-close{background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
+.modal-bdy{padding:22px;max-height:80vh;overflow-y:auto}
+.detail-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--g200);font-size:13px}
+.detail-row:last-child{border-bottom:none}
+.dk{color:var(--g400);font-weight:500;flex-shrink:0}
+.dv{color:var(--navy);font-weight:600;max-width:62%;word-break:break-word}
+.steps{display:flex;align-items:flex-start;margin:14px 0 18px}
+.step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.step-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid var(--g200);background:#fff;color:var(--g400)}
+.step.done .step-dot{background:var(--green);border-color:var(--green);color:#fff}
+.step.cur .step-dot{background:var(--navy);border-color:var(--navy);color:#fff}
+.step-line{flex:1;height:2px;background:var(--g200);align-self:center;margin:0 3px;min-width:16px}
+.step-line.done{background:var(--green)}
+.step-lbl{font-size:10px;color:var(--g400);text-align:center}
+.tl{margin-top:14px;padding-top:14px;border-top:1px solid var(--g200)}
+.tl-ttl{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px}
+.tl-item{display:flex;gap:10px;margin-bottom:12px}
+.tl-dot{width:9px;height:9px;border-radius:50%;background:var(--gold);margin-top:4px;flex-shrink:0}
+.tl-action{font-weight:600;color:var(--navy);font-size:12px}
+.tl-time{color:var(--g400);font-size:11px;margin-top:2px}
 
-.btn-tenant {
-  width: 100%; padding: 12px;
-  background: rgba(26,95,159,.2);
-  border: 1.5px solid rgba(74,159,212,.35);
-  color: #7ec8f0; border-radius: 10px;
-  font-family: 'Heebo', sans-serif; font-size: 14px; font-weight: 700;
-  cursor: pointer; transition: all .2s; text-decoration: none;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  position: relative; z-index: 10;
-}
-.btn-tenant:hover {
-  background: rgba(26,95,159,.35);
-  border-color: rgba(74,159,212,.6);
-  color: #b3dff5;
-  transform: translateY(-1px);
-}
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:13px 22px;border-radius:12px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;box-shadow:var(--sh-lg);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:999}
+.toast.show{transform:translateX(-50%) translateY(0)}
 
-/* FOOTER */
-.footer {
-  margin-top: 36px; color: rgba(255,255,255,.18); font-size: 12px;
-  animation: fadeUp .6s .4s ease both;
-}
+/* NOTIF */
+.notif-bell{position:relative;cursor:pointer}
+.notif-dot{position:absolute;top:-2px;left:-2px;width:9px;height:9px;background:var(--red);border-radius:50%;border:2px solid #fff;display:none}
+.notif-dot.show{display:block}
+.notif-panel{position:absolute;top:44px;left:0;background:#fff;border:1px solid var(--g200);border-radius:var(--r);box-shadow:var(--sh-lg);width:320px;z-index:300;display:none;overflow:hidden}
+.notif-panel.open{display:block}
+.notif-panel-hdr{padding:12px 16px;border-bottom:1px solid var(--g200);font-size:13px;font-weight:700;color:var(--navy);display:flex;justify-content:space-between;align-items:center}
+.notif-item{padding:12px 16px;border-bottom:1px solid var(--g200);cursor:pointer;transition:background .15s}
+.notif-item:last-child{border-bottom:none}
+.notif-item:hover{background:var(--g100)}
+.notif-item.unread{background:#fffbf0}
+.notif-item-title{font-size:13px;font-weight:600;color:var(--navy)}
+.notif-item-sub{font-size:11px;color:var(--g400);margin-top:2px}
+.notif-clear{padding:10px 16px;text-align:center;font-size:12px;color:var(--blue);cursor:pointer;font-weight:600}
+.notif-clear:hover{background:var(--g100)}
 
-/* LANG TOGGLE */
-.lang-toggle {
-  position: fixed; top: 20px; left: 20px;
-  display: flex; background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 20px; padding: 3px; gap: 2px; z-index: 10;
-}
-body[dir="ltr"] .lang-toggle { left: auto; right: 20px; }
-.lang-btn {
-  padding: 5px 13px; border-radius: 16px; border: none;
-  background: transparent; color: rgba(255,255,255,.4);
-  font-family: 'Heebo', sans-serif; font-size: 12px; font-weight: 700;
-  cursor: pointer; transition: all .2s;
-}
-.lang-btn.active { background: #c9a84c; color: #0b1729; }
+/* MAINT RECORD CARDS */
+.maint-record-card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:16px 18px;box-shadow:var(--sh-sm);margin-bottom:12px;cursor:pointer;transition:all .2s}
+.maint-record-card:hover{box-shadow:var(--sh-md);transform:translateY(-1px)}
+.maint-record-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.maint-record-title{font-size:14px;font-weight:700;color:var(--navy)}
+.maint-record-meta{font-size:12px;color:var(--g400);margin-top:3px}
+.maint-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.maint-tag{background:var(--g100);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--g600);font-weight:500}
+.cost-badge{background:var(--gold-pale);color:#9a6f20;font-weight:700;font-size:12px;padding:3px 10px;border-radius:20px}
+.dash-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.sec-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--g200)}
+.prop-select-wrap{margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.prop-select-wrap label{font-size:13px;font-weight:600;color:var(--navy);white-space:nowrap}
+.prop-select-wrap select{font-family:'Heebo',sans-serif;font-size:13px;padding:8px 12px;border:1.5px solid var(--g200);border-radius:var(--r-sm);outline:none;flex:1;max-width:260px;background:#fff;color:var(--g800)}
+.prop-select-wrap select:focus{border-color:var(--gold)}
 
-/* BADGE */
-.version-badge {
-  position: fixed; top: 20px; right: 20px;
-  background: rgba(201,168,76,.12); border: 1px solid rgba(201,168,76,.2);
-  color: #c9a84c; font-size: 11px; font-weight: 600;
-  padding: 5px 12px; border-radius: 20px; z-index: 10;
-}
-body[dir="ltr"] .version-badge { right: auto; left: 20px; }
+/* USER PAGE */
+.ucard{background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:16px 20px;box-shadow:var(--sh-sm);display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;transition:box-shadow .2s}
+.ucard:hover{box-shadow:var(--sh-md)}
+.uav{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0}
+.uname{font-size:15px;font-weight:700;color:var(--navy)}
+.urole{font-size:12px;color:var(--g400);margin-top:2px}
+.uprops{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.pchip{background:var(--g100);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--g600);font-weight:500}
 
-/* ANIMATIONS */
-@keyframes fadeDown { from{opacity:0;transform:translateY(-16px);} to{opacity:1;transform:translateY(0);} }
-@keyframes fadeUp   { from{opacity:0;transform:translateY(18px);}  to{opacity:1;transform:translateY(0);} }
+/* LOGIN USER BUTTONS */
+.lbtn{border:1.5px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 18px;cursor:pointer;font-family:'Heebo',sans-serif;background:rgba(255,255,255,.05);transition:all .2s;display:flex;align-items:center;gap:14px;width:100%;text-align:right}
+.lbtn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);transform:translateY(-1px)}
+.lbtn.lmgr{background:rgba(201,168,76,.1);border-color:rgba(201,168,76,.3)}
+.lbtn.lmgr:hover{background:rgba(201,168,76,.18)}
+.lav{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+.lav-m{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy)}
+.lav-e{background:rgba(26,127,90,.25);color:#4fc99a}
+.lav-t{background:rgba(26,95,159,.25);color:#6db3f2}
 
-/* SHAKE */
-@keyframes shake {
-  0%,100%{transform:translateX(0);}
-  20%{transform:translateX(-7px);}
-  40%{transform:translateX(7px);}
-  60%{transform:translateX(-5px);}
-  80%{transform:translateX(5px);}
-}
-.shake { animation: shake .4s ease; }
+/* PROP CHECKBOXES */
+.pcheck-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1.5px solid var(--g200);border-radius:8px;background:#fff;cursor:pointer;transition:all .15s;font-size:13px;color:var(--navy)}
+.pcheck-item:hover{border-color:var(--gold);background:var(--gold-pale)}
+.pcheck-item input{accent-color:var(--navy);width:15px;height:15px;cursor:pointer}
 
-@media(max-width:640px){
-  .cards{grid-template-columns:1fr;}
-  .logo-text{font-size:22px;}
-  .logo-icon{width:44px;height:44px;font-size:20px;}
-}
+/* PDF */
+.pdf-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pdf-field-item{display:flex;flex-direction:column;gap:4px}
+.pdf-field-item label{font-size:12px;font-weight:600;color:var(--navy)}
+.pdf-field-item input,.pdf-field-item select{font-family:'Heebo',sans-serif;font-size:13px;padding:8px 10px;border:1.5px solid var(--g200);border-radius:var(--r-sm);width:100%;background:#fff;color:var(--g800);outline:none;transition:border-color .2s}
+.pdf-field-item input:focus,.pdf-field-item select:focus{border-color:var(--gold)}
+@media(max-width:900px){.pdf-field-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<div class="bg">
-  <div class="bg-circle"></div>
-  <div class="bg-circle"></div>
-  <div class="bg-circle"></div>
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">Z</div>
+    <div class="login-title">זילברמינץ</div>
+    <div class="login-sub">מערכת ניהול נכסים ופיקוח AI</div>
+    <div id="login-users-grid" style="display:grid;gap:10px;max-width:440px;margin:0 auto"></div>
+    <div class="login-footer">© זילברמינץ ניהול נכסים</div>
+  </div>
 </div>
-<div class="bg-grid"></div>
 
-<div class="lang-toggle">
-  <button class="lang-btn active" id="btn-he" onclick="setLang('he')">עב</button>
-  <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
-</div>
-<div class="version-badge">זילברמינץ © 2026</div>
+<div class="layout">
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">Z</div>
+    <div><div class="logo-text">זילברמינץ</div><div class="logo-sub">ניהול נכסים</div></div>
+  </div>
+
+  <div id="nav-manager" style="display:none">
+    <div class="nav-section">ניהול</div>
+    <button class="nav-item" onclick="showPage('dashboard',this)"><span class="ni">📊</span>דשבורד</button>
+    <button class="nav-item" onclick="showPage('tickets',this)"><span class="ni">🔧</span>קריאות שירות<span class="badge-nav" id="open-badge">0</span></button>
+    <button class="nav-item" onclick="showPage('maintenance',this)"><span class="ni">🏗️</span>תחזוקה</button>
+    <button class="nav-item" onclick="showPage('pdfpage',this)"><span class="ni">📄</span>ניתוח מסמכים AI</button>
+    <div class="nav-section">הגדרות</div>
+    <button class="nav-item" onclick="showPage('users',this)"><span class="ni">👥</span>ניהול משתמשים</button>
+  </div>
+
+  <div id="nav-engineer" style="display:none">
+    <div class="nav-section">אב בית</div>
+    <button class="nav-item" onclick="showPage('maintenance',this)"><span class="ni">🏗️</span>תחזוקה ושבר</button>
+    <button class="nav-item" onclick="showPage('tickets',this)"><span class="ni">🔧</span>קריאות דיירים<span class="badge-nav" id="open-badge2">0</span></button>
+    <button class="nav-item" onclick="showPage('pdfpage',this)"><span class="ni">📄</span>ניתוח חשבוניות AI</button>
+  </div>
+
+  <div id="nav-tenant" style="display:none">
+    <div class="nav-section">דייר</div>
+    <button class="nav-item" onclick="showPage('tenant',this)"><span class="ni">📝</span>פתיחת קריאה</button>
+    <button class="nav-item" onclick="showPage('mytickets',this)"><span class="ni">📋</span>הקריאות שלי</button>
+  </div>
+
+  <div class="sidebar-footer">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div id="sb-av" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;background:rgba(201,168,76,.2);color:var(--gold)"></div>
+      <div><div style="font-size:12px;font-weight:600;color:#fff;line-height:1.2" id="sb-name"></div><div style="font-size:10px;color:rgba(255,255,255,.4)" id="sb-role-txt"></div></div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">🚪 התנתק</button>
+  </div>
+</nav>
 
 <div class="content">
-
-    <div class="logo-wrap">
-    <img src="data:image/png;base64,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" alt="זילברמינץ" style="height:58px;object-fit:contain;filter:brightness(1.1);" />
-  </div>
-  </div>
-
-  <div class="tagline" id="tagline">בחר את סוג הכניסה למערכת</div>
-
-  <div class="cards">
-
-    <!-- MANAGER CARD -->
-    <div class="card manager">
-      <div class="card-icon-wrap">👔</div>
-      <div class="card-title" id="mgr-title">מנהל נכסים</div>
-      <div class="card-desc" id="mgr-desc">כניסה מאובטחת לממשק הניהול המלא</div>
-
-      <div class="login-form">
-        <div class="input-wrap">
-          <input type="text" id="username" autocomplete="username"
-            placeholder="שם משתמש" onkeydown="if(event.key==='Enter') login()"/>
-        </div>
-        <div class="input-wrap">
-          <input type="password" id="password" autocomplete="current-password"
-            placeholder="סיסמה" onkeydown="if(event.key==='Enter') login()"/>
-        </div>
-        <div class="error-msg" id="login-error">שם משתמש או סיסמה שגויים</div>
-        <button class="btn-login" onclick="login()" id="btn-login">כניסה למערכת הניהול</button>
+<div class="topbar">
+  <div class="topbar-title" id="topbar-title">דשבורד</div>
+  <div class="topbar-right">
+    <div class="greeting">היי, <strong id="user-name">—</strong></div>
+    <span class="role-badge" id="role-badge"></span>
+    <div class="notif-bell" id="notif-bell-wrap">
+      <button style="background:none;border:none;cursor:pointer;font-size:20px;position:relative;padding:4px" onclick="toggleNotifPanel()">🔔<div class="notif-dot" id="notif-dot"></div></button>
+      <div class="notif-panel" id="notif-panel">
+        <div class="notif-panel-hdr"><span>התראות</span><span id="notif-count" style="background:var(--red);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px"></span></div>
+        <div id="notif-list"><div style="padding:24px;text-align:center;color:var(--g400);font-size:13px">אין התראות</div></div>
+        <div class="notif-clear" onclick="clearNotifs()">נקה הכל</div>
       </div>
     </div>
-
-    <!-- TENANT CARD -->
-    <div class="card tenant">
-      <div class="card-icon-wrap">🏠</div>
-      <div class="card-title" id="ten-title">דייר / שוכר</div>
-      <div class="card-desc" id="ten-desc">פתיחת קריאות שירות מהירה וקלה, דיווח על תקלות ומעקב בזמן אמת</div>
-
-      <div class="tenant-features" id="ten-features">
-        <div class="feature"><div class="fdot"></div><span>פתיחת קריאת שירות</span></div>
-        <div class="feature"><div class="fdot"></div><span>העלאת תמונות</span></div>
-        <div class="feature"><div class="fdot"></div><span>מעקב סטטוס קריאה</span></div>
-        <div class="feature"><div class="fdot"></div><span>היסטוריית קריאות</span></div>
-      </div>
-
-      <button class="btn-tenant" onclick="window.location.href='tenant.html'" id="btn-tenant">
-        <span id="ten-cta">כניסה לפורטל דיירים</span>
-        <span id="ten-arrow">←</span>
-      </button>
-    </div>
-
+    <div class="topbar-avatar" id="topbar-av">?</div>
   </div>
-
-  <div class="footer" id="footer">© 2026 י. זילברמינץ ובנו בע"מ • כל הזכויות שמורות</div>
 </div>
 
+<div class="page" id="page-dashboard">
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-icon ic-blue">🏠</div><div class="kpi-label">סה"כ נכסים</div><div class="kpi-val">8</div><div class="kpi-sub">פעילים</div></div>
+    <div class="kpi-card"><div class="kpi-icon ic-red">🚨</div><div class="kpi-label">קריאות פתוחות</div><div class="kpi-val" id="kpi-open">0</div><div class="kpi-sub">דיירים</div></div>
+    <div class="kpi-card"><div class="kpi-icon ic-orange">🏗️</div><div class="kpi-label">משימות תחזוקה</div><div class="kpi-val" id="kpi-maint">0</div><div class="kpi-sub">השנה</div></div>
+    <div class="kpi-card">
+        <div class="kpi-icon ic-green">💰</div><div class="kpi-label">עלות תחזוקה</div><div class="kpi-val" id="kpi-cost">₪0</div>
+        <div class="budget-progress-container">
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--g600);font-weight:700">
+                <span>ניצול תקציב נכס נוכחי:</span><span id="kpi-budget-percent">0%</span>
+            </div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="kpi-budget-bar" style="width: 0%"></div></div>
+        </div>
+    </div>
+  </div>
+  <div class="dash-row">
+    <div class="card">
+      <div class="card-head"><h3>🔧 קריאות אחרונות</h3><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showPage('tickets',document.querySelector('[onclick*=tickets]'))">הצג הכל</button></div>
+      <div id="dash-tickets-list"><div class="empty"><div class="empty-icon">📭</div><div class="empty-txt">אין קריאות</div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>📊 פילוח הוצאות לפי קטגוריה</h3></div>
+      <div class="card-body" id="dash-category-chart">
+         <div class="empty">אין נתוני עלות זמינים</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-tickets">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+    <div class="pills" id="ticket-pills">
+      <button class="pill active" onclick="filterTickets('all',this)">הכל</button>
+      <button class="pill" onclick="filterTickets('open',this)">פתוח</button>
+      <button class="pill" onclick="filterTickets('inprogress',this)">בטיפול</button>
+      <button class="pill" onclick="filterTickets('done',this)">טופל</button>
+    </div>
+  </div>
+  <div class="card">
+    <table class="tbl">
+      <thead><tr><th>מזהה</th><th>קטגוריה</th><th>נכס</th><th>יחידה</th><th>פירוט</th><th>תאריך</th><th>סטטוס</th></tr></thead>
+      <tbody id="tickets-tbody"></tbody>
+    </table>
+    <div class="empty" id="tickets-empty" style="display:none"><div class="empty-icon">📭</div><div class="empty-txt">אין קריאות</div></div>
+  </div>
+</div>
+
+<div class="page" id="page-tenant">
+  <div class="form-wrap">
+    <div class="form-hdr"><h2>📝 פתיחת קריאת שירות</h2><p>בחר קטגוריה, הוסף פירוט ושלח — נחזור אליך בהקדם</p></div>
+    <div class="form-bdy">
+      <div class="form-grid" style="margin-bottom:20px">
+        <div class="fg"><label>שם מלא <span class="req">*</span></label><input type="text" id="t-name" placeholder="ישראל ישראלי"/></div>
+        <div class="fg"><label>טלפון <span class="req">*</span></label><input type="tel" id="t-phone" placeholder="050-0000000"/></div>
+        <div class="fg"><label>נכס <span class="req">*</span></label>
+          <select id="t-property">
+            <option value="">בחר נכס</option>
+          </select>
+        </div>
+        <div class="fg"><label>מספר דירה / משרד <span class="req">*</span></label><input type="text" id="t-unit" placeholder="12"/></div>
+      </div>
+
+      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px">סוג הפנייה <span class="req">*</span></div>
+      <div class="cat-grid" id="cat-grid">
+        <button class="cat-btn" data-cat="ניקיון" onclick="selectCat(this)"><span class="ci">🧹</span><span>ניקיון</span></button>
+        <button class="cat-btn" data-cat="שבר" onclick="selectCat(this)"><span class="ci">🔨</span><span>שבר</span></button>
+        <button class="cat-btn" data-cat="מעלית" onclick="selectCat(this)"><span class="ci">🛗</span><span>מעלית</span></button>
+        <button class="cat-btn" data-cat="מיזוג אוויר" onclick="selectCat(this)"><span class="ci">❄️</span><span>מיזוג</span></button>
+        <button class="cat-btn" data-cat="חשמל" onclick="selectCat(this)"><span class="ci">⚡</span><span>חשמל</span></button>
+        <button class="cat-btn" data-cat="אינסטלציה" onclick="selectCat(this)"><span class="ci">🚰</span><span>אינסטלציה</span></button>
+        <button class="cat-btn" data-cat="נייר טואלט / חומרי ניקיון" onclick="selectCat(this)"><span class="ci">🧻</span><span>חומרי ניקיון</span></button>
+        <button class="cat-btn" data-cat="אחר" onclick="selectCat(this)"><span class="ci">📝</span><span>אחר</span></button>
+      </div>
+
+      <div class="fg">
+        <label>פירוט הבעיה <span class="req">*</span></label>
+        <textarea id="t-desc" placeholder="תאר בפירוט מה קרה..."></textarea>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end">
+        <button class="btn-primary" onclick="submitTenantTicket()">🚀 שלח קריאה</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-mytickets">
+  <div class="sec-title">📋 הקריאות שלי</div>
+  <div class="pills" style="margin-bottom:16px" id="mytickets-pills">
+    <button class="pill active" onclick="filterMyTickets('all',this)">הכל</button>
+    <button class="pill" onclick="filterMyTickets('open',this)">פתוח</button>
+    <button class="pill" onclick="filterMyTickets('inprogress',this)">בטיפול</button>
+    <button class="pill" onclick="filterMyTickets('done',this)">טופל</button>
+  </div>
+  <div class="card">
+    <table class="tbl">
+      <thead><tr><th>מזהה</th><th>קטגוריה</th><th>נכס</th><th>פירוט</th><th>תאריך</th><th>סטטוס</th></tr></thead>
+      <tbody id="mytickets-tbody"></tbody>
+    </table>
+    <div class="empty" id="mytickets-empty" style="display:none"><div class="empty-icon">📭</div><div class="empty-txt">אין קריאות עדיין</div></div>
+  </div>
+</div>
+
+<div class="page" id="page-maintenance">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div style="font-size:15px;font-weight:700;color:var(--navy)">🏗️ תחזוקה, שבר ומשימות מונעות</div>
+    <div style="display:flex;gap:8px">
+      <label class="btn-ghost" style="background:#eef2f9;color:var(--blue);border-color:var(--blue);padding:8px 14px;font-weight:700;display:flex;align-items:center;gap:6px">
+         📸 דיווח מהיר מהשטח
+         <input type="file" accept="image/*" capture="environment" style="display:none" onchange="quickFieldReport(this)">
+      </label>
+      <button class="btn-primary" onclick="openMaintForm()">+ רשום טיפול ידני</button>
+    </div>
+  </div>
+
+  <div class="kpi-grid" style="margin-bottom:24px">
+    <div class="kpi-card"><div class="kpi-icon ic-orange">📋</div><div class="kpi-label">רשומות השנה</div><div class="kpi-val" id="m-kpi-count">0</div></div>
+    <div class="kpi-card">
+        <div class="kpi-icon ic-green">💰</div><div class="kpi-label">עלות מול תקציב</div>
+        <div class="kpi-val" id="m-kpi-cost">₪0</div>
+        <div style="font-size:11px;color:var(--g600);margin-top:2px" id="m-budget-lbl">מתוך ₪5,000 חודשי</div>
+    </div>
+    <div class="kpi-card"><div class="kpi-icon ic-blue">🏠</div><div class="kpi-label">נכסים בטיפול</div><div class="kpi-val" id="m-kpi-props">0</div></div>
+    <div class="kpi-card"><div class="kpi-icon ic-red">📎</div><div class="kpi-label">קבצים מצורפים</div><div class="kpi-val" id="m-kpi-files">0</div></div>
+  </div>
+
+  <div class="prop-select-wrap">
+    <label>סנן לפי נכס:</label>
+    <select id="maint-filter-prop" onchange="renderMaintFiltered()">
+      <option value="">כל הנכסים</option>
+    </select>
+  </div>
+
+  <div class="dash-row" style="margin-bottom:20px">
+      <div class="card">
+          <div class="card-head"><h3>🗓️ משימות תחזוקה מונעת (Preventive) לביצוע השבוע</h3></div>
+          <div class="card-body" id="preventive-tasks-container"></div>
+      </div>
+      <div class="card">
+          <div class="card-head"><h3>📜 היסטוריית טיפולים שבוצעו</h3></div>
+          <div class="card-body" id="maint-records-list" style="padding:0"></div>
+      </div>
+  </div>
+</div>
+
+<div class="page" id="page-users">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div><div style="font-size:15px;font-weight:700;color:var(--navy)">👥 ניהול משתמשים והרשאות</div>
+    <div style="font-size:12px;color:var(--g400);margin-top:3px">קבע לכל אב בית לאילו נכסים יש לו גישה</div></div>
+    <button class="btn-primary" onclick="openAddUserModal()">+ הוסף משתמש</button>
+  </div>
+  <div class="sec-title">🔑 מנהלים</div><div id="ul-manager"></div>
+  <div class="sec-title" style="margin-top:20px">🔧 אבות בית</div><div id="ul-engineer"></div>
+  <div class="sec-title" style="margin-top:20px">🏠 דיירים</div><div id="ul-tenant"></div>
+</div>
+
+<div class="page" id="page-pdfpage">
+  <div style="max-width:820px;margin:0 auto">
+    <div class="card" style="margin-bottom:20px;overflow:visible">
+      <div class="card-head"><h3>📄 ניתוח מסמכים עם AI</h3></div>
+      <div style="padding:24px">
+        <label id="pdf-dropzone" for="pdf-file-input" ondragover="event.preventDefault();this.style.borderColor='var(--gold)';this.style.background='var(--gold-pale)'" ondragleave="this.style.borderColor='var(--g200)';this.style.background='var(--g100)'" ondrop="handlePdfDrop(event)" style="border:2.5px dashed var(--g200);border-radius:var(--r);padding:48px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--g100);display:block">
+          <input type="file" id="pdf-file-input" accept=".pdf,image/*" style="display:none" onchange="handlePdfFile(this.files[0])">
+          <div style="font-size:48px;margin-bottom:12px">📁</div>
+          <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px">גרור לכאן PDF או תמונה</div>
+          <div style="font-size:12px;color:var(--g400);margin-bottom:16px">חשבוניות, דוחות בדיקה, הצעות מחיר</div>
+          <div style="display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:center">
+            <span style="background:var(--gold-pale);color:#9a6f20;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600">📋 חשבונית</span>
+            <span style="background:#e0f5ed;color:var(--green);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600">🔍 דוח בדיקה</span>
+            <span style="background:#e3f0ff;color:var(--blue);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600">💰 הצעת מחיר</span>
+          </div>
+        </label>
+        <div id="pdf-loading" style="display:none;text-align:center;padding:40px">
+          <div style="font-size:40px;margin-bottom:12px;animation:spin 1.5s linear infinite;display:inline-block">⚙️</div>
+          <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px">מנתח את המסמך...</div>
+          <div style="font-size:12px;color:var(--g400)" id="pdf-loading-sub">Claude קורא ומחלץ מידע</div>
+        </div>
+      </div>
+    </div>
+    <div id="pdf-result-area" style="display:none">
+      <div id="pdf-type-banner" style="border-radius:var(--r);padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px;font-weight:700;font-size:14px"></div>
+      <div class="card" style="margin-bottom:16px;overflow:visible">
+        <div class="card-head"><h3>✨ שדות שחולצו</h3><span style="font-size:11px;color:var(--g400)">ניתן לערוך לפני שמירה</span></div>
+        <div style="padding:20px" id="pdf-fields-container"></div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-head"><h3>📝 תקציר AI</h3></div>
+        <div style="padding:18px 20px;font-size:13px;color:var(--g800);line-height:1.7" id="pdf-summary-text"></div>
+      </div>
+      <div style="background:#fff;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--sh-sm);padding:18px 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+        <div style="font-size:12px;color:var(--g400)">שמור כ:</div>
+        <div style="display:flex;gap:10px">
+          <button class="btn-ghost" onclick="resetPdfAnalyzer()">🔄 נתח שוב</button>
+          <button class="btn-primary" onclick="savePdfAsMaint()">🔧 שמור כרשומת תחזוקה</button>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:28px">
+      <div class="sec-title">📂 מסמכים שנותחו</div>
+      <div class="card"><table class="tbl"><thead><tr><th>תאריך</th><th>סוג</th><th>ספק</th><th>נכס</th><th>סכום</th></tr></thead>
+      <tbody id="pdf-hist-body"></tbody></table>
+      <div class="empty" id="pdf-hist-empty"><div class="empty-icon">📄</div><div class="empty-txt">אין מסמכים שנותחו עדיין</div></div></div>
+    </div>
+  </div>
+</div>
+
+</div></div><div class="modal-ov" id="ticket-detail-modal" onclick="closeModalOv(event,'ticket-detail-modal')">
+  <div class="modal">
+    <div class="modal-hdr"><h3 id="td-title"></h3><button class="modal-close" onclick="closeModal('ticket-detail-modal')">✕</button></div>
+    <div class="modal-bdy" id="td-body"></div>
+  </div>
+</div>
+
+<div class="modal-ov" id="maint-form-modal" onclick="closeModalOv(event,'maint-form-modal')">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-hdr"><h3>🏗️ רישום טיפול תחזוקה</h3><button class="modal-close" onclick="closeModal('maint-form-modal')">✕</button></div>
+    <div class="modal-bdy">
+      <div class="fg">
+        <label>נכס <span class="req">*</span></label>
+        <select id="mf-property">
+          <option value="">—</option>
+        </select>
+      </div>
+
+      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px">בחר נושאי טיפול (ניתן לסמן כמה) <span class="req">*</span></div>
+      <div class="maint-bank-grid" id="maint-bank-grid"></div>
+
+      <div class="add-topic-wrap">
+        <input type="text" id="new-topic-input" placeholder="הוסף נושא חדש למאגר..."/>
+        <button class="btn-ghost" onclick="addCustomTopic()">+ הסף</button>
+      </div>
+
+      <div class="selected-items-wrap" id="sel-items-wrap">
+        <div class="selected-items-title">נושאים שנבחרו:</div>
+        <div id="sel-items-list"></div>
+      </div>
+
+      <div class="form-grid">
+        <div class="fg"><label>תאריך ביצוע <span class="req">*</span></label><input type="date" id="mf-date"/></div>
+        <div class="fg"><label>עלות (₪)</label><input type="number" id="mf-cost" placeholder="0"/></div>
+        <div class="fg"><label>ספק / קבלן</label><input type="text" id="mf-vendor" placeholder="שם הספק"/></div>
+        <div class="fg"><label>מספר חשבונית</label><input type="text" id="mf-invoice" placeholder="123456"/></div>
+        <div class="fg full"><label>הערות נוספות</label><textarea id="mf-notes" placeholder="פרט מה בוצע, מה הוחלף, הערות..."></textarea></div>
+      </div>
+
+      <div class="fg">
+        <label>קבצים (חשבוניות, תמונות, דוחות)</label>
+        <label class="file-upload-zone" for="mf-files">
+          <input type="file" id="mf-files" multiple accept="image/*,.pdf,.doc,.docx" onchange="handleMaintFiles(this)" style="display:none">
+          <div style="font-size:24px;margin-bottom:6px">📎</div>
+          <div style="font-size:13px;color:var(--g600)"><strong>לחץ להעלאת קבצים</strong> — תמונות, PDF, מסמכים</div>
+        </label>
+        <div class="uploaded-files" id="mf-files-list"></div>
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+        <button class="btn-ghost" onclick="closeModal('maint-form-modal')">ביטול</button>
+        <button class="btn-primary" onclick="saveMaintRecord()">✅ שמור רשומה</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-ov" id="maint-detail-modal" onclick="closeModalOv(event,'maint-detail-modal')">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-hdr"><h3 id="md-title">פרטי טיפול</h3><button class="modal-close" onclick="closeModal('maint-detail-modal')">✕</button></div>
+    <div class="modal-bdy" id="md-body"></div>
+  </div>
+</div>
+
+<div class="modal-ov" id="user-modal" onclick="if(event.target===this)closeModal('user-modal')">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-hdr"><h3 id="um-modal-title">הוספת משתמש</h3><button class="modal-close" onclick="user-modal')">✕</button></div>
+    <div class="modal-bdy">
+      <div class="form-grid">
+        <div class="fg"><label>שם מלא <span class="req">*</span></label><input type="text" id="um-name" placeholder="ישראל ישראלי"/></div>
+        <div class="fg"><label>תפקיד <span class="req">*</span></label>
+          <select id="um-role" onchange="togglePropSec()">
+            <option value="manager">מנהל</option><option value="engineer">אב בית</option><option value="tenant">דייר</option>
+          </select>
+        </div>
+        <div class="fg"><label>סיסמה <span class="req">*</span></label><input type="text" id="um-pass" placeholder="סיסמה לכניסה"/></div>
+        <div class="fg"><label>טלפון</label><input type="tel" id="um-phone" placeholder="050-0000000"/></div>
+      </div>
+      <div id="prop-access-sec">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px">גישה לנכסים
+          <span style="font-size:11px;font-weight:400;color:var(--g400)">(בחר אילו נכסים יוצגו לאב הבית)</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px" id="prop-cg"></div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+        <button class="btn-ghost" onclick="closeModal('user-modal')">ביטול</button>
+        <button class="btn-primary" onclick="saveUserFromModal()">✅ שמור משתמש</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span>✅</span><span id="toast-msg"></span></div>
+
 <script>
-// ── CREDENTIALS (שנה כאן) ──
-const USERS = {
-  'admin':   'zilber2026',
-  'nitsan':  'nitsan123',
-  'manager': 'manager1',
+// ── DATA & STATE MANAGEMENT ──
+var tickets = JSON.parse(localStorage.getItem('zb_tickets_v4') || '[]');
+var maintRecords = JSON.parse(localStorage.getItem('zb_maint_v2') || '[]');
+var notifs = JSON.parse(localStorage.getItem('zb_notifs_v2') || '[]');
+var ticketFilter = 'all';
+var myTicketFilter = 'all';
+var selectedCat = '';
+var selectedMaintTopics = [];
+var maintFiles = [];
+var currentPage = 'dashboard';
+
+// PREVENTIVE MAINTENANCE BASE DATA
+var defaultPreventiveTasks = [
+    {id: 'p1', name: 'בדיקת תקינות גנרטור חירום והנעה ידנית', cat: 'חשמל', property: 'שלם 3 רמת גן', cost: 150},
+    {id: 'p2', name: 'בדיקת לחצים במשאבות מים ואיטום', cat: 'אינסטלציה', property: 'מודיעין 5 בלוד', cost: 0},
+    {id: 'p3', name: 'ביקורת חודשית וניקוי מסנני מיזוג אוויר מרכזי', cat: 'מיזוג', property: 'ההשכלה 5 תל אביב', cost: 200},
+    {id: 'p4', name: 'סריקת לוחות חשמל ציבוריים עם מצלמה תרמית', cat: 'חשמל', property: 'שלם 3 רמת גן', cost: 450}
+];
+var preventiveTasks = JSON.parse(localStorage.getItem('zb_preventive_v1') || JSON.stringify(defaultPreventiveTasks));
+
+var PAGE_TITLES = {
+  dashboard: 'דשבורד פיננסי ומנהלי',
+  tickets: 'קריאות שירות',
+  tenant: 'פתיחת קריאה',
+  mytickets: 'הקריאות שלי',
+  maintenance: 'ניהול תחזוקה שוטפת ומונעת',
+  users: 'ניהול משתמשים',
+  pdfpage: 'ניתוח מסמכים AI'
 };
 
-// ── DISPLAY NAMES ──
-const USER_NAMES = {
-  'admin':   'Admin',
-  'nitsan':  'Nitsan Gal-On',
-  'manager': 'Manager',
-};
-
-// ── TRANSLATIONS ──
-const TR = {
-  he: {
-    dir:'rtl', lang:'he',
-    logoSub:'ניהול נכסים מתקדם',
-    tagline:'בחר את סוג הכניסה למערכת',
-    mgrTitle:'מנהל נכסים',
-    mgrDesc:'כניסה מאובטחת לממשק הניהול המלא',
-    userPh:'שם משתמש', passPh:'סיסמה',
-    btnLogin:'כניסה למערכת הניהול',
-    loginErr:'שם משתמש או סיסמה שגויים',
-    tenTitle:'דייר / שוכר',
-    tenDesc:'פתיחת קריאות שירות מהירה וקלה, דיווח על תקלות ומעקב בזמן אמת',
-    tenFeatures:['פתיחת קריאת שירות','העלאת תמונות','מעקב סטטוס קריאה','היסטוריית קריאות'],
-    tenCta:'כניסה לפורטל דיירים', tenArrow:'←',
-    footer:'© 2026 י. זילברמינץ ובנו בע"מ • כל הזכויות שמורות',
-  },
-  en: {
-    dir:'ltr', lang:'en',
-    logoSub:'Advanced Property Management',
-    tagline:'Choose your entry point',
-    mgrTitle:'Property Manager',
-    mgrDesc:'Secure login to the full management dashboard',
-    userPh:'Username', passPh:'Password',
-    btnLogin:'Enter Management System',
-    loginErr:'Incorrect username or password',
-    tenTitle:'Tenant / Renter',
-    tenDesc:'Quick and easy service requests, fault reporting and real-time status tracking',
-    tenFeatures:['Open a service request','Upload photos','Track request status','Request history'],
-    tenCta:'Enter Tenant Portal', tenArrow:'→',
-    footer:'© 2026 Y. Zilbermintz & Son Ltd. • All rights reserved',
-  }
-};
-
-let lang = 'he';
-
-function setLang(l) {
-  lang = l;
-  const t = TR[l];
-  const isEn = l === 'en';
-
-  document.documentElement.setAttribute('lang', t.lang);
-  document.documentElement.setAttribute('dir', t.dir);
-  document.body.setAttribute('dir', t.dir);
-
-  document.getElementById('btn-he').classList.toggle('active', !isEn);
-  document.getElementById('btn-en').classList.toggle('active',  isEn);
-
-  document.getElementById('logo-sub').textContent  = t.logoSub;
-  document.getElementById('tagline').textContent   = t.tagline;
-  document.getElementById('mgr-title').textContent = t.mgrTitle;
-  document.getElementById('mgr-desc').textContent  = t.mgrDesc;
-  document.getElementById('username').placeholder  = t.userPh;
-  document.getElementById('password').placeholder  = t.passPh;
-  document.getElementById('btn-login').textContent = t.btnLogin;
-  document.getElementById('login-error').textContent = t.loginErr;
-  document.getElementById('ten-title').textContent = t.tenTitle;
-  document.getElementById('ten-desc').textContent  = t.tenDesc;
-  document.getElementById('ten-cta').textContent   = t.tenCta;
-  document.getElementById('ten-arrow').textContent = t.tenArrow;
-  document.getElementById('footer').textContent    = t.footer;
-
-  const spans = document.querySelectorAll('#ten-features .feature span');
-  t.tenFeatures.forEach((f, i) => { if (spans[i]) spans[i].textContent = f; });
-}
-
-function login() {
-  const user = document.getElementById('username').value.trim().toLowerCase();
-  const pass = document.getElementById('password').value;
-  const errEl = document.getElementById('login-error');
-  const form  = document.querySelector('.login-form');
-
-  if (USERS[user] && USERS[user] === pass) {
-    errEl.classList.remove('show');
-    sessionStorage.setItem('zb_user', user);
-    sessionStorage.setItem('zb_display_name', USER_NAMES[user] || user);
-    document.getElementById('btn-login').textContent = lang === 'he' ? '✓ מתחבר...' : '✓ Logging in...';
-    document.getElementById('btn-login').style.opacity = '0.7';
-    setTimeout(() => { window.location.href = 'manager.html'; }, 600);
-  } else {
-    errEl.classList.add('show');
-    form.classList.remove('shake');
-    void form.offsetWidth; // reflow to restart animation
-    form.classList.add('shake');
-    document.getElementById('password').value = '';
-    document.getElementById('password').focus();
-  }
-}
-</script>
-</body>
-</html>
+var DEFAULT_TOPICS = [
+  {id:'t1', icon:'🛗', name:'טיפול שנתי במעלית', cat:'מעלית'},
+  {id:'t2', icon:'🔥', name:'טיפול שנתי מערכות גילוי אש', cat:'בטיחות'},
+  {id:'t3', icon:'💧', name:'בדיקת ברזים ואינסטלציה', cat:'אינסטלציה'},
+  {id:'t4', icon:'⚡', name:'בדיקת לוחות חשמל', cat:'חשמל'},
+  {id:'t5', icon:'❄️', name:'תחזוקה שנתית מיזוג', cat:'מיזוג'},
