@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>זילברמינץ | מערכת ניהול נכסים מלאה</title>
+<title>זילברמינץ | מערכת ניהול נכסים</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -34,7 +34,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 .lbtn-desc-txt {font-size:12px; color:rgba(255,255,255,.5); line-height:1.4;}
 .lbtn-arrow {color:rgba(255,255,255,.25); font-size:22px;}
 .sub-login-grid {display:none; flex-direction:column; gap:14px; animation:slideUp .25s ease; width:100%;}
-.back-login-btn {background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:var(--gold-light); font-size:13px; font-weight:600; padding:8px 16px; border-radius:20px; cursor:pointer; align-self:flex-start; margin-bottom:12px; transition:all 0.2s;}
+.back-login-btn {background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:var(--gold-light); font-size:13px; font-weight:600; padding:8px 16px; border-radius:20px; cursor:pointer; align-self:flex-start; margin-bottom:12px; transition:all 0.2s; font-family:'Heebo';}
 
 /* LAYOUT FIXED */
 .layout{display:flex;min-height:100vh}
@@ -118,8 +118,12 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 .file-upload-zone{border:2px dashed var(--g200);border-radius:var(--r-sm);padding:16px;text-align:center;cursor:pointer;background:var(--g100);display:block;width:100%}
 .file-chip{background:#fff;border:1px solid var(--g200);border-radius:20px;padding:4px 10px;font-size:11px;display:inline-flex;align-items:center;gap:5px;margin:2px}
 .pcheck-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1.5px solid var(--g200);border-radius:8px;background:#fff;cursor:pointer;font-size:13px;}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:12px 22px;border-radius:12px;font-size:13px;transition:transform .4s;z-index:999}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.sec-title{font-size:16px;font-weight:800;color:var(--navy);margin:20px 0 14px 0;display:flex;align-items:center;gap:10px}
+.empty{text-align:center;padding:32px;color:var(--g400);font-size:14px}
 
-/* MODALS & TOAST */
+/* MODALS */
 .modal-ov{position:fixed;inset:0;background:rgba(15,31,61,.55);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-ov.open{display:flex}
 .modal{background:#fff;border-radius:var(--r);width:100%;max-width:600px;box-shadow:var(--sh-lg);overflow:hidden;animation:slideUp .25s ease;display:flex;flex-direction:column}
@@ -127,10 +131,6 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 .modal-hdr h3{font-size:15px;font-weight:700}
 .modal-close{background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .modal-bdy{padding:20px;max-height:80vh;overflow-y:auto}
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:12px 22px;border-radius:12px;font-size:13px;transition:transform .4s;z-index:999}
-.toast.show{transform:translateX(-50%) translateY(0)}
-.sec-title{font-size:16px;font-weight:800;color:var(--navy);margin:20px 0 14px 0;display:flex;align-items:center;gap:10px}
-.empty{text-align:center;padding:32px;color:var(--g400);font-size:14px}
 @media(max-width:900px){.dash-row, .kpi-grid, .users-list-grid, .property-dashboard-grid, .topic-bank-grid {grid-template-columns: 1fr;}}
 </style>
 
@@ -201,7 +201,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   <div class="login-card">
     <div class="login-logo">Z</div>
     <div class="login-title">זילברמינץ</div>
-    <div class="login-sub">מערכת ניהול נכסים משולבת</div>
+    <div class="login-sub">מערכת ניהול נכסים</div>
     <div id="main-login-hub" class="login-split-container">
         <button class="lbtn lmgr" onclick="openStaffSubLogin()">
             <div class="lav" style="background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--navy)">⚙️</div>
@@ -259,7 +259,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
       <div class="ai-scanner-left">
           <div class="ai-stars-icon">✨</div>
           <div>
-              <div style="font-size:15px; font-weight:800; color:var(--navy)">ניתוח חשבוניות ודוחות ספקים באנטיליגנציה מלאה (AI)</div>
+              <div style="font-size:15px; font-weight:800; color:var(--navy)">ניתוח חשבוניות ודוחות ספקים (AI)</div>
               <div style="font-size:12px; color:var(--g600)">גרור דוח בדיקה או חשבונית PDF - המערכת תחלץ עלויות ותסנכרן אוטומטית לענן</div>
           </div>
       </div>
@@ -277,7 +277,6 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
     <div class="kpi-card"><div class="kpi-label">משימות מבוצעות היסטוריה</div><div class="kpi-val" id="kpi-maint">0</div></div>
     <div class="kpi-card"><div class="kpi-label">משימות פתוחות בלוח</div><div class="kpi-val" id="kpi-pending-tasks">0</div></div>
   </div>
-  
   <div class="sec-title">🏠 ריכוז סטטוס ותקציבים מפולח לפי נכסים</div>
   <div class="property-dashboard-grid" id="property-dashboard-nodes"></div>
 </div>
@@ -322,28 +321,37 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   </div>
 
   <div class="card" id="mgr-preventive-hub">
-      <div class="card-head" style="background:var(--g100)"><h3>➕ הקצאה / תזמון משימה מונעת לענן</h3></div>
+      <div class="card-head" style="background:var(--g100)"><h3 id="preventive-hub-title">➕ הקצאה / תזמון משימה מונעת ומחזוריות חדשה ללוח</h3></div>
       <div class="card-body form-grid">
           <div class="fg"><label>תיאור המשימה המונעת</label><input type="text" id="p-new-name" placeholder="תיאור הטיפול..."/></div>
           <div class="fg"><label>נכס יעד</label><select id="p-new-prop"></select></div>
-          <div class="fg"><label>תאריך יעד לביצוע *</label><input type="date" id="p-new-duedate"/></div>
+          <div class="fg"><label>תאריך יעד לביצוע (Deadline) *</label><input type="date" id="p-new-duedate"/></div>
           <div class="fg"><label>מחזוריות *</label>
               <select id="p-new-period">
-                  <option value="once">חד-פעמי</option><option value="monthly">כל חודש</option><option value="half-year">כל חצי שנה</option>
+                  <option value="once">חד-פעמי</option><option value="monthly">כל חודש</option><option value="half-year">כל חצי שנה</option><option value="yearly">כל שנה</option>
               </select>
           </div>
           <div class="fg"><label>עלות משוערת (₪)</label><input type="number" id="p-new-cost" placeholder="0"/></div>
           <div class="fg"><label>קטגוריה</label>
               <select id="p-new-cat"><option>חשמל</option><option>אינסטלציה</option><option>מיזוג</option><option>מעלית</option></select>
           </div>
-          <div style="grid-column:1/-1; display:flex; justify-content:flex-end; width:100%">
-              <button class="btn-primary" onclick="savePreventiveTaskHub()">הוסף משימה ללוח הענן 🚀</button>
+          <div class="fg full">
+              <label>צרף מסמכים / תמונות למשימה מראש</label>
+              <label class="file-upload-zone" for="p-new-files">
+                  <input type="file" id="p-new-files" multiple accept="image/*,.pdf" onchange="handleHubPreFiles(this)" style="display:none">
+                  <div style="font-size:13px; color:var(--g600)">📎 לחץ להעלאת קבצים או דוחות מראש</div>
+              </label>
+              <div class="uploaded-files" id="hub-pre-files-list"></div>
+          </div>
+          <div style="grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; width:100%">
+              <button class="btn-danger" id="p-btn-cancel-edit" style="display:none" onclick="cancelPreventiveEdit()">ביטול עריכה</button>
+              <button class="btn-primary" id="p-btn-submit" onclick="savePreventiveTaskHub()">הוסף משימה ללוח הענן 🚀</button>
           </div>
       </div>
   </div>
 
   <div class="dash-row">
-      <div class="card"><div class="card-head"><h3>🗓️ משימות פתוחות לביצוע</h3></div><div class="card-body" id="preventive-tasks-container"></div></div>
+      <div class="card"><div class="card-head"><h3>🗓️ משימות תחזוקה מונעת וקריאות לביצוע</h3></div><div class="card-body" id="preventive-tasks-container"></div></div>
       <div class="card">
           <div class="card-head">
               <h3>📜 היסטוריית ביצועים ותיקונים</h3>
@@ -384,7 +392,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
         <div class="fg"><label>תפקיד / סיווג *</label>
           <select id="um-role" onchange="togglePropSec()">
             <option value="manager">מנהל מערכת</option>
-            <option value="engineer">אב בית (צוות שטח)</option>
+            <option value="engineer">אב בית (צום שטח)</option>
           </select>
         </div>
         <div class="fg"><label>טלפון</label><input type="tel" id="um-phone"/></div>
@@ -406,7 +414,6 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
     <div class="modal-hdr"><h3>🏗️ רישום טיפול תחזוקה ידני</h3><button class="modal-close" onclick="closeModal('maint-form-modal')">✕</button></div>
     <div class="modal-bdy">
       <div class="fg"><label>נכס *</label><select id="mf-property"></select></div>
-      
       <div class="fg">
           <label>בחר נושא מהיר או הקלד חופשי</label>
           <div class="topic-bank-grid">
@@ -419,7 +426,6 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
           </div>
           <input type="text" id="mf-edit-topic-string" placeholder="נושא הטיפול..."/>
       </div>
-
       <div class="form-grid">
         <div class="fg"><label>תאריך ביצוע *</label><input type="date" id="mf-date"/></div>
         <div class="fg"><label>עלות (₪)</label><input type="number" id="mf-cost" value="0"/></div>
@@ -439,7 +445,7 @@ var ALL_PROPS = ['מודיעין 5 בלוד','שלם 3 רמת גן','ההשכל�
 
 var users = [
   {id:'u1',name:'Nitsan Gal-On',role:'manager',props:ALL_PROPS, phone:'—'},
-  {id:'u2',name:'יעקב דוידי',role:'engineer',props:['שלם 3 רמת גן','מודיעין 5 בלוד'], phone:'054-123456'},
+  {id:'u2',name:'יעקב דוידי',role:'engineer',props:['שלם 3 רמת גן','מודיעין 5 בלוד','ההשכלה 5 תל אביב'], phone:'054-123456'},
   {id:'u3',name:'דייר בבניין',role:'tenant',props:ALL_PROPS, phone:'—'}
 ];
 var currentUser = null;
@@ -495,7 +501,6 @@ function renderPageFull(id){
   else if(id === 'users') { renderUsersPage(); }
 }
 
-/* 🔔 3. REAL-TIME UNREAD ALERTS FUNCTION */
 function checkUnreadAlerts() {
     var openCount = tickets.filter(t => t.status === 'open').length;
     var bell = document.getElementById('bell-badge');
@@ -503,7 +508,6 @@ function checkUnreadAlerts() {
 }
 function clearAlerts() { document.getElementById('bell-badge').style.display = 'none'; showToast('🔔 כל ההתראות נקראו בהצלחה!'); }
 
-/* ✨ AI HUB FUNCTION SYNC */
 function triggerAIScan(input) {
     if(!input.files.length) return;
     showToast('✨ סורק AI מנתח את ה-PDF ומחלץ נתונים...');
@@ -518,10 +522,8 @@ function triggerAIScan(input) {
     }, 1500);
 }
 
-/* ⚡ QUICK TOPIC CHIP APPLY */
 function applyQuickTopic(txt) { document.getElementById('mf-edit-topic-string').value = txt; }
 
-/* 👥 USERS MANAGEMENT EXECUTION */
 function renderUsersPage(){
   var container = document.getElementById('users-list-container'); if(!container) return;
   container.innerHTML = users.filter(u => u.role !== 'tenant').map(u => {
@@ -559,8 +561,9 @@ async function saveUserFromModal(){
   closeModal('user-modal'); showToast('👥 הגדרות המשתמש והסיווג שלו סונכרנו בענן!');
 }
 
-/* FLOW CONTROLLERS */
+function handleHubPreFiles(input) { hubPreFiles = hubPreFiles.concat(Array.from(input.files).map(f => f.name)); document.getElementById('hub-pre-files-list').innerHTML = hubPreFiles.map(n => `<div class="file-chip">📎 ${n}</div>`).join(''); }
 function handleEngineerFiles(input) { engineerActionFiles = engineerActionFiles.concat(Array.from(input.files).map(f => f.name)); document.getElementById('eng-m-files-list').innerHTML = engineerActionFiles.map(n => `<div class="file-chip">📎 ${n}</div>`).join(''); }
+function handleMaintFiles(input) { maintFiles = Array.from(input.files).map(f => f.name); }
 function selectTenantCat(btn) { document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selectedTenantCategory = btn.dataset.cat; }
 
 async function submitTenantTicket(){
@@ -597,7 +600,7 @@ async function executePreventive(taskId){
         var nextDate = new Date(task.dueDate); nextDate.setMonth(nextDate.getMonth() + 1); task.dueDate = nextDate.toISOString().split('T')[0];
         await window.cloudSave("preventive", taskId, task);
     }
-    closeModal('engineer-action-modal'); showToast('✓ משימה בוצעה בהצלחה!');
+    closeModal('engineer-action-modal');
 }
 
 function openMaintForm() { document.getElementById('mf-date').value = new Date().toISOString().split('T')[0]; document.getElementById('maint-form-modal').classList.add('open'); }
@@ -608,20 +611,17 @@ async function saveMaintRecord(){
   closeModal('maint-form-modal'); showToast('✓ טיפול שבר נרשם בהצלחה!');
 }
 
-/* RENDER LOGICS */
 function renderDashboard(){
-  var up = getUserProps(), isMgr = currentUser && currentUser.role === 'manager';
-  var flMaint = isMgr ? maintRecords : maintRecords.filter(r=>up.indexOf(r.property) !== -1);
-  var openTickets = tickets.filter(t => t.status !== 'done' && (isMgr || up.indexOf(t.property) !== -1));
-  var flTasks = preventiveTasks.filter(t => isMgr || up.indexOf(t.property) !== -1);
+  var totalCost = maintRecords.reduce((a,r)=>a+(r.cost||0),0); var openTickets = tickets.filter(t => t.status !== 'done');
+  var flTasks = preventiveTasks.filter(t => currentUser.role === 'manager' || currentUser.props.indexOf(t.property) !== -1);
 
-  document.getElementById('kpi-cost').textContent = '₪' + flMaint.reduce((a,r)=>a+(r.cost||0),0).toLocaleString();
-  document.getElementById('kpi-maint').textContent = flMaint.length;
+  document.getElementById('kpi-cost').textContent = '₪' + totalCost.toLocaleString();
+  document.getElementById('kpi-maint').textContent = maintRecords.length;
   document.getElementById('kpi-pending-tasks').textContent = flTasks.length;
   document.getElementById('kpi-tickets-count').textContent = openTickets.length;
   
   var hubGrid = document.getElementById('property-dashboard-nodes'); if(!hubGrid) return;
-  hubGrid.innerHTML = up.map(prop => {
+  hubGrid.innerHTML = getUserProps().map(prop => {
       var propMaint = maintRecords.filter(r => r.property === prop); var propPending = preventiveTasks.filter(t => t.property === prop); var propTickets = tickets.filter(t => t.property === prop && t.status !== 'done');
       return `<div class="property-card-hub"><div class="property-hub-title"><span>🏢 ${prop}</span><span style="color:var(--green)">₪${propMaint.reduce((a,r)=>a+(r.cost||0),0).toLocaleString()}</span></div>`
             +`<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:11px;"><div style="background:var(--cream); padding:6px; border-radius:6px;">📋 בוצעו: <strong>${propMaint.length}</strong></div>`
@@ -649,4 +649,26 @@ function renderPreventiveTasks(){
     
     flTickets.forEach(t => {
         html += `<div class="preventive-card overdue"><div style="flex:1"><span>🚨 קריאת דייר (${t.cat})</span><div style="font-size:14px; font-weight:700; color:var(--navy); margin-top:4px;">דירה ${t.unit}: ${t.desc}</div><div>נכס: ${t.property}</div></div>`
-             + `<div><button class="btn-primary" style="background:var(--navy); color:#fff;" onclick="closeTenantTicket
+             + `<div><button class="btn-primary" style="background:var(--navy); color:#fff;" onclick="closeTenantTicket('${t.id}')">סגור ✓</button></div></div>`;
+    });
+    flTasks.forEach(t => {
+        html += `<div class="preventive-card ${t.dueDate < todayStr ? 'overdue' : 'upcoming'}"><div><strong>${t.name}</strong><div>${t.property}</div><div style="font-size:11px; color:var(--g600)">📅 יעד: ${t.dueDate}</div></div><div><button class="btn-primary" onclick="openEngineerActionModal('${t.id}')">בצע ✓</button></div></div>`;
+    });
+    container.innerHTML = html;
+}
+
+async function closeTenantTicket(id) { var t = tickets.find(x => x.id === id); if(!t) return; t.status = 'done'; await window.cloudSave("tickets", id, t); showToast('קריאת דייר נסגרה בבטחה'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function closeModalOv(e, id){ if(e.target === document.getElementById(id)) closeModal(id); }
+function showToast(m){ var el=document.getElementById('toast'); document.getElementById('toast-msg').textContent=m; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3000); }
+
+window.openStaffSubLogin = openStaffSubLogin;
+window.backToMainLoginHub = backToMainLoginHub;
+window.loginAsUser = loginAsUser;
+window.renderPageFull = renderPageFull;
+window.checkUnreadAlerts = checkUnreadAlerts;
+
+renderLoginScreen();
+</script>
+</body>
+</html>
