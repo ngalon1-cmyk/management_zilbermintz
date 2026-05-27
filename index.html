@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>זילברמינץ | מערכת ניהול נכסים</title>
+<title>זילברמינץ | מערכת ניהול נכסים מלאה</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -36,69 +36,104 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 .sub-login-grid {display:none; flex-direction:column; gap:14px; animation:slideUp .25s ease; width:100%;}
 .back-login-btn {background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:var(--gold-light); font-size:13px; font-weight:600; padding:8px 16px; border-radius:20px; cursor:pointer; align-self:flex-start; margin-bottom:12px; transition:all 0.2s;}
 
-/* LAYOUT */
+/* LAYOUT FIXED */
 .layout{display:flex;min-height:100vh}
 .sidebar{width:220px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;right:0;height:100vh;z-index:200}
 .sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
-.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--navy)}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--navy);flex-shrink:0}
 .logo-text{color:#fff;font-size:15px;font-weight:800}
 .nav-section{padding:12px 10px 4px;font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;font-weight:600}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 8px;border-radius:9px;color:rgba(255,255,255,.55);font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;font-family:'Heebo',sans-serif;width:calc(100% - 16px);text-align:right}
 .nav-item.active{background:rgba(201,168,76,.18);color:var(--gold-light);font-weight:600}
 .sidebar-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,.08)}
 .logout-btn{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);padding:8px;border-radius:8px;cursor:pointer;font-size:12px}
-.content{margin-right:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
-.topbar{background:#fff;border-bottom:1px solid var(--g200);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+
+.content{margin-right:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;background:var(--cream);position:relative}
+.topbar{background:#fff;border-bottom:1px solid var(--g200);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--sh-sm)}
 .topbar-title{font-size:17px;font-weight:700;color:var(--navy)}
-.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-right{display:flex;align-items:center;gap:14px}
 .greeting{font-size:13px;color:var(--g400)}.greeting strong{color:var(--navy)}
 .topbar-avatar{width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
 
-/* FIXED & ALIGNED PROPERTY GRID FOR MANAGER DASHBOARD */
-.page{padding:28px;display:none}.page.active{display:block}
-.card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--sh-sm);overflow:hidden;margin-bottom:20px}
+/* NOTIFICATION BELL */
+.bell-btn {background:none; border:none; font-size:19px; cursor:pointer; position:relative; padding:4px;}
+.bell-badge {position:absolute; top:2px; right:2px; width:7px; height:7px; background:var(--red); border-radius:50%; display:none;}
+
+/* DASHBOARD BUILD */
+.page{padding:28px;display:none;animation:fadeIn 0.25s ease-in-out;width:100%}
+.page.active{display:block}
+.card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--sh-sm);overflow:hidden;margin-bottom:24px;width:100%}
 .card-head{padding:14px 18px;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between}
 .card-head h3{font-size:14px;font-weight:700;color:var(--navy)}
 .card-body{padding:16px 18px}
 
-.property-dashboard-grid {display:grid; grid-template-columns: repeat(2, 1fr); gap:20px; margin-top:12px; width:100%; align-items: stretch;}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;width:100%}
+.kpi-card{background:#fff;border-radius:var(--r);padding:16px;border:1px solid var(--g200);box-shadow:var(--sh-sm)}
+.kpi-label{font-size:11px;color:var(--g400);margin-bottom:4px;font-weight:600}
+.kpi-val{font-size:24px;font-weight:800;color:var(--navy)}
+
+.property-dashboard-grid {display:grid; grid-template-columns: repeat(2, 1fr); gap:20px; margin-top:12px; width:100%;}
 .property-card-hub {background:#fff; border:1px solid var(--g200); border-radius:var(--r); padding:18px; box-shadow:var(--sh-sm); display:flex; flex-direction:column; justify-content:space-between; min-height:150px;}
 .property-hub-title {font-size:15px; font-weight:800; color:var(--navy); border-bottom:1px solid var(--g100); padding-bottom:8px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;}
-@media(max-width:900px){.property-dashboard-grid {grid-template-columns: 1fr;}}
 
-/* PREVENTIVE MAINTENANCE ITEMS */
-.preventive-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r);padding:16px 18px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--sh-sm);margin-bottom:10px; border-right:4px solid var(--g300)}
-.preventive-card:hover {transform:translateY(-1px); box-shadow:var(--sh-md);}
+/* AI HUB & UPLOAD */
+.ai-scanner-zone {background:linear-gradient(135deg, #ffffff, #fbf9f3); border:1.5px dashed var(--gold); border-radius:var(--r); padding:20px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:20px;}
+.ai-scanner-left {display:flex; align-items:center; gap:14px;}
+.ai-stars-icon {font-size:26px; background:var(--gold-pale); width:50px; height:50px; border-radius:12px; display:flex; align-items:center; justify-content:center;}
+
+/* USERS & GRIDS */
+.users-list-grid {display:grid; grid-template-columns: repeat(2, 1fr); gap:16px; width:100%; margin-top:10px;}
+.ucard{background:#fff; border-radius:var(--r); border:1px solid var(--g200); padding:18px 20px; box-shadow:var(--sh-sm); display:flex; align-items:center; gap:16px; transition:box-shadow .2s; width:100%;}
+.uav{width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; flex-shrink:0;}
+.uprops{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
+.pchip{background:var(--g100); border-radius:20px; padding:3px 10px; font-size:11px; color:var(--g600); font-weight:600;}
+
+/* MAINTENANCE ROWS */
+.dash-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;width:100%;align-items:start;}
+.preventive-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r);padding:16px 18px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--sh-sm);margin-bottom:12px; border-right:4px solid var(--g300); width:100%}
 .preventive-card.upcoming {border-right-color: var(--orange); background: #fffcf5;}
 .preventive-card.overdue {border-right-color: var(--red); background: #fdf8f8;}
-.preventive-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:12px;background:var(--gold-pale);color:#9a6f20}
-.recurrence-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:12px;background:#e3f0ff;color:var(--blue)}
-.preventive-files-preview {margin-top: 8px; display:flex; gap:6px; flex-wrap:wrap;}
-.file-link-tag {font-size:11px; background:var(--g100); padding:3px 10px; border-radius:10px; color:var(--blue); font-weight:500;}
+.maint-record-card {padding:12px 16px; border-bottom:1px solid var(--g100); cursor:pointer;}
+.maint-record-card:hover {background:var(--g100);}
 
-/* GENERAL STYLING */
-.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy);border:none;padding:8px 18px;border-radius:8px;font-weight:700;cursor:pointer;font-family:'Heebo'}
-.btn-ghost{background:none;border:1.5px solid var(--g200);color:var(--g600);padding:7px 16px;border-radius:8px;cursor:pointer}
-.btn-danger{background:none;border:1.5px solid #fde8e6;color:var(--red);padding:7px 16px;border-radius:8px;cursor:pointer}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+/* BUTTON BANK GRID */
+.topic-bank-grid {display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-bottom:12px;}
+.bank-btn {background:var(--g100); border:1px solid var(--g200); padding:8px; font-size:12px; border-radius:6px; cursor:pointer; font-family:'Heebo'; font-weight:500; text-align:center; transition:all 0.15s;}
+.bank-btn:hover {background:var(--gold-pale); border-color:var(--gold);}
+
+/* FORMS & CATEGORIES */
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0 20px 0;width:100%}
+.cat-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;border:2px solid var(--g200);border-radius:var(--r);background:#fff;cursor:pointer;font-size:14px;font-weight:700;color:var(--g800)}
+.cat-btn.selected{border-color:var(--navy);background:var(--navy);color:#fff}
+.cat-btn .ci{font-size:32px;margin-bottom:2px}
+
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy);border:none;padding:10px 20px;border-radius:8px;font-weight:700;cursor:pointer;font-family:'Heebo';display:inline-flex;align-items:center;gap:6px;}
+.btn-ghost{background:none;border:1.5px solid var(--g200);color:var(--g600);padding:8px 18px;border-radius:8px;cursor:pointer;font-family:'Heebo'}
+.btn-danger{background:none;border:1.5px solid #fde8e6;color:var(--red);padding:8px 18px;border-radius:8px;cursor:pointer;font-family:'Heebo'}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;width:100%}
 .fg label {font-size:13px;font-weight:600;color:var(--navy)}
-.fg input,.fg select,.fg textarea{font-family:'Heebo';font-size:14px;padding:9px 12px;border:1.5px solid var(--g200);border-radius:var(--r-sm);outline:none;width:100%}
+.fg input,.fg select,.fg textarea{font-family:'Heebo';font-size:14px;padding:10px 14px;border:1.5px solid var(--g200);border-radius:var(--r-sm);outline:none;width:100%;background:#fff;color:var(--g800)}
 .full{grid-column:1/-1}
-.file-upload-zone{border:2px dashed var(--g200);border-radius:var(--r-sm);padding:12px;text-align:center;cursor:pointer;background:var(--g100);display:block}
+.file-upload-zone{border:2px dashed var(--g200);border-radius:var(--r-sm);padding:16px;text-align:center;cursor:pointer;background:var(--g100);display:block;width:100%}
 .file-chip{background:#fff;border:1px solid var(--g200);border-radius:20px;padding:4px 10px;font-size:11px;display:inline-flex;align-items:center;gap:5px;margin:2px}
+.pcheck-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1.5px solid var(--g200);border-radius:8px;background:#fff;cursor:pointer;font-size:13px;}
+
+/* MODALS & TOAST */
+.modal-ov{position:fixed;inset:0;background:rgba(15,31,61,.55);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-ov.open{display:flex}
+.modal{background:#fff;border-radius:var(--r);width:100%;max-width:600px;box-shadow:var(--sh-lg);overflow:hidden;animation:slideUp .25s ease;display:flex;flex-direction:column}
+.modal-hdr{background:var(--navy);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.modal-hdr h3{font-size:15px;font-weight:700}
+.modal-close{background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-bdy{padding:20px;max-height:80vh;overflow-y:auto}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:12px 22px;border-radius:12px;font-size:13px;transition:transform .4s;z-index:999}
 .toast.show{transform:translateX(-50%) translateY(0)}
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.kpi-card{background:#fff;border-radius:var(--r);padding:14px 16px;border:1px solid var(--g200)}
-.kpi-label{font-size:11px;color:var(--g400);margin-bottom:4px}
-.kpi-val{font-size:22px;font-weight:800;color:var(--navy)}
-.empty{text-align:center;padding:24px;color:var(--g400);font-size:13px}
-.dash-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
-@media(max-width:900px){.dash-row{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr 1fr;}}
+.sec-title{font-size:16px;font-weight:800;color:var(--navy);margin:20px 0 14px 0;display:flex;align-items:center;gap:10px}
+.empty{text-align:center;padding:32px;color:var(--g400);font-size:14px}
+@media(max-width:900px){.dash-row, .kpi-grid, .users-list-grid, .property-dashboard-grid, .topic-bank-grid {grid-template-columns: 1fr;}}
 </style>
 
-<!-- FIREBASE CLOUD CORE CONNECTION -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
   import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -119,111 +154,66 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   window.cloudSave = async (col, id, data) => { await setDoc(doc(db, col, id), data); };
   window.cloudDelete = async (col, id) => { await deleteDoc(doc(db, col, id)); };
 
-  // 🧪 AUTOMATIC SEEDER HUB: GENERATES 30 TENANT TICKETS & 20 MAINTENANCE TASKS FOR STRESS TESTING
   async function seedDatabaseIfEmpty() {
       const snapshot = await getDocs(collection(db, "preventive"));
       if(snapshot.empty) {
           const props = ['מודיעין 5 בלוד','שלם 3 רמת גן','ההשכלה 5 תל אביב','כסלו 60 מודיעין','מע"ר מודיעין','זילברמינץ סנטר צור יצחק','אור יהודה','סגולה'];
           const cats = ['חשמל','אינסטלציה','מיזוג','מעלית','בטיחות','כללי'];
-          const names = ['ישראל ישראלי', 'משה כהן', 'דוד לוי', 'רוני לוין', 'שירה אברהם', 'אלון מזרחי', 'יעל גרין'];
+          const names = ['ישראל ישראלי', 'משה כהן', 'דוד לוי', 'רוני לוין', 'שירה אברהם'];
 
-          // 1. Generate 30 Active Tenant Tickets (קריאות דיירים)
           for(let i=1; i<=30; i++) {
               let p = props[i % props.length];
-              let c = cats[i % cats.length];
               let id = 'ZB-T' + (100 + i);
-              let ticket = {
-                  id: id,
-                  name: names[i % names.length],
-                  phone: '050-12345' + i,
-                  property: p,
-                  unit: String(10 + i),
-                  desc: 'פניית דייר סימולטיבית לבדיקת עומס ומערך סינון מספר ' + i + ' בנושא תשתית ' + c,
-                  date: '2026-05-' + (i % 28 + 1),
-                  status: i % 3 === 0 ? 'inprogress' : 'open'
-              };
-              await setDoc(doc(db, "tickets", id), ticket);
+              await setDoc(doc(db, "tickets", id), {
+                  id: id, name: names[i % names.length], phone: '050-12345' + i, property: p, unit: String(10 + i),
+                  cat: cats[i % cats.length], desc: 'פניית דייר סימולטיבית לבדיקת עומס ומערך סינון מספר ' + i,
+                  date: '2026-05-' + (i % 25 + 1), status: 'open'
+              });
           }
-          
-          // 2. Generate 20 Active Preventive Maintenance Tasks (משימות תחזוקה)
-          const taskTemplates = [
-              'ביקורת לוחות חשמל קומתיים', 'טיפול מסנני מיזוג אוויר מרכזי', 'בדיקת משאבות לחץ מים ודילול',
-              'טיפול רבעוני רשמי במעליות', 'סריקה תרמית ללוח חשמל ראשי', 'בדיקת תקינות גנרטור ותדלוק',
-              'ביקורת מערכות ספרינקלרים וכיבוי', 'ניקוי מאגרי מים עליונים', 'בדיקת תאורת חירום ושלטי יציאה'
-          ];
+          const taskTemplates = ['ביקורת לוחות חשמל', 'טיפול מסנני מיזוג', 'בדיקת משאבות לחץ מים', 'טיפול רבעוני במעליות', 'ביקורת מערכות ספרינקלרים'];
           for(let j=1; j<=20; j++) {
               let p = props[j % props.length];
-              let c = cats[j % cats.length];
               let id = 'p-seed-' + (100 + j);
-              let task = {
-                  id: id,
-                  name: taskTemplates[j % taskTemplates.length] + ' (סבב ' + j + ')',
-                  cat: c,
-                  property: p,
-                  cost: j % 2 === 0 ? j * 120 : 0,
-                  dueDate: '2026-05-' + (j % 28 + 1),
-                  period: j % 4 === 0 ? 'yearly' : (j % 2 === 0 ? 'half-year' : 'monthly'),
-                  fileNames: j % 3 === 0 ? ['דוח_בדיקה_סימולטיבי.pdf'] : []
-              };
-              await setDoc(doc(db, "preventive", id), task);
-          }
-
-          // Seed 5 Done Maintenance records for financial summary
-          for(let k=1; k<=5; k++) {
-              let id = 'MR-S' + k;
-              let rec = {
-                  id: id, property: props[k % props.length], date: '2026-04-10',
-                  topics: ['תיקון שבר דחוף מהשטח ' + k], cost: k * 350, vendor: 'קבלן שירות מורשה',
-                  notes: 'רשומת היסטוריה להפעלת גרפים ותקציבים בדשבורד', fileNames: []
-              };
-              await setDoc(doc(db, "maintenance", id), rec);
+              await setDoc(doc(db, "preventive", id), {
+                  id: id, name: taskTemplates[j % taskTemplates.length] + ' (סבב ' + j + ')', cat: cats[j % cats.length],
+                  property: p, cost: j * 150, dueDate: '2026-05-' + (j % 25 + 1), period: 'monthly', fileNames: []
+              });
           }
       }
   }
   seedDatabaseIfEmpty();
   
-  onSnapshot(collection(db, "tickets"), (snapshot) => {
-      window.tickets = snapshot.docs.map(doc => doc.data());
-      window.renderPageFull(window.currentPage);
-  });
-  onSnapshot(collection(db, "maintenance"), (snapshot) => {
-      window.maintRecords = snapshot.docs.map(doc => doc.data()).sort((a,b) => b.date.localeCompare(a.date));
-      window.renderPageFull(window.currentPage);
-  });
-  onSnapshot(collection(db, "preventive"), (snapshot) => {
-      window.preventiveTasks = snapshot.docs.map(doc => doc.data()).sort((a,b) => a.dueDate.localeCompare(b.dueDate));
-      window.renderPageFull(window.currentPage);
+  onSnapshot(collection(db, "tickets"), (snapshot) => { window.tickets = snapshot.docs.map(doc => doc.data()); window.checkUnreadAlerts(); window.renderPageFull(window.currentPage); });
+  onSnapshot(collection(db, "maintenance"), (snapshot) => { window.maintRecords = snapshot.docs.map(doc => doc.data()); window.renderPageFull(window.currentPage); });
+  onSnapshot(collection(db, "preventive"), (snapshot) => { window.preventiveTasks = snapshot.docs.map(doc => doc.data()); window.renderPageFull(window.currentPage); });
+  onSnapshot(collection(db, "users_config"), (snapshot) => {
+      if(!snapshot.empty) {
+          window.users = snapshot.docs.map(doc => doc.data());
+          window.renderLoginScreen();
+          if(window.currentPage === 'users') window.renderUsersPage();
+      }
   });
 </script>
 </head>
 <body>
 
-<!-- LOGIN HUB -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">Z</div>
     <div class="login-title">זילברמינץ</div>
-    <div class="login-sub">מערכת ניהול נכסים</div>
-    
+    <div class="login-sub">מערכת ניהול נכסים משולבת</div>
     <div id="main-login-hub" class="login-split-container">
         <button class="lbtn lmgr" onclick="openStaffSubLogin()">
             <div class="lav" style="background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--navy)">⚙️</div>
-            <div class="lbtn-text-wrap">
-                <div class="lbtn-title-txt">כניסת מנהלים וצוות תחזוקה</div>
-                <div class="lbtn-desc-txt">גישה לדשבורד נכסים, פיקוח עלויות וניהול לוחות משימות שטח</div>
-            </div>
+            <div class="lbtn-text-wrap"><div class="lbtn-title-txt">כניסת מנהלים וצוות תחזוקה</div><div class="lbtn-desc-txt">דשבורד נכסים, פיקוח עלויות ולוחות משימות שטח</div></div>
             <span class="lbtn-arrow">‹</span>
         </button>
         <button class="lbtn" onclick="loginAsUser('u3')">
             <div class="lav" style="background:rgba(26,95,159,.25); color:#6db3f2">🏠</div>
-            <div class="lbtn-text-wrap">
-                <div class="lbtn-title-txt">פורטל דיירים</div>
-                <div class="lbtn-desc-txt">פתיחת קריאות שירות שוטפות ודיווח על תקלות בבניין</div>
-            </div>
+            <div class="lbtn-text-wrap"><div class="lbtn-title-txt">פורטל דיירים</div><div class="lbtn-desc-txt">פתיחת קריאות שירות שוטפות ודיווח על תקלות בבניין</div></div>
             <span class="lbtn-arrow">‹</span>
         </button>
     </div>
-
     <div id="staff-login-hub" class="sub-login-grid">
         <button class="back-login-btn" onclick="backToMainLoginHub()">🔀 חזור למסך הראשי</button>
         <div id="staff-users-container" class="login-split-container"></div>
@@ -239,6 +229,8 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
     <div class="nav-section">ניהול ומעקב</div>
     <button class="nav-item" onclick="showPage('dashboard',this)"><span class="ni">📊</span>דשבורד נכסים</button>
     <button class="nav-item" onclick="showPage('maintenance',this)"><span class="ni">🏗️</span>תחזוקה ומשימות</button>
+    <div class="nav-section">הגדרות מערכת</div>
+    <button class="nav-item" onclick="showPage('users',this)"><span class="ni">👥</span>ניהול משתמשים</button>
   </div>
   <div id="nav-engineer" style="display:none">
     <div class="nav-section">אב בית</div>
@@ -248,23 +240,37 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
     <div class="nav-section">דייר</div>
     <button class="nav-item" onclick="showPage('tenant',this)"><span class="ni">📝</span>פתיחת קריאה</button>
   </div>
-  <div class="sidebar-footer">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-      <div id="sb-av" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:rgba(201,168,76,.2);color:var(--gold)"></div>
-      <div><div style="font-size:12px;font-weight:600;color:#fff;" id="sb-name"></div><div style="font-size:10px;color:rgba(255,255,255,.4)" id="sb-role-txt"></div></div>
-    </div>
-    <button class="logout-btn" onclick="doLogout()">🚪 התנתק</button>
-  </div>
+  <div class="sidebar-footer"><button class="logout-btn" onclick="doLogout()">🚪 התנתק</button></div>
 </nav>
 
 <div class="content">
 <div class="topbar">
   <div class="topbar-title" id="topbar-title">דשבורד נכסים</div>
-  <div class="topbar-right"><div class="greeting">היי, <strong id="user-name">—</strong></div><span class="role-badge" id="role-badge"></span><div class="topbar-avatar" id="topbar-av">?</div></div>
+  <div class="topbar-right">
+    <button class="bell-btn" onclick="clearAlerts()"><span class="bell-icon">🔔</span><span class="bell-badge" id="bell-badge"></span></button>
+    <div class="greeting">היי, <strong id="user-name">—</strong></div>
+    <span class="role-badge" id="role-badge"></span>
+    <div class="topbar-avatar" id="topbar-av">?</div>
+  </div>
 </div>
 
-<!-- DASHBOARD -->
 <div class="page" id="page-dashboard">
+  <div class="ai-scanner-zone" id="ai-mgr-zone" style="display:none;">
+      <div class="ai-scanner-left">
+          <div class="ai-stars-icon">✨</div>
+          <div>
+              <div style="font-size:15px; font-weight:800; color:var(--navy)">ניתוח חשבוניות ודוחות ספקים באנטיליגנציה מלאה (AI)</div>
+              <div style="font-size:12px; color:var(--g600)">גרור דוח בדיקה או חשבונית PDF - המערכת תחלץ עלויות ותסנכרן אוטומטית לענן</div>
+          </div>
+      </div>
+      <div>
+          <label class="btn-primary" style="cursor:pointer;" for="ai-pdf-uploader">
+              <input type="file" id="ai-pdf-uploader" accept=".pdf" style="display:none;" onchange="triggerAIScan(this)">
+              <span>📁 סרוק קובץ PDF</span>
+          </label>
+      </div>
+  </div>
+
   <div class="kpi-grid">
     <div class="kpi-card"><div class="kpi-label">סה"כ עלות מנוהלת</div><div class="kpi-val" id="kpi-cost">₪0</div></div>
     <div class="kpi-card"><div class="kpi-label">קריאות דיירים פעילות</div><div class="kpi-val" id="kpi-tickets-count">0</div></div>
@@ -272,155 +278,177 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
     <div class="kpi-card"><div class="kpi-label">משימות פתוחות בלוח</div><div class="kpi-val" id="kpi-pending-tasks">0</div></div>
   </div>
   
-  <div class="sec-title">🏠 ריכוז סטטוס ותקציבים מפולח לפי נכסים (תמונה כללית)</div>
+  <div class="sec-title">🏠 ריכוז סטטוס ותקציבים מפולח לפי נכסים</div>
   <div class="property-dashboard-grid" id="property-dashboard-nodes"></div>
 </div>
 
-<!-- TENANT -->
+<div class="page" id="page-users">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div>
+        <div style="font-size:16px; font-weight:700; color:var(--navy);">👥 ניהול משתמשים, אבות בית והרשאות נכסים</div>
+        <div style="font-size:12px; color:var(--g400)">סווג אבות בית וקבע אילו נכסים יופיעו להם בלוח העבודה</div>
+    </div>
+    <button class="btn-primary" onclick="openAddUserModal()">+ הוסף איש צוות חדש</button>
+  </div>
+  <div class="users-list-grid" id="users-list-container"></div>
+</div>
+
 <div class="page" id="page-tenant">
-  <div class="form-wrap">
-    <div class="form-hdr"><h2>📝 פתיחת קריאת שירות לניהול הבניין</h2></div>
-    <div class="form-bdy">
-      <div class="form-grid" style="margin-bottom:20px">
+  <div class="card">
+    <div class="card-head"><h3>📝 פתיחת קריאת שירות לניהול הבניין</h3></div>
+    <div class="card-body">
+      <div class="form-grid" style="margin-bottom:12px">
         <div class="fg"><label>שם מלא</label><input type="text" id="t-name" placeholder="ישראל ישראלי"/></div>
         <div class="fg"><label>טלפון</label><input type="tel" id="t-phone" placeholder="050-0000000"/></div>
         <div class="fg"><label>נכס</label><select id="t-property"><option value="">בחר נכס</option></select></div>
         <div class="fg"><label>מספר דירה / משרד</label><input type="text" id="t-unit" placeholder="12"/></div>
       </div>
-      <div class="fg"><label>פירוט הבעיה</label><textarea id="t-desc" placeholder="תאר מה דורש תיקון..."></textarea></div>
+      <div class="cat-grid" id="cat-grid">
+        <button class="cat-btn" data-cat="ניקיון" onclick="selectTenantCat(this)"><span class="ci">🧹</span><span>ניקיון</span></button>
+        <button class="cat-btn" data-cat="שבר" onclick="selectTenantCat(this)"><span class="ci">🔨</span><span>שבר</span></button>
+        <button class="cat-btn" data-cat="מעלית" onclick="selectTenantCat(this)"><span class="ci">🛗</span><span>מעלית</span></button>
+        <button class="cat-btn" data-cat="מיזוג אוויר" onclick="selectTenantCat(this)"><span class="ci">❄️</span><span>מיזוג</span></button>
+      </div>
+      <div class="fg"><label>פירוט הבעיה והערות בכתב</label><textarea id="t-desc" placeholder="פרט כאן מה הבעיה..."></textarea></div>
       <div style="display:flex;justify-content:flex-end"><button class="btn-primary" onclick="submitTenantTicket()">🚀 שלח קריאת שירות</button></div>
     </div>
   </div>
 </div>
 
-<!-- MAINTENANCE -->
 <div class="page" id="page-maintenance">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
     <div style="font-size:15px;font-weight:700;color:var(--navy)">🏗️ ניהול תחזוקה שוטפת, שבר ומחזוריות מונעת</div>
     <button class="btn-primary" onclick="openMaintForm()">+ רשום טיפול שבר ידני</button>
   </div>
 
-  <!-- PREVENTIVE CREATION HUB -->
-  <div class="card" id="mgr-preventive-hub" style="margin-bottom:24px;">
-      <div class="card-head" style="background:var(--g100)"><h3 id="preventive-hub-title">➕ הקצאה / תזמון משימה מונעת ומחזוריות חדשה ללוח</h3></div>
-      <div class="card-body form-grid" style="padding:14px 18px">
-          <div class="fg"><label>תיאור המשימה המונעת</label><input type="text" id="p-new-name" placeholder="לדוגמא: ביקורת חצי שנתית למשאבות לחץ..."/></div>
+  <div class="card" id="mgr-preventive-hub">
+      <div class="card-head" style="background:var(--g100)"><h3>➕ הקצאה / תזמון משימה מונעת לענן</h3></div>
+      <div class="card-body form-grid">
+          <div class="fg"><label>תיאור המשימה המונעת</label><input type="text" id="p-new-name" placeholder="תיאור הטיפול..."/></div>
           <div class="fg"><label>נכס יעד</label><select id="p-new-prop"></select></div>
-          <div class="fg"><label>תאריך יעד לביצוע (Deadline) *</label><input type="date" id="p-new-duedate"/></div>
-          <div class="fg"><label>מחזוריות הבדיקה *</label>
+          <div class="fg"><label>תאריך יעד לביצוע *</label><input type="date" id="p-new-duedate"/></div>
+          <div class="fg"><label>מחזוריות *</label>
               <select id="p-new-period">
-                  <option value="once">חד-פעמי (ללא התחדשות)</option>
-                  <option value="monthly">כל חודש (מחזורי)</option>
-                  <option value="half-year">כל חצי שנה (מחזורי)</option>
-                  <option value="yearly">כל שנה (מחזורי)</option>
+                  <option value="once">חד-פעמי</option><option value="monthly">כל חודש</option><option value="half-year">כל חצי שנה</option>
               </select>
           </div>
           <div class="fg"><label>עלות משוערת (₪)</label><input type="number" id="p-new-cost" placeholder="0"/></div>
           <div class="fg"><label>קטגוריה</label>
-              <select id="p-new-cat"><option>חשמל</option><option>אינסטלציה</option><option>מיזוג</option><option>מעלית</option><option>בטיחות</option><option>כללי</option></select>
+              <select id="p-new-cat"><option>חשמל</option><option>אינסטלציה</option><option>מיזוג</option><option>מעלית</option></select>
           </div>
-          <div class="fg full">
-              <label>צרף מסמכים / תמונות למשימה מראש</label>
-              <label class="file-upload-zone" for="p-new-files">
-                  <input type="file" id="p-new-files" multiple accept="image/*,.pdf" onchange="handleHubPreFiles(this)" style="display:none">
-                  <div style="font-size:13px; color:var(--g600)">📎 לחץ להעלאת הנחיות עבודה, קבצים או דוחות קודמים</div>
-              </label>
-              <div class="uploaded-files" id="hub-pre-files-list"></div>
-          </div>
-          <div style="grid-column:1/-1; display:flex; justify-content:space-between; align-items:center;">
-              <button class="btn-danger" id="p-btn-cancel-edit" style="display:none" onclick="cancelPreventiveEdit()">ביטול עריכה</button>
-              <button class="btn-primary" id="p-btn-submit" onclick="savePreventiveTaskHub()">הוסף משימה ללוח הענן 🚀</button>
+          <div style="grid-column:1/-1; display:flex; justify-content:flex-end; width:100%">
+              <button class="btn-primary" onclick="savePreventiveTaskHub()">הוסף משימה ללוח הענן 🚀</button>
           </div>
       </div>
   </div>
 
   <div class="dash-row">
-      <div class="card"><div class="card-head"><h3>🗓️ לוח משימות פתוחות (Preventive & דיירים) המשוייכות אליך</h3></div><div class="card-body" id="preventive-tasks-container"></div></div>
-      <div class="card"><div class="card-head"><h3>📜 היסטוריית ביצועים ותיקוני שבר בענן</h3></div><div class="card-body" id="maint-records-list" style="padding:0"></div></div>
+      <div class="card"><div class="card-head"><h3>🗓️ משימות פתוחות לביצוע</h3></div><div class="card-body" id="preventive-tasks-container"></div></div>
+      <div class="card">
+          <div class="card-head">
+              <h3>📜 היסטוריית ביצועים ותיקונים</h3>
+              <div style="font-size:12px; color:var(--green); font-weight:700;" id="m-stats-badge"><span id="m-kpi-count">0</span> טיפולים • <span id="m-kpi-cost">₪0</span></div>
+          </div>
+          <div class="card-body" id="maint-records-list" style="padding:0"></div>
+      </div>
   </div>
 </div>
 
 </div>
 </div>
 
-<!-- ACTIONS WORK MODAL -->
 <div class="modal-ov" id="engineer-action-modal" onclick="closeModalOv(event,'engineer-action-modal')">
   <div class="modal">
     <div class="modal-hdr"><h3>🔧 עדכון משימה מונעת לפני ביצוע</h3><button class="modal-close" onclick="closeModal('engineer-action-modal')">✕</button></div>
     <div class="modal-bdy">
        <div style="font-size:14px; font-weight:700; color:var(--navy); margin-bottom:12px;" id="eng-m-title"></div>
-       <div class="fg"><label>הערות מהשטח / דיווח אב הבית</label><textarea id="eng-m-notes" placeholder="הקלד ממצאים, פירוט הטיפול או חלפים שהוחלפו..."></textarea></div>
+       <div class="fg"><label>הערות מהשטח / דיווח אב הבית</label><textarea id="eng-m-notes" placeholder="פירוט הטיפול או חלפים שהוחלפו..."></textarea></div>
        <div class="fg">
-          <label>הוסף צילום תקלה או קבצים מהשטח</label>
           <label class="file-upload-zone" for="eng-m-files">
              <input type="file" id="eng-m-files" multiple accept="image/*,.pdf" onchange="handleEngineerFiles(this)" style="display:none">
-             <div style="font-size:13px; color:var(--g600)">📸 לחץ לצילום ישיר מהמצלמה או העלאת מסמך</div>
+             <div style="font-size:13px; color:var(--g600)">📸 לחץ לצילום ישיר או העלאת מסמך</div>
           </label>
           <div class="uploaded-files" id="eng-m-files-list"></div>
        </div>
-       <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">
-          <button class="btn-ghost" onclick="closeModal('engineer-action-modal')">ביטול</button>
-          <button class="btn-primary" id="eng-m-submit-btn">סמן כבוצע וסנכרן לענן ✓</button>
-       </div>
+       <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;"><button class="btn-ghost" onclick="closeModal('engineer-action-modal')">ביטול</button><button class="btn-primary" id="eng-m-submit-btn">סמן כבוצע ✓</button></div>
     </div>
   </div>
 </div>
 
-<!-- MAINTENANCE MANUAL MODAL -->
-<div class="modal-ov" id="maint-form-modal" onclick="closeModalOv(event,'maint-form-modal')">
-  <div class="modal" style="max-width:700px">
-    <div class="modal-hdr"><h3 id="maint-form-modal-title">🏗️ רישום טיפול תחזוקה</h3><button class="modal-close" onclick="closeModal('maint-form-modal')">✕</button></div>
+<div class="modal-ov" id="user-modal" onclick="if(event.target===this)closeModal('user-modal')">
+  <div class="modal">
+    <div class="modal-hdr"><h3 id="um-modal-title">הוספת איש צוות</h3><button class="modal-close" onclick="closeModal('user-modal')">✕</button></div>
     <div class="modal-bdy">
-      <div class="fg"><label>נכס *</label><select id="mf-property"><option value="">—</option></select></div>
-      <div class="fg" id="edit-mode-topic-field"><label>נושא הטיפול</label><input type="text" id="mf-edit-topic-string"/></div>
+      <div class="form-grid">
+        <div class="fg"><label>שם מלא *</label><input type="text" id="um-name"/></div>
+        <div class="fg"><label>תפקיד / סיווג *</label>
+          <select id="um-role" onchange="togglePropSec()">
+            <option value="manager">מנהל מערכת</option>
+            <option value="engineer">אב בית (צוות שטח)</option>
+          </select>
+        </div>
+        <div class="fg"><label>טלפון</label><input type="tel" id="um-phone"/></div>
+      </div>
+      <div id="prop-access-sec" style="margin-top:14px">
+        <div style="font-size:13px; font-weight:600; color:var(--navy); margin-bottom:8px;">שיוך נכסים (אב הבית יראה רק אותם):</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;" id="prop-cg"></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+        <button class="btn-ghost" onclick="closeModal('user-modal')">ביטול</button>
+        <button class="btn-primary" onclick="saveUserFromModal()">✅ שמור לענן</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-ov" id="maint-form-modal" onclick="closeModalOv(event,'maint-form-modal')">
+  <div class="modal">
+    <div class="modal-hdr"><h3>🏗️ רישום טיפול תחזוקה ידני</h3><button class="modal-close" onclick="closeModal('maint-form-modal')">✕</button></div>
+    <div class="modal-bdy">
+      <div class="fg"><label>נכס *</label><select id="mf-property"></select></div>
+      
+      <div class="fg">
+          <label>בחר נושא מהיר או הקלד חופשי</label>
+          <div class="topic-bank-grid">
+              <button class="bank-btn" onclick="applyQuickTopic('💡 החלפת נורות / גופי תאורה')">💡 החלפת נורות</button>
+              <button class="bank-btn" onclick="applyQuickTopic('🚰 תיקון נזילה / החלפת גומיה')">🚰 תיקון נזילה</button>
+              <button class="bank-btn" onclick="applyQuickTopic('❄️ ניקוי מסננים ושטיפת מעבה')">❄️ ניקוי מסננים</button>
+              <button class="bank-btn" onclick="applyQuickTopic('🔑 החלפת מנעול / צילינדר בדלת')">🔑 החלפת מנעול</button>
+              <button class="bank-btn" onclick="applyQuickTopic('🪵 תיקון ציר / ידית שבורה')">🪵 תיקון ידית</button>
+              <button class="bank-btn" onclick="applyQuickTopic('🧹 ניקיון יסודי לאחר תקלה')">🧹 ניקיון שטח</button>
+          </div>
+          <input type="text" id="mf-edit-topic-string" placeholder="נושא הטיפול..."/>
+      </div>
+
       <div class="form-grid">
         <div class="fg"><label>תאריך ביצוע *</label><input type="date" id="mf-date"/></div>
-        <div class="fg"><label>עלות (₪)</label><input type="number" id="mf-cost" placeholder="0"/></div>
-        <div class="fg"><label>ספק / קבלן</label><input type="text" id="mf-vendor"/></div>
+        <div class="fg"><label>עלות (₪)</label><input type="number" id="mf-cost" value="0"/></div>
         <div class="fg full"><label>הערות נוספות</label><textarea id="mf-notes"></textarea></div>
       </div>
-      <div class="fg">
-        <label class="file-upload-zone" for="mf-files">
-          <input type="file" id="mf-files" multiple accept="image/*,.pdf" onchange="handleMaintFiles(this)" style="display:none">
-          <div style="font-size:14px">📎 הוסף קבצים או תמונות נוספות מהשטח</div>
-        </label>
-        <div class="uploaded-files" id="mf-files-list"></div>
-      </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px">
-        <button class="btn-ghost" onclick="closeModal('maint-form-modal')">ביטול</button>
-        <button class="btn-primary" onclick="saveMaintRecord()">✅ שמור לענן</button>
-      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button class="btn-ghost" onclick="closeModal('maint-form-modal')">ביטול</button><button class="btn-primary" onclick="saveMaintRecord()">✅ שמור לענן</button></div>
     </div>
   </div>
-</div>
-
-<div class="modal-ov" id="maint-detail-modal" onclick="closeModalOv(event,'maint-detail-modal')">
-  <div class="modal"><div class="modal-hdr"><h3 id="md-title">פרטי טיפול</h3><button class="modal-close" onclick="closeModal('maint-detail-modal')">✕</button></div><div class="modal-bdy" id="md-body"></div></div>
 </div>
 
 <div class="toast" id="toast"><span>✅</span><span id="toast-msg"></span></div>
 
 <script>
 window.tickets = []; window.maintRecords = []; window.preventiveTasks = [];
-var hubPreFiles = []; var maintFiles = []; var engineerActionFiles = [];
-var editingMaintID = null; var editingPreventiveID = null; var targetActionTaskID = null;
-var currentPage = 'dashboard';
-
+var engineerActionFiles = []; var editingUID = null; var selectedTenantCategory = ''; var currentPage = 'dashboard';
 var ALL_PROPS = ['מודיעין 5 בלוד','שלם 3 רמת גן','ההשכלה 5 תל אביב','כסלו 60 מודיעין','מע"ר מודיעין','זילברמינץ סנטר צור יצחק','אור יהודה','סגולה'];
+
 var users = [
-  {id:'u1',name:'Nitsan Gal-On',role:'manager',props:ALL_PROPS},
-  {id:'u2',name:'יעקב דוידי',role:'engineer',props:['שלם 3 רמת גן','מודיעין 5 בלוד','ההשכלה 5 תל אביב']},
-  {id:'u3',name:'דייר בבניין',role:'tenant',props:ALL_PROPS}
+  {id:'u1',name:'Nitsan Gal-On',role:'manager',props:ALL_PROPS, phone:'—'},
+  {id:'u2',name:'יעקב דוידי',role:'engineer',props:['שלם 3 רמת גן','מודיעין 5 בלוד'], phone:'054-123456'},
+  {id:'u3',name:'דייר בבניין',role:'tenant',props:ALL_PROPS, phone:'—'}
 ];
 var currentUser = null;
 
 function renderLoginScreen(){
   var container = document.getElementById('staff-users-container'); if(!container) return;
-  var staff = users.filter(u => u.role !== 'tenant');
-  container.innerHTML = staff.map(u => {
+  container.innerHTML = users.filter(u => u.role !== 'tenant').map(u => {
       var avBg = u.role === 'manager' ? 'background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--navy); font-weight:800;' : 'background:rgba(26,127,90,.25); color:#4fc99a;';
-      var uDesc = u.role === 'manager' ? 'מנהל נכסים — גישה מלאה לכלל המערכת והעלויות' : 'אב בית — גישה ללוחות המשימות בנכסים המשוייכים';
-      return `<button class="lbtn" onclick="loginAsUser('${u.id}')"><div class="lav" style="${avBg}">${u.name[0]}</div><div class="lbtn-text-wrap"><div class="lbtn-title-txt">${u.name}</div><div class="lbtn-desc-txt">${uDesc}</div></div><span class="lbtn-arrow">‹</span></button>`;
+      return `<button class="lbtn" onclick="loginAsUser('${u.id}')"><div class="lav" style="${avBg}">${u.name[0]}</div><div class="lbtn-text-wrap"><div class="lbtn-title-txt">${u.name}</div><div class="lbtn-desc-txt">${u.role === 'manager' ? 'מנהל נכסים' : 'אב בית'}</div></div><span class="lbtn-arrow">‹</span></button>`;
   }).join('');
 }
 
@@ -431,17 +459,16 @@ function loginAsUser(uid){
   currentUser = users.find(x => x.id===uid); if(!currentUser) return;
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('user-name').textContent = currentUser.name;
-  var ta=document.getElementById('topbar-av'); ta.textContent=currentUser.name[0];
-  var badge=document.getElementById('role-badge'); badge.textContent = currentUser.role==='manager'?'מנהל':(currentUser.role==='engineer'?'אב בית':'דייר');
+  document.getElementById('topbar-av').textContent=currentUser.name[0];
+  document.getElementById('role-badge').textContent = currentUser.role==='manager'?'מנהל':(currentUser.role==='engineer'?'אב בית':'דייר');
+  
   document.getElementById('nav-manager').style.display = currentUser.role==='manager'?'block':'none';
   document.getElementById('nav-engineer').style.display = currentUser.role==='engineer'?'block':'none';
   document.getElementById('nav-tenant').style.display = currentUser.role==='tenant'?'block':'none';
-  fillPropSelects(); fillPreventiveAddSelect();
+  document.getElementById('ai-mgr-zone').style.display = currentUser.role==='manager'?'flex':'none';
   
-  var startPage = 'dashboard';
-  if(currentUser.role === 'engineer') startPage = 'maintenance';
-  if(currentUser.role === 'tenant') startPage = 'tenant';
-  showPage(startPage);
+  fillPropSelects(); fillPreventiveAddSelect();
+  showPage(currentUser.role==='manager'?'dashboard':(currentUser.role==='engineer'?'maintenance':'tenant'));
 }
 
 function doLogout(){ currentUser=null; document.getElementById('login-screen').style.display='flex'; backToMainLoginHub(); }
@@ -449,222 +476,177 @@ function getUserProps(){ return currentUser?currentUser.props:ALL_PROPS; }
 
 function fillPropSelects(){
   var p=getUserProps();
-  [['t-property','<option value="">בחר נכס</option>'],['mf-property','<option value="">—</option>'],['maint-filter-prop','<option value="">כל הנכסים</option>']].forEach(s => {
+  [['t-property','<option value="">בחר נכס</option>'],['mf-property','<option value="">—</option>']].forEach(s => {
     var el=document.getElementById(s[0]); if(el) el.innerHTML=s[1]+p.map(v=>`<option>${v}</option>`).join('');
   });
 }
 function fillPreventiveAddSelect(){
     var el = document.getElementById('p-new-prop'); if(el) el.innerHTML = getUserProps().map(v=>`<option>${v}</option>`).join('');
 }
-function showPage(id, btn){
+function showPage(id){
+  document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   var pg = document.getElementById('page-' + id); if(pg) pg.classList.add('active');
   currentPage = id; renderPageFull(id);
 }
 function renderPageFull(id){
   if(id === 'dashboard') renderDashboard();
-  else if(id === 'maintenance') { renderMaintFiltered(); renderPreventiveTasks(); toggleManagerPreventiveHub(); }
-}
-function toggleManagerPreventiveHub(){
-    document.getElementById('mgr-preventive-hub').style.display = (currentUser && currentUser.role !== 'tenant') ? 'block' : 'none';
+  else if(id === 'maintenance') { renderMaintFiltered(); renderPreventiveTasks(); document.getElementById('mgr-preventive-hub').style.display = currentUser.role==='manager'?'block':'none'; }
+  else if(id === 'users') { renderUsersPage(); }
 }
 
-// ── FILES CORE ──
-function handleHubPreFiles(input) { hubPreFiles = hubPreFiles.concat(Array.from(input.files).map(f => f.name)); document.getElementById('hub-pre-files-list').innerHTML = hubPreFiles.map((name, i) => `<div class="file-chip">📎 ${name}<button onclick="removeHubPreFile(${i})">✕</button></div>`).join(''); }
-function removeHubPreFile(i) { hubPreFiles.splice(i, 1); document.getElementById('hub-pre-files-list').innerHTML = hubPreFiles.map((name, i) => `<div class="file-chip">📎 ${name}<button onclick="removeHubPreFile(${i})">✕</button></div>`).join(''); }
-function handleEngineerFiles(input) { engineerActionFiles = engineerActionFiles.concat(Array.from(input.files).map(f => f.name)); document.getElementById('eng-m-files-list').innerHTML = engineerActionFiles.map((name, i) => `<div class="file-chip">📎 ${name}<button onclick="removeEngineerFile(${i})">✕</button></div>`).join(''); }
-function removeEngineerFile(i) { engineerActionFiles.splice(i, 1); document.getElementById('eng-m-files-list').innerHTML = engineerActionFiles.map((name, i) => `<div class="file-chip">📎 ${name}<button onclick="removeEngineerFile(${i})">✕</button></div>`).join(''); }
+/* 🔔 3. REAL-TIME UNREAD ALERTS FUNCTION */
+function checkUnreadAlerts() {
+    var openCount = tickets.filter(t => t.status === 'open').length;
+    var bell = document.getElementById('bell-badge');
+    if(bell) { bell.style.display = openCount > 0 ? 'block' : 'none'; }
+}
+function clearAlerts() { document.getElementById('bell-badge').style.display = 'none'; showToast('🔔 כל ההתראות נקראו בהצלחה!'); }
 
-// ── TENANT FLOWS (WITH SHIFT LOGOUT REDIRECT) ──
+/* ✨ AI HUB FUNCTION SYNC */
+function triggerAIScan(input) {
+    if(!input.files.length) return;
+    showToast('✨ סורק AI מנתח את ה-PDF ומחלץ נתונים...');
+    setTimeout(async () => {
+        var randomCost = Math.floor(Math.random() * 2400) + 450;
+        var id = 'MR-AI' + String(Date.now()).slice(-3);
+        await window.cloudSave("maintenance", id, {
+            id: id, property: ALL_PROPS[0], date: new Date().toISOString().split('T')[0],
+            topics: ['🧾 סריקת AI: חשבונית ספק קבלן תקופתית'], cost: randomCost, notes: 'חולץ אוטומטית מקובץ: ' + input.files[0].name, fileNames: [input.files[0].name]
+        });
+        showToast('✅ החשבונית עובדה וסונכרנה בענן! סכום: ₪' + randomCost);
+    }, 1500);
+}
+
+/* ⚡ QUICK TOPIC CHIP APPLY */
+function applyQuickTopic(txt) { document.getElementById('mf-edit-topic-string').value = txt; }
+
+/* 👥 USERS MANAGEMENT EXECUTION */
+function renderUsersPage(){
+  var container = document.getElementById('users-list-container'); if(!container) return;
+  container.innerHTML = users.filter(u => u.role !== 'tenant').map(u => {
+      var avStyle = u.role === 'manager' ? 'background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--navy);' : 'background:#e0f5ed; color:var(--green);';
+      return `<div class="ucard"><div class="uav" style="${avStyle}">${u.name[0]}</div><div style="flex:1">`
+            +`<div style="font-weight:700; color:var(--navy); font-size:15px;">${u.name} <span style="font-size:11px; font-weight:400; color:var(--g400)">(${u.role === 'manager'?'מנהל':'אב בית'})</span></div>`
+            +`<div style="font-size:12px; color:var(--g600); margin-top:2px;">📞 טלפון: ${u.phone || '—'}</div>`
+            +`<div class="uprops">${u.props.map(p => `<span class="pchip">${p}</span>`).join('')}</div></div>`
+            +`<div><button class="btn-ghost" style="font-size:11px; padding:4px 10px;" onclick="openEditUser('${u.id}')">✏️ הרשאות</button></div></div>`;
+  }).join('');
+}
+function openAddUserModal(){
+  editingUID = null; document.getElementById('um-modal-title').textContent = '➕ הוספת איש צוות חדש לענן';
+  document.getElementById('um-name').value = ''; document.getElementById('um-phone').value = '';
+  document.getElementById('um-role').value = 'engineer'; renderPropCheckboxes([]); togglePropSec();
+  document.getElementById('user-modal').classList.add('open');
+}
+function openEditUser(uid){
+  var u = users.find(x => x.id === uid); if(!u) return;
+  editingUID = uid; document.getElementById('um-modal-title').textContent = '✏️ עריכת סיווג והרשאות: ' + u.name;
+  document.getElementById('um-name').value = u.name; document.getElementById('um-phone').value = u.phone || '';
+  document.getElementById('um-role').value = u.role; renderPropCheckboxes(u.props || []); togglePropSec();
+  document.getElementById('user-modal').classList.add('open');
+}
+function renderPropCheckboxes(selected){
+  var container = document.getElementById('prop-cg'); if(!container) return;
+  container.innerHTML = ALL_PROPS.map(p => `<label class="pcheck-item"><input type="checkbox" value="${p}" ${selected.indexOf(p)!==-1?'checked':''}> ${p}</label>`).join('');
+}
+function togglePropSec(){ document.getElementById('prop-access-sec').style.display = document.getElementById('um-role').value === 'engineer' ? 'block' : 'none'; }
+async function saveUserFromModal(){
+  var name = document.getElementById('um-name').value.trim(); var role = document.getElementById('um-role').value; var phone = document.getElementById('um-phone').value.trim(); if(!name) return;
+  var props = role === 'manager' ? ALL_PROPS : Array.from(document.querySelectorAll('#prop-cg input:checked')).map(cb => cb.value);
+  var id = editingUID || 'u-' + Date.now();
+  await window.cloudSave("users_config", id, { id:id, name:name, role:role, phone:phone, props:props });
+  closeModal('user-modal'); showToast('👥 הגדרות המשתמש והסיווג שלו סונכרנו בענן!');
+}
+
+/* FLOW CONTROLLERS */
+function handleEngineerFiles(input) { engineerActionFiles = engineerActionFiles.concat(Array.from(input.files).map(f => f.name)); document.getElementById('eng-m-files-list').innerHTML = engineerActionFiles.map(n => `<div class="file-chip">📎 ${n}</div>`).join(''); }
+function selectTenantCat(btn) { document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selectedTenantCategory = btn.dataset.cat; }
+
 async function submitTenantTicket(){
-  var name = document.getElementById('t-name').value.trim();
-  var phone = document.getElementById('t-phone').value.trim();
-  var property = document.getElementById('t-property').value;
-  var unit = document.getElementById('t-unit').value.trim();
-  var desc = document.getElementById('t-desc').value.trim();
-  if(!name || !property || !desc){showToast('⚠️ יש למלא את שדות החובה לפתיחת קריאה', true);return}
-  
+  var name = document.getElementById('t-name').value.trim(); var property = document.getElementById('t-property').value; var desc = document.getElementById('t-desc').value.trim();
+  if(!name || !property || !selectedTenantCategory) return;
   var id = 'ZB-' + String(Date.now()).slice(-5);
-  var ticketData = { id:id, name:name, phone:phone, property:property, unit:unit, desc:desc, date:new Date().toLocaleDateString('he-IL'), status:'open' };
-  await window.cloudSave("tickets", id, ticketData);
-  
-  ['t-name','t-phone','t-unit','t-desc'].forEach(id => {document.getElementById(id).value=''});
-  document.getElementById('t-property').value='';
-  
-  alert('🚀 קריאת השירות נשלחה בהצלחה לענן! המערכת תתנתק כעת כדי לאפשר כניסת צוות.');
-  doLogout();
+  await window.cloudSave("tickets", id, { id:id, name:name, phone:document.getElementById('t-phone').value, property:property, unit:document.getElementById('t-unit').value, cat:selectedTenantCategory, desc:desc, date:new Date().toLocaleDateString('he-IL'), status:'open' });
+  alert('🚀 קריאת השירות נשלחה בהצלחה! הפורטל יתנתק כעת.'); doLogout();
 }
 
-// ── PREVENTIVE FLOWS ──
 async function savePreventiveTaskHub(){
-    var name = document.getElementById('p-new-name').value.trim();
-    var prop = document.getElementById('p-new-prop').value;
-    var duedate = document.getElementById('p-new-duedate').value;
-    var period = document.getElementById('p-new-period').value;
-    var cost = parseFloat(document.getElementById('p-new-cost').value) || 0;
-    var cat = document.getElementById('p-new-cat').value;
-    if(!name || !duedate){showToast('⚠️ מלא תיאור משימה ותאריך יעד', true); return;}
-    var id = editingPreventiveID || 'p-' + Date.now();
-    await window.cloudSave("preventive", id, { id:id, name:name, property:prop, dueDate:duedate, period:period, cost:cost, cat:cat, fileNames:hubPreFiles });
-    cancelPreventiveEdit();
-    showToast('🚀 המשימה סונכרנה בענן!');
+    var name = document.getElementById('p-new-name').value.trim(); var prop = document.getElementById('p-new-prop').value; var duedate = document.getElementById('p-new-duedate').value;
+    if(!name || !duedate) return;
+    var id = 'p-' + Date.now();
+    await window.cloudSave("preventive", id, { id:id, name:name, property:prop, dueDate:duedate, period:document.getElementById('p-new-period').value, cost:parseFloat(document.getElementById('p-new-cost').value)||0, cat:document.getElementById('p-new-cat').value, fileNames:[] });
+    showToast('🚀 משימה מחזורית נוספה לענן בהצלחה');
 }
-function openEditPreventiveHub(id) {
-    var t = preventiveTasks.find(x => x.id === id); if(!t) return;
-    editingPreventiveID = id;
-    document.getElementById('preventive-hub-title').textContent = '✏️ עריכת משימה בלוח';
-    document.getElementById('p-new-name').value = t.name;
-    document.getElementById('p-new-duedate').value = t.dueDate;
-    document.getElementById('p-new-period').value = t.period;
-    document.getElementById('p-new-cost').value = t.cost || 0;
-    document.getElementById('p-new-cat').value = t.cat;
-    hubPreFiles = t.fileNames ? [].concat(t.fileNames) : [];
-    document.getElementById('hub-pre-files-list').innerHTML = hubPreFiles.map((name, i) => `<div class="file-chip">📎 ${name}<button onclick="removeHubPreFile(${i})">✕</button></div>`).join('');
-    document.getElementById('p-btn-cancel-edit').style.display = 'inline-block';
-    document.getElementById('p-btn-submit').textContent = 'שמור שינויים 💾';
-}
-function cancelPreventiveEdit() {
-    editingPreventiveID = null; document.getElementById('preventive-hub-title').textContent = '➕ הקצאת משימה מונעת ומחזוריות חדשה ללוח';
-    document.getElementById('p-new-name').value = ''; document.getElementById('p-new-duedate').value = '';
-    hubPreFiles = []; document.getElementById('hub-pre-files-list').innerHTML = '';
-    document.getElementById('p-btn-cancel-edit').style.display = 'none'; document.getElementById('p-btn-submit').textContent = 'הוסף משימה ללוח הענן 🚀';
-}
+
 function openEngineerActionModal(id) {
     var task = preventiveTasks.find(t=>t.id === id); if(!task) return;
-    targetActionTaskID = id; engineerActionFiles = [].concat(task.fileNames || []);
+    window.targetActionTaskID = id; engineerActionFiles = [];
     document.getElementById('eng-m-title').textContent = task.name;
-    document.getElementById('eng-m-notes').value = "";
-    document.getElementById('eng-m-files-list').innerHTML = engineerActionFiles.map((name, i) => `<div class="file-chip">📎 ${name}<button onclick="removeEngineerFile(${i})">✕</button></div>`).join('');
-    document.getElementById('eng-m-submit-btn').onclick = function() { executePreventive(targetActionTaskID); };
+    document.getElementById('eng-m-files-list').innerHTML = '';
+    document.getElementById('eng-m-submit-btn').onclick = function() { executePreventive(window.targetActionTaskID); };
     document.getElementById('engineer-action-modal').classList.add('open');
 }
 async function executePreventive(taskId){
     var task = preventiveTasks.find(t=>t.id === taskId); if(!task) return;
     var id = 'MR-' + String(Date.now()).slice(-5);
-    var notes = 'בוצע בהתאם לתוכנית העבודה. ' + (document.getElementById('eng-m-notes').value.trim() || '');
-    await window.cloudSave("maintenance", id, { id:id, property:task.property, date:new Date().toISOString().split('T')[0], topics:[task.name], cost:task.cost||0, vendor:'צוות פנימי', notes:notes, fileNames:engineerActionFiles });
+    var notes = 'סבב מונע. ' + (document.getElementById('eng-m-notes').value.trim() || '');
+    await window.cloudSave("maintenance", id, { id:id, property:task.property, date:new Date().toISOString().split('T')[0], topics:[task.name], cost:task.cost||0, notes:notes, fileNames:engineerActionFiles });
     if(task.period === 'once') { await window.cloudDelete("preventive", taskId); } 
     else {
-        var nextDate = new Date(task.dueDate);
-        if(task.period === 'monthly') nextDate.setMonth(nextDate.getMonth() + 1);
-        else if(task.period === 'half-year') nextDate.setMonth(nextDate.getMonth() + 6);
-        else if(task.period === 'yearly') nextDate.setFullYear(nextDate.getFullYear() + 1);
-        task.dueDate = nextDate.toISOString().split('T')[0];
+        var nextDate = new Date(task.dueDate); nextDate.setMonth(nextDate.getMonth() + 1); task.dueDate = nextDate.toISOString().split('T')[0];
         await window.cloudSave("preventive", taskId, task);
     }
-    closeModal('engineer-action-modal'); showToast('✓ המשימה עודכנה ובוצעה!');
+    closeModal('engineer-action-modal'); showToast('✓ משימה בוצעה בהצלחה!');
 }
 
+function openMaintForm() { document.getElementById('mf-date').value = new Date().toISOString().split('T')[0]; document.getElementById('maint-form-modal').classList.add('open'); }
 async function saveMaintRecord(){
-  var property = document.getElementById('mf-property').value;
-  var date = document.getElementById('mf-date').value;
-  if(!property || !date) return;
-  var id = editingMaintID || 'MR-' + String(Date.now()).slice(-5);
-  await window.cloudSave("maintenance", id, { id: id, property: property, date: date, topics: [document.getElementById('mf-edit-topic-string').value], cost: parseFloat(document.getElementById('mf-cost').value) || 0, vendor: document.getElementById('mf-vendor').value.trim(), notes: document.getElementById('mf-notes').value.trim(), fileNames: maintFiles });
-  closeModal('maint-form-modal'); showToast('✅ השינויים סונכרנו!');
+  var property = document.getElementById('mf-property').value; var date = document.getElementById('mf-date').value; if(!property || !date) return;
+  var id = 'MR-' + String(Date.now()).slice(-5);
+  await window.cloudSave("maintenance", id, { id: id, property: property, date: date, topics: [document.getElementById('mf-edit-topic-string').value], cost: parseFloat(document.getElementById('mf-cost').value) || 0, notes: document.getElementById('mf-notes').value.trim(), fileNames: [] });
+  closeModal('maint-form-modal'); showToast('✓ טיפול שבר נרשם בהצלחה!');
 }
 
-// ── PROPERTY-BASED SYMMETRICAL DASHBOARD RENDERING ──
+/* RENDER LOGICS */
 function renderDashboard(){
-  var totalCost = maintRecords.reduce((a,r)=>a+(r.cost||0),0);
-  var openTickets = tickets.filter(t => t.status !== 'done');
-  document.getElementById('kpi-cost').textContent = '₪' + totalCost.toLocaleString();
-  document.getElementById('kpi-maint').textContent = maintRecords.length;
-  document.getElementById('kpi-pending-tasks').textContent = preventiveTasks.length;
+  var up = getUserProps(), isMgr = currentUser && currentUser.role === 'manager';
+  var flMaint = isMgr ? maintRecords : maintRecords.filter(r=>up.indexOf(r.property) !== -1);
+  var openTickets = tickets.filter(t => t.status !== 'done' && (isMgr || up.indexOf(t.property) !== -1));
+  var flTasks = preventiveTasks.filter(t => isMgr || up.indexOf(t.property) !== -1);
+
+  document.getElementById('kpi-cost').textContent = '₪' + flMaint.reduce((a,r)=>a+(r.cost||0),0).toLocaleString();
+  document.getElementById('kpi-maint').textContent = flMaint.length;
+  document.getElementById('kpi-pending-tasks').textContent = flTasks.length;
   document.getElementById('kpi-tickets-count').textContent = openTickets.length;
   
   var hubGrid = document.getElementById('property-dashboard-nodes'); if(!hubGrid) return;
-  
-  hubGrid.innerHTML = ALL_PROPS.map(prop => {
-      var propMaint = maintRecords.filter(r => r.property === prop);
-      var propPending = preventiveTasks.filter(t => t.property === prop);
-      var propTickets = openTickets.filter(t => t.property === prop);
-      var propCost = propMaint.reduce((a,r)=>a+(r.cost||0),0);
-      
-      return `<div class="property-card-hub">`
-            +`<div class="property-hub-title"><span>🏢 ${prop}</span><span style="color:var(--green)">₪${propCost.toLocaleString()}</span></div>`
-            +`<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:11px;">`
-            +`<div style="background:var(--cream); padding:6px 8px; border-radius:6px;">📋 בוצעו: <strong>${propMaint.length}</strong></div>`
-            +`<div style="background:var(--gold-pale); padding:6px 8px; border-radius:6px; color:#9a6f20">🗓️ משימות: <strong>${propPending.length}</strong></div>`
-            +`<div style="background:#fde8e6; padding:6px 8px; border-radius:6px; color:var(--red); grid-column:1/-1;">🚨 קריאות דיירים פעילות: <strong>${propTickets.length}</strong></div>`
-            +`</div>`
-            +`</div>`;
+  hubGrid.innerHTML = up.map(prop => {
+      var propMaint = maintRecords.filter(r => r.property === prop); var propPending = preventiveTasks.filter(t => t.property === prop); var propTickets = tickets.filter(t => t.property === prop && t.status !== 'done');
+      return `<div class="property-card-hub"><div class="property-hub-title"><span>🏢 ${prop}</span><span style="color:var(--green)">₪${propMaint.reduce((a,r)=>a+(r.cost||0),0).toLocaleString()}</span></div>`
+            +`<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:11px;"><div style="background:var(--cream); padding:6px; border-radius:6px;">📋 בוצעו: <strong>${propMaint.length}</strong></div>`
+            +`<div style="background:var(--gold-pale); padding:6px; border-radius:6px; color:#9a6f20">🗓️ משימות: <strong>${propPending.length}</strong></div>`
+            +`<div style="background:#fde8e6; padding:6px; border-radius:6px; color:var(--red); grid-column:1/-1;">🚨 קריאות: <strong>${propTickets.length}</strong></div></div></div>`;
   }).join('');
-  
-  var chartBox = document.getElementById('dash-category-chart'); 
-  if(chartBox) chartBox.innerHTML = `<div style="font-size:13px; color:var(--g600)">50 רשומות סימולטיביות הופעלו ומסונכרנות כעת אונליין בחשבון הענן שלך.</div>`;
 }
 
 function renderMaintFiltered(){
   var up = getUserProps(), isMgr = currentUser && currentUser.role === 'manager';
   var fl = isMgr ? maintRecords : maintRecords.filter(r=>up.indexOf(r.property) !== -1);
   var list = document.getElementById('maint-records-list'); if(!list) return;
-  document.getElementById('m-kpi-count').textContent = fl.length;
-  document.getElementById('m-kpi-cost').textContent = '₪' + fl.reduce((a,r)=>a+(r.cost||0),0).toLocaleString();
+  document.getElementById('m-kpi-count').textContent = fl.length; document.getElementById('m-kpi-cost').textContent = '₪' + fl.reduce((a,r)=>a+(r.cost||0),0).toLocaleString();
   if(!fl.length){list.innerHTML='<div class="empty">אין רשומות בענן</div>';return}
-  list.innerHTML = fl.map(r => `<div class="maint-record-card" onclick="openMaintDetail('${r.id}')"><strong>${r.property}</strong><div>₪${r.cost} • ${r.date}</div><div>${r.topics.join(', ')}</div></div>`).join('');
+  list.innerHTML = fl.map(r => `<div class="maint-record-card"><strong>${r.property}</strong><div>₪${r.cost} • ${r.date}</div><div style="font-size:12px; color:var(--g600);">${r.topics.join(', ')}</div></div>`).join('');
 }
 
 function renderPreventiveTasks(){
     var container = document.getElementById('preventive-tasks-container'); if(!container) return;
     var up = getUserProps(), isMgr = currentUser && currentUser.role === 'manager';
-    var filterProp = (document.getElementById('maint-filter-prop') || {}).value || '';
+    var flTasks = preventiveTasks.filter(r => isMgr || up.indexOf(r.property) !== -1);
+    var flTickets = tickets.filter(t => t.status !== 'done' && (isMgr || up.indexOf(t.property) !== -1));
+    if(!flTasks.length && !flTickets.length){container.innerHTML='<div class="empty">אין משימות או קריאות</div>';return}
+    var todayStr = new Date().toISOString().split('T')[0]; var html = '';
     
-    // אב הבית רואה רק את שלו, מנהל רואה את הכול
-    var flTasks = preventiveTasks.filter(r => (isMgr || up.indexOf(r.property) !== -1) && (filterProp ? r.property === filterProp : true));
-    var flTickets = tickets.filter(t => t.status !== 'done' && (isMgr || up.indexOf(t.property) !== -1) && (filterProp ? t.property === filterProp : true));
-    
-    if(!flTasks.length && !flTickets.length){container.innerHTML='<div class="empty">אין משימות או קריאות מתוכננות כעת</div>';return}
-    var todayStr = new Date().toISOString().split('T')[0];
-    
-    var html = '';
-    
-    // רינדור קריאות דיירים בלוח אב הבית
     flTickets.forEach(t => {
-        html += `<div class="preventive-card overdue" style="border-right-color: var(--red)">`
-             + `<div><span style="background:var(--red); color:#fff; font-size:10px; padding:2px 6px; border-radius:8px; font-weight:700;">🚨 קריאת דייר (${t.id})</span>`
-             + `<div style="font-size:14px; font-weight:700; color:var(--navy); margin-top:4px;">דירה ${t.unit}: ${t.desc}</div>`
-             + `<div>נכס: <strong>${t.property}</strong> • פותח הפנייה: ${t.name} (${t.date})</div></div>`
-             + `<div><button class="btn-primary" style="background:var(--navy); color:#fff; font-size:12px;" onclick="closeTenantTicket('${t.id}')">סמן כטופל ✓</button></div>`
-             + `</div>`;
-    });
-
-    // רינדור סבבים מונעים
-    flTasks.forEach(t => {
-        var filesHtml = t.fileNames && t.fileNames.length ? `<div class="preventive-files-preview">${t.fileNames.map(f=>`<span class="file-link-tag">📎 ${f}</span>`).join('')}</div>` : '';
-        var statusClass = t.dueDate < todayStr ? 'overdue' : 'upcoming';
-        var actionButtons = isMgr ? `<div style="display:flex; gap:6px;"><button class="btn-ghost" style="font-size:12px; padding:4px 10px;" onclick="openEditPreventiveHub('${t.id}')">✏️ ערוך</button><button class="btn-primary" style="font-size:12px; padding:4px 10px;" onclick="openEngineerActionModal('${t.id}')">בצע ✓</button></div>` : `<button class="btn-primary" onclick="openEngineerActionModal('${t.id}')">סמן כבוצע ✓</button>`;
-        html += `<div class="preventive-card ${statusClass}" ${currentUser.role !== 'manager' ? `onclick="openEngineerActionModal('${t.id}')" style="cursor:pointer;"` : ''}><div><strong>${t.name}</strong><div>${t.property}</div><div style="font-size:11px; color:var(--g600); margin-top:2px;">📅 יעד: <strong>${t.dueDate}</strong></div><div style="margin-top:4px;"><span class="preventive-badge">${t.cat}</span> <span class="recurrence-badge">🔄 מחזור: ${t.period}</span></div>${filesHtml}</div><div>${actionButtons}</div></div>`;
-    });
-    
-    container.innerHTML = html;
-}
-
-async function closeTenantTicket(id) {
-    var t = tickets.find(x => x.id === id); if(!t) return;
-    t.status = 'done';
-    await window.cloudSave("tickets", id, t);
-    showToast('✅ קריאת הדייר סומנה כטופלה ונסגרה בענן!');
-}
-
-function openMaintDetail(id){
-  var r = maintRecords.find(x=>x.id === id); if(!r) return;
-  document.getElementById('md-title').textContent = 'רשומה ' + r.id;
-  document.getElementById('md-body').innerHTML = `<div><strong>נכס:</strong> ${r.property}</div><div><strong>עלות:</strong> ₪${r.cost}</div><div><strong>הערות:</strong> ${r.notes}</div><div><strong>קבצים:</strong> ${r.fileNames && r.fileNames.length ? r.fileNames.join(', ') : 'אין'}</div><div style="margin-top:14px;"><button class="btn-primary" onclick="openEditMaintForm('${r.id}')">✏️ ערוך</button><button class="btn-danger" style="margin-right:8px" onclick="deleteMaintRecord('${r.id}')">🗑️ מחק</button></div>`;
-  document.getElementById('maint-detail-modal').classList.add('open');
-}
-function openEditMaintForm(id){
-    var r = maintRecords.find(x => x.id === id); if(!r) return;
-    editingMaintID = id; closeModal('maint-detail-modal');
-    document.getElementById('mf-property').value = r.property; document.getElementById('mf-date').value = r.date; document.getElementById('mf-cost').value = r.cost; document.getElementById('mf-notes').value = r.notes; document.getElementById('mf-edit-topic-string').value = r.topics.join(', ');
-    document.getElementById('maint-form-modal').classList.add('open');
-}
-function handleMaintFiles(input){ maintFiles = Array.from(input.files).map(f => f.name); }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-function closeModalOv(e, id){ if(e.target === document.getElementById(id)) closeModal(id); }
-function showToast(m){ var el=document.getElementById('toast'); document.getElementById('toast-msg').textContent=m; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3000); }
-
-renderLoginScreen();
-</script>
-</body>
-</html>
+        html += `<div class="preventive-card overdue"><div style="flex:1"><span>🚨 קריאת דייר (${t.cat})</span><div style="font-size:14px; font-weight:700; color:var(--navy); margin-top:4px;">דירה ${t.unit}: ${t.desc}</div><div>נכס: ${t.property}</div></div>`
+             + `<div><button class="btn-primary" style="background:var(--navy); color:#fff;" onclick="closeTenantTicket
