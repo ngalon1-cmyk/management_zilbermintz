@@ -76,6 +76,12 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 .property-card-hub {background:#fff; border:1px solid var(--g200); border-radius:var(--r); padding:18px; box-shadow:var(--sh-sm); display:flex; flex-direction:column; justify-content:space-between; min-height:150px;}
 .property-hub-title {font-size:15px; font-weight:800; color:var(--navy); border-bottom:1px solid var(--g100); padding-bottom:8px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;}
 
+/* FILTER CHIPS STYLE (NEW) */
+.filter-pills {display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+.filter-pill {background:#fff; border:1.5px solid var(--g200); padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; color:var(--g600); cursor:pointer; transition:all 0.15s; font-family:'Heebo';}
+.filter-pill:hover {border-color:var(--navy); color:var(--navy);}
+.filter-pill.active {background:var(--navy); color:#fff; border-color:var(--navy);}
+
 /* AI HUB & UPLOAD */
 .ai-scanner-zone {background:linear-gradient(135deg, #ffffff, #fbf9f3); border:1.5px dashed var(--gold); border-radius:var(--r); padding:20px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:20px;}
 .ai-scanner-left {display:flex; align-items:center; gap:14px;}
@@ -90,9 +96,15 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 
 /* MAINTENANCE ROWS */
 .dash-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;width:100%;align-items:start;}
+.board-section-container {display:flex; flex-direction:column; gap:14px; margin-bottom:20px;}
+.board-sub-title {font-size:13px; font-weight:800; color:var(--navy); padding:4px 0; border-bottom:2px solid var(--g200); margin-bottom:4px;}
+
 .preventive-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r);padding:16px 18px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--sh-sm);margin-bottom:12px; border-right:4px solid var(--g300); width:100%}
 .preventive-card.upcoming {border-right-color: var(--orange); background: #fffcf5;}
 .preventive-card.overdue {border-right-color: var(--red); background: #fdf8f8;}
+.preventive-card.tenant-alert {border-right-color: var(--red); background: #fff9f9;}
+.preventive-card.completed-task {border-right-color: var(--green); background: #f6fbf9; opacity: 0.85;}
+
 .maint-record-card {padding:12px 16px; border-bottom:1px solid var(--g100); cursor:pointer;}
 .maint-record-card:hover {background:var(--g100);}
 
@@ -117,23 +129,14 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 .full{grid-column:1/-1}
 .file-upload-zone{border:2px dashed var(--g200);border-radius:var(--r-sm);padding:16px;text-align:center;cursor:pointer;background:var(--g100);display:block;width:100%}
 .file-chip{background:#fff;border:1px solid var(--g200);border-radius:20px;padding:4px 10px;font-size:11px;display:inline-flex;align-items:center;gap:5px;margin:2px}
-.pcheck-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1.5px solid var(--g200);border-radius:8px;background:#fff;cursor:pointer;font-size:13px;}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:12px 22px;border-radius:12px;font-size:13px;transition:transform .4s;z-index:999}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .sec-title{font-size:16px;font-weight:800;color:var(--navy);margin:20px 0 14px 0;display:flex;align-items:center;gap:10px}
 .empty{text-align:center;padding:32px;color:var(--g400);font-size:14px}
-
-/* MODALS */
-.modal-ov{position:fixed;inset:0;background:rgba(15,31,61,.55);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-ov.open{display:flex}
-.modal{background:#fff;border-radius:var(--r);width:100%;max-width:600px;box-shadow:var(--sh-lg);overflow:hidden;animation:slideUp .25s ease;display:flex;flex-direction:column}
-.modal-hdr{background:var(--navy);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
-.modal-hdr h3{font-size:15px;font-weight:700}
-.modal-close{background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.modal-bdy{padding:20px;max-height:80vh;overflow-y:auto}
 @media(max-width:900px){.dash-row, .kpi-grid, .users-list-grid, .property-dashboard-grid, .topic-bank-grid {grid-template-columns: 1fr;}}
 </style>
 
+<!-- FIREBASE CONNECTIONS -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
   import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -197,6 +200,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 </head>
 <body>
 
+<!-- LOGIN HUB -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">Z</div>
@@ -254,6 +258,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   </div>
 </div>
 
+<!-- DASHBOARD -->
 <div class="page" id="page-dashboard">
   <div class="ai-scanner-zone" id="ai-mgr-zone" style="display:none;">
       <div class="ai-scanner-left">
@@ -281,6 +286,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   <div class="property-dashboard-grid" id="property-dashboard-nodes"></div>
 </div>
 
+<!-- USERS PAGE -->
 <div class="page" id="page-users">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
     <div>
@@ -292,6 +298,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   <div class="users-list-grid" id="users-list-container"></div>
 </div>
 
+<!-- TENANT PORTAL -->
 <div class="page" id="page-tenant">
   <div class="card">
     <div class="card-head"><h3>📝 פתיחת קריאת שירות לניהול הבניין</h3></div>
@@ -314,6 +321,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   </div>
 </div>
 
+<!-- MAINTENANCE -->
 <div class="page" id="page-maintenance">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
     <div style="font-size:15px;font-weight:700;color:var(--navy)">🏗️ ניהול תחזוקה שוטפת, שבר ומחזוריות מונעת</div>
@@ -321,7 +329,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   </div>
 
   <div class="card" id="mgr-preventive-hub">
-      <div class="card-head" style="background:var(--g100)"><h3 id="preventive-hub-title">➕ הקצאה / תזמון משימה מונעת ומחזוריות חדשה ללוח</h3></div>
+      <div class="card-head" style="background:var(--g100)"><h3>➕ הקצאה / תזמון משימה מונעת לענן</h3></div>
       <div class="card-body form-grid">
           <div class="fg"><label>תיאור המשימה המונעת</label><input type="text" id="p-new-name" placeholder="תיאור הטיפול..."/></div>
           <div class="fg"><label>נכס יעד</label><select id="p-new-prop"></select></div>
@@ -335,23 +343,35 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
           <div class="fg"><label>קטגוריה</label>
               <select id="p-new-cat"><option>חשמל</option><option>אינסטלציה</option><option>מיזוג</option><option>מעלית</option></select>
           </div>
-          <div class="fg full">
-              <label>צרף מסמכים / תמונות למשימה מראש</label>
-              <label class="file-upload-zone" for="p-new-files">
-                  <input type="file" id="p-new-files" multiple accept="image/*,.pdf" onchange="handleHubPreFiles(this)" style="display:none">
-                  <div style="font-size:13px; color:var(--g600)">📎 לחץ להעלאת קבצים או דוחות מראש</div>
-              </label>
-              <div class="uploaded-files" id="hub-pre-files-list"></div>
-          </div>
-          <div style="grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; width:100%">
-              <button class="btn-danger" id="p-btn-cancel-edit" style="display:none" onclick="cancelPreventiveEdit()">ביטול עריכה</button>
-              <button class="btn-primary" id="p-btn-submit" onclick="savePreventiveTaskHub()">הוסף משימה ללוח הענן 🚀</button>
+          <div style="grid-column:1/-1; display:flex; justify-content:flex-end; width:100%">
+              <button class="btn-primary" onclick="savePreventiveTaskHub()">הוסף משימה ללוח הענן 🚀</button>
           </div>
       </div>
   </div>
 
+  <!-- 🎛️ 1. NEW FILTER CHIPS HUB INSTALLED FOR SEAMLESS QA FILTERING -->
+  <div class="filter-pills" id="board-filter-pills-wrap">
+      <button class="filter-pill active" onclick="setBoardStatusFilter('all', this)">📋 הכל</button>
+      <button class="filter-pill" onclick="setBoardStatusFilter('pending', this)">🚨 באיחור / פתוח</button>
+      <button class="filter-pill" onclick="setBoardStatusFilter('active', this)">🗓️ בתוכנית / בטיפול</button>
+      <button class="filter-pill" onclick="setBoardStatusFilter('closed', this)">✓ טופלו / סגורות</button>
+  </div>
+
   <div class="dash-row">
-      <div class="card"><div class="card-head"><h3>🗓️ משימות תחזוקה מונעת וקריאות לביצוע</h3></div><div class="card-body" id="preventive-tasks-container"></div></div>
+      <div class="card">
+          <div class="card-head"><h3>🗓️ לוח משימות שטח מסונכרן לבניין</h3></div>
+          <div class="card-body">
+              <div class="board-section-container">
+                  <div class="board-sub-title">🚨 פניות וקריאות שירות פתוחות מדיירים (מענה מהיר)</div>
+                  <div id="tenant-alerts-board-container"></div>
+              </div>
+              <div class="board-section-container" style="margin-top:20px;">
+                  <div class="board-sub-title">🗓️ סבבי מונע ותוכנית עבודה חודשית / שנתית (Preventive)</div>
+                  <div id="preventive-tasks-board-container"></div>
+              </div>
+          </div>
+      </div>
+      
       <div class="card">
           <div class="card-head">
               <h3>📜 היסטוריית ביצועים ותיקונים</h3>
@@ -365,6 +385,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 </div>
 </div>
 
+<!-- WORK UPDATE MODAL -->
 <div class="modal-ov" id="engineer-action-modal" onclick="closeModalOv(event,'engineer-action-modal')">
   <div class="modal">
     <div class="modal-hdr"><h3>🔧 עדכון משימה מונעת לפני ביצוע</h3><button class="modal-close" onclick="closeModal('engineer-action-modal')">✕</button></div>
@@ -383,6 +404,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   </div>
 </div>
 
+<!-- USER CONFIGURATION MODAL -->
 <div class="modal-ov" id="user-modal" onclick="if(event.target===this)closeModal('user-modal')">
   <div class="modal">
     <div class="modal-hdr"><h3 id="um-modal-title">הוספת איש צוות</h3><button class="modal-close" onclick="closeModal('user-modal')">✕</button></div>
@@ -392,7 +414,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
         <div class="fg"><label>תפקיד / סיווג *</label>
           <select id="um-role" onchange="togglePropSec()">
             <option value="manager">מנהל מערכת</option>
-            <option value="engineer">אב בית (צום שטח)</option>
+            <option value="engineer">אב בית (צוות שטח)</option>
           </select>
         </div>
         <div class="fg"><label>טלפון</label><input type="tel" id="um-phone"/></div>
@@ -409,6 +431,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   </div>
 </div>
 
+<!-- MANUAL MAINTENANCE MODAL -->
 <div class="modal-ov" id="maint-form-modal" onclick="closeModalOv(event,'maint-form-modal')">
   <div class="modal">
     <div class="modal-hdr"><h3>🏗️ רישום טיפול תחזוקה ידני</h3><button class="modal-close" onclick="closeModal('maint-form-modal')">✕</button></div>
@@ -441,6 +464,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 <script>
 window.tickets = []; window.maintRecords = []; window.preventiveTasks = [];
 var engineerActionFiles = []; var editingUID = null; var selectedTenantCategory = ''; var currentPage = 'dashboard';
+var boardGlobalStatusFilter = 'all'; // Filter switch holder
 var ALL_PROPS = ['מודיעין 5 בלוד','שלם 3 רמת גן','ההשכלה 5 תל אביב','כסלו 60 מודיעין','מע"ר מודיעין','זילברמינץ סנטר צור יצחק','אור יהודה','סגולה'];
 
 var users = [
@@ -508,6 +532,13 @@ function checkUnreadAlerts() {
 }
 function clearAlerts() { document.getElementById('bell-badge').style.display = 'none'; showToast('🔔 כל ההתראות נקראו בהצלחה!'); }
 
+function setBoardStatusFilter(statusType, btnEl) {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    btnEl.classList.add('active');
+    boardGlobalStatusFilter = statusType;
+    renderPreventiveTasks();
+}
+
 function triggerAIScan(input) {
     if(!input.files.length) return;
     showToast('✨ סורק AI מנתח את ה-PDF ומחלץ נתונים...');
@@ -566,9 +597,20 @@ function handleEngineerFiles(input) { engineerActionFiles = engineerActionFiles.
 function handleMaintFiles(input) { maintFiles = Array.from(input.files).map(f => f.name); }
 function selectTenantCat(btn) { document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selectedTenantCategory = btn.dataset.cat; }
 
+/* 🧠 2. NEW INTELLIGENT DUPLICATE DETECTOR INTERACTOR FOR TENANTS */
 async function submitTenantTicket(){
-  var name = document.getElementById('t-name').value.trim(); var property = document.getElementById('t-property').value; var desc = document.getElementById('t-desc').value.trim();
+  var name = document.getElementById('t-name').value.trim(); 
+  var property = document.getElementById('t-property').value; 
+  var desc = document.getElementById('t-desc').value.trim();
   if(!name || !property || !selectedTenantCategory) return;
+  
+  // SCAN UNRESOLVED CLOUD TICKETS FOR ACTIVE SAME-PROPERTY SIMILAR ALERTS
+  var isDuplicated = window.tickets.some(t => t.property === property && t.cat === selectedTenantCategory && t.status !== 'done');
+  if(isDuplicated) {
+      alert(`🛑 שים לב! דייר אחר כבר פתח פנייה פעילה בבניין זה בנושא "${selectedTenantCategory}".\nצוות התחזוקה כבר עודכן ומטפל במפגע ברגעים אלו, אין צורך בדיווח כפול. תודה!`);
+      return; // HALT EXECUTION
+  }
+  
   var id = 'ZB-' + String(Date.now()).slice(-5);
   await window.cloudSave("tickets", id, { id:id, name:name, phone:document.getElementById('t-phone').value, property:property, unit:document.getElementById('t-unit').value, cat:selectedTenantCategory, desc:desc, date:new Date().toLocaleDateString('he-IL'), status:'open' });
   alert('🚀 קריאת השירות נשלחה בהצלחה! הפורטל יתנתק כעת.'); doLogout();
@@ -612,16 +654,18 @@ async function saveMaintRecord(){
 }
 
 function renderDashboard(){
-  var totalCost = maintRecords.reduce((a,r)=>a+(r.cost||0),0); var openTickets = tickets.filter(t => t.status !== 'done');
-  var flTasks = preventiveTasks.filter(t => currentUser.role === 'manager' || currentUser.props.indexOf(t.property) !== -1);
+  var up = getUserProps(), isMgr = currentUser && currentUser.role === 'manager';
+  var flMaint = isMgr ? maintRecords : maintRecords.filter(r=>up.indexOf(r.property) !== -1);
+  var openTickets = tickets.filter(t => t.status !== 'done' && (isMgr || up.indexOf(t.property) !== -1));
+  var flTasks = preventiveTasks.filter(t => isMgr || up.indexOf(t.property) !== -1);
 
-  document.getElementById('kpi-cost').textContent = '₪' + totalCost.toLocaleString();
-  document.getElementById('kpi-maint').textContent = maintRecords.length;
+  document.getElementById('kpi-cost').textContent = '₪' + flMaint.reduce((a,r)=>a+(r.cost||0),0).toLocaleString();
+  document.getElementById('kpi-maint').textContent = flMaint.length;
   document.getElementById('kpi-pending-tasks').textContent = flTasks.length;
   document.getElementById('kpi-tickets-count').textContent = openTickets.length;
   
   var hubGrid = document.getElementById('property-dashboard-nodes'); if(!hubGrid) return;
-  hubGrid.innerHTML = getUserProps().map(prop => {
+  hubGrid.innerHTML = up.map(prop => {
       var propMaint = maintRecords.filter(r => r.property === prop); var propPending = preventiveTasks.filter(t => t.property === prop); var propTickets = tickets.filter(t => t.property === prop && t.status !== 'done');
       return `<div class="property-card-hub"><div class="property-hub-title"><span>🏢 ${prop}</span><span style="color:var(--green)">₪${propMaint.reduce((a,r)=>a+(r.cost||0),0).toLocaleString()}</span></div>`
             +`<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:11px;"><div style="background:var(--cream); padding:6px; border-radius:6px;">📋 בוצעו: <strong>${propMaint.length}</strong></div>`
@@ -639,25 +683,83 @@ function renderMaintFiltered(){
   list.innerHTML = fl.map(r => `<div class="maint-record-card"><strong>${r.property}</strong><div>₪${r.cost} • ${r.date}</div><div style="font-size:12px; color:var(--g600);">${r.topics.join(', ')}</div></div>`).join('');
 }
 
+/* 📋 🎛️ MODIFIED TO SUPPORT DYNAMIC MULTI-LEVEL STATUS FILTERING CHIPS */
 function renderPreventiveTasks(){
-    var container = document.getElementById('preventive-tasks-container'); if(!container) return;
-    var up = getUserProps(), isMgr = currentUser && currentUser.role === 'manager';
-    var flTasks = preventiveTasks.filter(r => isMgr || up.indexOf(r.property) !== -1);
-    var flTickets = tickets.filter(t => t.status !== 'done' && (isMgr || up.indexOf(t.property) !== -1));
-    if(!flTasks.length && !flTickets.length){container.innerHTML='<div class="empty">אין משימות או קריאות</div>';return}
-    var todayStr = new Date().toISOString().split('T')[0]; var html = '';
+    var tContainer = document.getElementById('tenant-alerts-board-container');
+    var pContainer = document.getElementById('preventive-tasks-board-container');
+    if(!tContainer || !pContainer) return;
     
-    flTickets.forEach(t => {
-        html += `<div class="preventive-card overdue"><div style="flex:1"><span>🚨 קריאת דייר (${t.cat})</span><div style="font-size:14px; font-weight:700; color:var(--navy); margin-top:4px;">דירה ${t.unit}: ${t.desc}</div><div>נכס: ${t.property}</div></div>`
-             + `<div><button class="btn-primary" style="background:var(--navy); color:#fff;" onclick="closeTenantTicket('${t.id}')">סגור ✓</button></div></div>`;
-    });
-    flTasks.forEach(t => {
-        html += `<div class="preventive-card ${t.dueDate < todayStr ? 'overdue' : 'upcoming'}"><div><strong>${t.name}</strong><div>${t.property}</div><div style="font-size:11px; color:var(--g600)">📅 יעד: ${t.dueDate}</div></div><div><button class="btn-primary" onclick="openEngineerActionModal('${t.id}')">בצע ✓</button></div></div>`;
-    });
-    container.innerHTML = html;
+    var up = getUserProps(), isMgr = currentUser && currentUser.role === 'manager';
+    var filterProp = (document.getElementById('maint-filter-prop') || {}).value || '';
+    var todayStr = new Date().toISOString().split('T')[0];
+    
+    // 1. Core Cloud Fetch Filters
+    var flTasks = preventiveTasks.filter(r => (isMgr || up.indexOf(r.property) !== -1) && (filterProp ? r.property === filterProp : true));
+    var flTickets = tickets.filter(t => (isMgr || up.indexOf(t.property) !== -1) && (filterProp ? t.property === filterProp : true));
+    
+    // 2. Apply Symmetrical Status Filter Pills logic (all | pending | active | closed)
+    if(boardGlobalStatusFilter === 'pending') {
+        flTickets = flTickets.filter(t => t.status === 'open');
+        flTasks = flTasks.filter(t => t.dueDate < todayStr); // Overdue ONLY
+    } else if(boardGlobalStatusFilter === 'active') {
+        flTickets = flTickets.filter(t => t.status === 'inprogress');
+        flTasks = flTasks.filter(t => t.dueDate >= todayStr); // Upcoming ONLY
+    } else if(boardGlobalStatusFilter === 'closed') {
+        flTickets = flTickets.filter(t => t.status === 'done');
+        flTasks = []; // Done preventive tasks go straight into the permanent right ledger card
+    } else {
+        // 'all' scenario: only fetch unresolved assets for active workspace
+        flTickets = flTickets.filter(t => t.status !== 'done');
+    }
+    
+    // Render Board Part 1: Tenant Tickets
+    if(!flTickets.length) {
+        tContainer.innerHTML = '<div class="empty" style="padding:14px;">אין פניות דיירים פתוחות בקבוצה זו 👍</div>';
+    } else {
+        tContainer.innerHTML = flTickets.map(t => {
+            var alertLabel = t.status === 'inprogress' ? '⚙️ בטיפול צוות' : '🚨 קריאה פתוחה';
+            var cardColor = t.status === 'inprogress' ? 'border-right-color:var(--blue); background:#f4f9ff;' : '';
+            var actionBtn = t.status === 'open' 
+                ? `<button class="btn-primary" style="background:var(--blue); font-size:12px; padding:6px 12px;" onclick="setTicketInMaintenanceProgress('${t.id}')">טפל פנייה ⚙️</button>` 
+                : `<button class="btn-primary" style="background:var(--green); font-size:12px; padding:6px 12px;" onclick="closeTenantTicket('${t.id}')">סגור קריאה ✓</button>`;
+            
+            return `<div class="preventive-card" style="${cardColor}">`
+                 + `<div style="flex:1">`
+                 + `<div style="font-size:11px; font-weight:800; color:var(--navy); display:flex; gap:6px; align-items:center;"><span>${alertLabel}</span> • <span style="background:var(--g200); padding:1px 6px; border-radius:4px;">${t.cat}</span></div>`
+                 + `<div style="font-size:14px; font-weight:700; color:var(--navy); margin-top:4px;">דירה ${t.unit}: ${t.desc}</div>`
+                 + `<div style="font-size:12px; color:var(--g600); margin-top:2px;">🏢 נכס: <strong>${t.property}</strong> • מדווח: ${t.name} (${t.date})</div>`
+                 + `</div><div>${actionBtn}</div></div>`;
+        }).join('');
+    }
+
+    // Render Board Part 2: Preventive Submissions
+    if(!flTasks.length) {
+        pContainer.innerHTML = '<div class="empty" style="padding:14px;">אין משימות מונעות בחתך הנבחר</div>';
+    } else {
+        pContainer.innerHTML = flTasks.map(t => {
+            var statusLabel = t.dueDate < todayStr ? '⚠️ באיחור חורג' : 'בתוכנית שבועית';
+            return `<div class="preventive-card ${t.dueDate < todayStr ? 'overdue' : 'upcoming'}">`
+                 + `<div style="flex:1">`
+                 + `<div style="font-size:14px; font-weight:700; color:var(--navy);">${t.name}</div>`
+                 + `<div style="font-size:12px; color:var(--g600); margin-top:2px;">🏠 נכס: <strong>${t.property}</strong> • 📅 יעד: <strong>${t.dueDate}</strong> (${statusLabel})</div>`
+                 + `<div style="margin-top:4px;"><span class="preventive-badge">${t.cat}</span> <span class="recurrence-badge">🔄 מחזור: ${t.period}</span></div>`
+                 + `</div><div><button class="btn-primary" style="font-size:12px; padding:6px 14px;" onclick="openEngineerActionModal('${t.id}')">בצע ✓</button></div></div>`;
+        }).join('');
+    }
 }
 
-async function closeTenantTicket(id) { var t = tickets.find(x => x.id === id); if(!t) return; t.status = 'done'; await window.cloudSave("tickets", id, t); showToast('קריאת דייר נסגרה בבטחה'); }
+async function setTicketInMaintenanceProgress(id) {
+    var t = tickets.find(x => x.id === id); if(!t) return;
+    t.status = 'inprogress';
+    await window.cloudSave("tickets", id, t);
+    showToast('⚙️ הסטטוס עודכן: הקריאה הועברה למצב "בטיפול אב בית"');
+}
+async function closeTenantTicket(id) { 
+    var t = tickets.find(x => x.id === id); if(!t) return; 
+    t.status = 'done'; 
+    await window.cloudSave("tickets", id, t); 
+    showToast('קריאת דייר נסגרה וסומנה כטופלה בהצלחה!'); 
+}
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 function closeModalOv(e, id){ if(e.target === document.getElementById(id)) closeModal(id); }
 function showToast(m){ var el=document.getElementById('toast'); document.getElementById('toast-msg').textContent=m; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3000); }
@@ -667,6 +769,7 @@ window.backToMainLoginHub = backToMainLoginHub;
 window.loginAsUser = loginAsUser;
 window.renderPageFull = renderPageFull;
 window.checkUnreadAlerts = checkUnreadAlerts;
+window.setBoardStatusFilter = setBoardStatusFilter;
 
 renderLoginScreen();
 </script>
