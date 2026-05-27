@@ -640,6 +640,18 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 <!-- PDF AI PAGE -->
 <div class="page" id="page-pdfpage">
   <div style="max-width:820px;margin:0 auto">
+
+    <!-- API Key banner -->
+    <div id="api-key-banner" style="background:var(--gold-pale);border:1.5px solid var(--gold);border-radius:var(--r);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--navy)">🔑 נדרש Anthropic API Key לניתוח מסמכים</div>
+        <div style="font-size:11px;color:var(--g600);margin-top:2px">המפתח נשמר מקומית בדפדפן בלבד — לא נשלח לשום מקום אחר</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span id="api-key-status" style="font-size:12px;color:var(--g400)">לא מוגדר</span>
+        <button class="btn-primary" style="font-size:12px;white-space:nowrap" onclick="promptApiKey()">הגדר מפתח</button>
+      </div>
+    </div>
     <div class="card" style="margin-bottom:20px;overflow:visible">
       <div class="card-head"><h3>📄 ניתוח מסמכים עם AI</h3></div>
       <div style="padding:24px">
@@ -1764,6 +1776,11 @@ function handlePdfDrop(e){
 }
 function handlePdfFile(file){
   if(!file) return;
+  if(!getApiKey()){
+    showToast('⚠️ יש להגדיר Anthropic API Key תחילה', true);
+    promptApiKey();
+    return;
+  }
   if(file.size>10*1024*1024){showToast('⚠️ הקובץ גדול מדי (מקס 10MB)',true);return}
   document.getElementById('pdf-dropzone').style.display='none';
   document.getElementById('pdf-loading').style.display='block';
@@ -1775,7 +1792,7 @@ function handlePdfFile(file){
     var b64=ev.target.result.split(',')[1], isI=file.type.startsWith('image/'), mt=isI?file.type:'application/pdf';
     var ci=isI?{type:'image',source:{type:'base64',media_type:mt,data:b64}}:{type:'document',source:{type:'base64',media_type:mt,data:b64}};
     var body={model:'claude-sonnet-4-20250514',max_tokens:1000,system:'אתה מנתח מסמכים. ענה אך ורק ב-JSON ללא markdown: {"docType":"invoice|inspection|quote|other","docTypeLabel":"חשבונית ספק|דוח בדיקה|הצעת מחיר|אחר","vendor":"","property":"","date":"YYYY-MM-DD","amount":0,"invoiceNumber":"","categoryLabel":"","urgency":"low|medium|high","summary":"","items":[{"desc":"","qty":1,"price":0}]}',messages:[{role:'user',content:[ci,{type:'text',text:'נתח את המסמך וענה ב-JSON בלבד.'}]}]};
-    fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true','x-api-key': getApiKey()},body:JSON.stringify(body)})
     .then(function(r){return r.json()})
     .then(function(data){
       clearInterval(intv);
@@ -1816,6 +1833,22 @@ function savePdfAsMaint(){
   setTimeout(function(){showPage('maintenance',document.querySelector('#nav-'+((currentUser&&currentUser.role)||'manager')+' .nav-item[onclick*="maintenance"]'))},900);
 }
 function renderPdfHist(){
+  // Update API key banner
+  var key = getApiKey();
+  var status = document.getElementById('api-key-status');
+  var banner = document.getElementById('api-key-banner');
+  if(status){
+    if(key){
+      status.textContent = '✅ מוגדר (' + key.slice(0,8) + '...)';
+      status.style.color = 'var(--green)';
+      if(banner) banner.style.borderColor = 'var(--green)';
+    } else {
+      status.textContent = '❌ לא מוגדר';
+      status.style.color = 'var(--red)';
+      if(banner) banner.style.borderColor = 'var(--red)';
+    }
+  }
+  // History table
   var tb=document.getElementById('pdf-hist-body'),em=document.getElementById('pdf-hist-empty');
   if(!pdfHistArr.length){if(tb)tb.innerHTML='';if(em)em.style.display='';return}
   if(em)em.style.display='none';
@@ -1823,6 +1856,23 @@ function renderPdfHist(){
 }
 function resetPdfAnalyzer(){pdfAnalyzed=null;document.getElementById('pdf-file-input').value='';document.getElementById('pdf-dropzone').style.display='block';document.getElementById('pdf-loading').style.display='none';document.getElementById('pdf-result-area').style.display='none'}
 
+
+// ── ANTHROPIC API KEY ──
+function getApiKey(){
+  return localStorage.getItem('zb_api_key') || '';
+}
+function setApiKey(key){
+  localStorage.setItem('zb_api_key', key.trim());
+}
+function promptApiKey(){
+  var current = getApiKey();
+  var key = prompt('הזן Anthropic API Key:\n(מתחיל ב-sk-ant-...)\n\nניתן לקבל ב: console.anthropic.com', current);
+  if(key && key.trim()){
+    setApiKey(key.trim());
+    showToast('✅ API Key נשמר');
+    renderPdfHist();
+  }
+}
 
 // ── EDIT MAINT ──
 function openEditMaint(id){
