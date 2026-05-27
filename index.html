@@ -1011,6 +1011,8 @@ var DEFAULT_TOPICS = [
 var topicBank = JSON.parse(localStorage.getItem('zb_topics_v2') || JSON.stringify(DEFAULT_TOPICS));
 
 function save(){
+  // unified save — always call saveAll if available
+  if(typeof saveAll === 'function'){ saveAll(); return; }
   localStorage.setItem('zb_tickets_v4', JSON.stringify(tickets));
   localStorage.setItem('zb_maint_v2', JSON.stringify(maintRecords));
   localStorage.setItem('zb_notifs_v2', JSON.stringify(notifs));
@@ -1365,15 +1367,25 @@ function processFiles(files, gridId){
 function renderAttachmentsGrid(gridId){
   var store = getStore(gridId);
   var grid = document.getElementById(gridId); if(!grid) return;
-  grid.innerHTML = store.map(function(att){
+  grid.innerHTML = store.map(function(att, aidx){
     var thumb = att.type === 'application/pdf'
       ? '<div class="attach-pdf-thumb"><div class="pdf-icon">📄</div><div class="pdf-ext">PDF</div></div>'
-      : '<img class="attach-img-preview" src="'+att.data+'" alt="'+att.name+'"/>';
-    return '<div class="attach-card" onclick="viewAttachment(''+gridId+'',''+att.id+'')">'+thumb
-      +'<button class="attach-remove" onclick="event.stopPropagation();removeAttachment(''+gridId+'',''+att.id+'')">✕</button>'
+      : '<img class="attach-img-preview" src="'+att.data+'"/>';
+    return '<div class="attach-card" data-grid="'+gridId+'" data-aid="'+att.id+'" data-idx="'+aidx+'" onclick="handleAttachClick(this)">'
+      +thumb
+      +'<button class="attach-remove" onclick="event.stopPropagation();removeAttachment(this.parentNode.dataset.grid,this.parentNode.dataset.aid)">✕</button>'
       +'<div class="attach-name">'+att.name.slice(0,18)+(att.name.length>18?'…':'')+'</div>'
     +'</div>';
   }).join('');
+}
+
+function handleAttachClick(el){
+  var gridId = el.dataset.grid;
+  var aid = el.dataset.aid;
+  var store = getStore(gridId);
+  var att = store.find(function(a){return a.id===aid});
+  if(!att) return;
+  openFileViewer(att);
 }
 
 function removeAttachment(gridId, attId){
@@ -1403,14 +1415,19 @@ function updateStorageBar(gridId){
 var _currentViewerAtt = null;
 function viewAttachment(gridId, attId){
   var store = getStore(gridId);
-  var att = store.find(function(a){return a.id===attId}); if(!att) return;
+  var att = store.find(function(a){return a.id===attId});
+  if(att) openFileViewer(att);
+}
+
+function openFileViewer(att){
+  if(!att) return;
   _currentViewerAtt = att;
   document.getElementById('fv-title').textContent = att.name;
   var body = document.getElementById('fv-body');
   if(att.type === 'application/pdf'){
-    body.innerHTML = '<iframe id="file-viewer-embed" src="'+att.data+'" style="width:100%;height:75vh;border:none"></iframe>';
+    body.innerHTML = '<iframe src="'+att.data+'" style="width:100%;height:75vh;border:none"></iframe>';
   } else {
-    body.innerHTML = '<img src="'+att.data+'" style="max-width:100%;max-height:75vh;display:block" />';
+    body.innerHTML = '<img src="'+att.data+'" style="max-width:100%;max-height:75vh;display:block"/>';
   }
   document.getElementById('file-viewer-modal').classList.add('open');
 }
@@ -1525,7 +1542,7 @@ function openMaintDetail(id){
     (r.cost?'<div class="detail-row"><span class="dk">עלות</span><span class="dv">₪'+Number(r.cost).toLocaleString('he-IL')+'</span></div>':'')+
     '<div class="detail-row"><span class="dk">נושאים</span><span class="dv">'+r.topics.join(', ')+'</span></div>'+
     (r.notes?'<div class="detail-row"><span class="dk">הערות</span><span class="dv">'+r.notes+'</span></div>':'')+
-    (r.attachments&&r.attachments.length?'<div class="detail-row" style="flex-direction:column;gap:8px"><span class="dk" style="margin-bottom:4px">📎 קבצים מצורפים</span><div class="attachments-grid" style="margin:0">'+r.attachments.map(function(att,i){var thumb=att.type==='application/pdf'?'<div class="attach-pdf-thumb"><div class="pdf-icon">📄</div><div class="pdf-ext">PDF</div></div>':'<img class="attach-img-preview" src="'+att.data+'"/>';return'<div class="attach-card" onclick="viewAttachmentDirect(''+JSON.stringify({id:att.id}).replace(/"/g,'&quot;')+'''+',''+i+'','detail')">'+thumb+'<div class="attach-name">'+att.name.slice(0,18)+(att.name.length>18?'…':'')+'</div></div>';}).join('')+'</div></div>':'')+(r.fileNames&&r.fileNames.length&&!(r.attachments&&r.attachments.length)?'<div class="detail-row"><span class="dk">קבצים</span><span class="dv">'+r.fileNames.map(function(f){return'<div style="font-size:12px;color:var(--blue)">📎 '+f+'</div>'}).join('')+'</span></div>':'')+
+    (r.attachments&&r.attachments.length?'<div class="detail-row" style="flex-direction:column;gap:8px"><span class="dk" style="margin-bottom:4px">📎 קבצים מצורפים</span><div class="attachments-grid" style="margin:0">'+r.attachments.map(function(att,idx){var thumb=att.type==='application/pdf'?'<div class="attach-pdf-thumb"><div class="pdf-icon">📄</div><div class="pdf-ext">PDF</div></div>':'<img class="attach-img-preview" src="'+att.data+'"/>';return'<div class="attach-card" onclick="viewStoredAttachment(\''+r.id+'\','+idx+')">'+thumb+'<div class="attach-name">'+att.name.slice(0,18)+(att.name.length>18?'…':'')+'</div></div>';}).join('')+'</div></div>':'')+(r.fileNames&&r.fileNames.length&&!(r.attachments&&r.attachments.length)?'<div class="detail-row"><span class="dk">קבצים</span><span class="dv">'+r.fileNames.map(function(f){return'<div style="font-size:12px;color:var(--blue)">📎 '+f+'</div>'}).join('')+'</span></div>':'')+
     '<div style="display:flex;gap:8px;margin-top:16px">'+
     '<button class="edit-btn" onclick="openEditMaint(\''+r.id+'\')">✏️ ערוך</button>'+
     '<button class="btn-danger" style="font-size:12px" onclick="deleteMaintRecord(\''+r.id+'\')">🗑️ מחק רשומה</button>'+
@@ -1595,8 +1612,7 @@ var editingUID = null;
 var pdfAnalyzed = null;
 var pdfHistArr = JSON.parse(localStorage.getItem('zb_pdf_h1') || '[]');
 
-// patch save to use saveAll
-save = saveAll;
+// saveAll defined later — patched after definition
 
 PAGE_TITLES['users'] = 'ניהול משתמשים';
 PAGE_TITLES['pdfpage'] = 'ניתוח מסמכים AI';
@@ -1970,26 +1986,26 @@ function renderBudgetContent(){
         +'<div style="padding:14px 18px">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
         +'<div style="font-size:12px;font-weight:700;color:var(--g400)">🔄 הוצאות קבועות</div>'
-        +'<button class="btn-primary" style="font-size:11px;padding:4px 10px" onclick="openAddRecurring(''+prop+'')">+ הוסף</button></div>'
+        +'<button class="btn-primary" style="font-size:11px;padding:4px 10px" onclick="openAddRecurring(\''+prop+'\')">+ הוסף</button></div>'
         +propRec.map(function(r){
           var periodLbl = {monthly:'חודשי',quarterly:'רבעוני',yearly:'שנתי',once:'חד פעמי'}[r.period]||r.period;
           return'<div class="recurring-item"><div><div class="ri-name">'+r.name+'</div><div class="ri-meta">'+(r.vendor?r.vendor+' • ':'')+periodLbl+'</div></div>'
             +'<div style="display:flex;align-items:center;gap:8px"><span class="cost-badge">₪'+Number(r.amount||0).toLocaleString('he-IL')+'</span>'
-            +'<button class="edit-btn" onclick="openEditRecurring(''+r.id+'')">✏️</button>'
-            +'<button class="edit-btn" style="color:var(--red)" onclick="deleteRecurring(''+r.id+'')">✕</button></div></div>';
+            +'<button class="edit-btn" onclick="openEditRecurring(\''+r.id+'\')">✏️</button>'
+            +'<button class="edit-btn" style="color:var(--red)" onclick="deleteRecurring(\''+r.id+'\')">✕</button></div></div>';
         }).join('')
         +(propMaintB.length?'<div style="font-size:12px;font-weight:700;color:var(--g400);margin:12px 0 8px">🏗️ טיפולים קבועים</div>'+propMaintB.map(function(r){return'<div class="recurring-item"><div><div class="ri-name">'+r.topics.slice(0,2).join(', ')+'</div><div class="ri-meta">'+r.date+'</div></div><span class="cost-badge">₪'+Number(r.cost||0).toLocaleString('he-IL')+'</span></div>'}).join(''):'')
         +'</div></div>';
     }).filter(Boolean).join('')
-    + '<div style="margin-top:16px"><button class="btn-primary" onclick="openAddRecurring('')">+ הוסף הוצאה קבועה לנכס</button></div>';
+    + '<div style="margin-top:16px"><button class="btn-primary" onclick="openAddRecurring(\'\')">+ הוסף הוצאה קבועה לנכס</button></div>';
     if(!recurringExpenses.length && !maintRecords.filter(function(r){return r.budgetType==='B'}).length){
-      html2 = '<div class="empty"><div class="empty-icon">🔄</div><div class="empty-txt">אין הוצאות קבועות — לחץ "+ הוסף" על נכס</div></div><div style="margin-top:16px"><button class="btn-primary" onclick="openAddRecurring('')">+ הוסף הוצאה קבועה</button></div>';
+      html2 = '<div class="empty"><div class="empty-icon">🔄</div><div class="empty-txt">אין הוצאות קבועות</div></div><div style="margin-top:16px"><button class="btn-primary" onclick="openAddRecurring(\'\')">+ הוסף הוצאה קבועה</button></div>';
     }
 
   } else if(currentBudgetType === 'C'){
     var maintC = maintRecords.filter(function(r){return r.budgetType==='C'});
     html2 = '<div style="display:flex;justify-content:flex-end;margin-bottom:16px">'
-      +'<button class="btn-primary" onclick="openMaintFormWithType('C')">+ רשום השקעה / שיפוץ</button></div>'
+      +'<button class="btn-primary" onclick="openMaintFormWithType(\'C\')">+ רשום השקעה / שיפוץ</button></div>'
       +props.map(function(prop){
         var propC = maintC.filter(function(r){return r.property===prop});
         if(!propC.length) return '';
@@ -1998,7 +2014,7 @@ function renderBudgetContent(){
           +'<div class="pbc-header"><span class="pbc-title">🏢 '+prop+'</span><span class="pbc-total">₪'+total.toLocaleString('he-IL')+'</span></div>'
           +'<div style="padding:14px 18px">'
           +propC.map(function(r){return'<div class="recurring-item"><div><div class="ri-name">'+r.topics.join(', ')+'</div><div class="ri-meta">'+r.date+(r.notes?' • '+r.notes.slice(0,40):'')+'</div></div>'
-            +'<div style="display:flex;gap:8px;align-items:center"><span class="cost-badge">₪'+Number(r.cost||0).toLocaleString('he-IL')+'</span><button class="edit-btn" onclick="openEditMaint(''+r.id+'')">✏️</button></div></div>'}).join('')
+            +'<div style="display:flex;gap:8px;align-items:center"><span class="cost-badge">₪'+Number(r.cost||0).toLocaleString('he-IL')+'</span><button class="edit-btn" onclick="openEditMaint(\''+r.id+'\')">✏️</button></div></div>'}).join('')
           +'</div></div>';
       }).filter(Boolean).join('')
     +(maintC.length===0?'<div class="empty"><div class="empty-icon">🏗️</div><div class="empty-txt">אין השקעות רשומות</div></div>':'');
@@ -2135,7 +2151,21 @@ function renderUsersPage(){
     var el=document.getElementById('ul-'+role); if(!el) return;
     var ru=users.filter(function(u){return u.role===role});
     if(!ru.length){el.innerHTML='<div style="color:var(--g400);font-size:13px;padding:8px 0">אין משתמשים</div>';return}
-    el.innerHTML=ru.map(function(u){return'<div class="ucard"><div class="uav" style="'+avSt[u.role]+'">'+u.name[0]+'</div><div style="flex:1"><div class="uname">'+u.name+'</div><div class="urole">'+(u.phone||'אין טלפון')+'</div>'+(u.role==='engineer'?'<div class="uprops">'+u.props.map(function(p){return'<span class="pchip">'+p+'</span>'}).join('')+'</div>':'')+'</div><div style="display:flex;gap:6px;flex-shrink:0"><button class="btn-ghost" style="font-size:11px;padding:4px 10px" onclick="openEditUser(''+u.id+'')">✏️ ערוך</button>'+(u.id!=='u1'?'<button class="btn-danger" style="font-size:11px;padding:4px 10px" onclick="deleteUser(''+u.id+'')">🗑️</button>':'')+'</div></div>'}).join('');
+    el.innerHTML=ru.map(function(u){
+      var uid = u.id;
+      return '<div class="ucard">'
+        +'<div class="uav" style="'+avSt[u.role]+'">'+u.name[0]+'</div>'
+        +'<div style="flex:1">'
+          +'<div class="uname">'+u.name+'</div>'
+          +'<div class="urole">'+(u.phone||'אין טלפון')+'</div>'
+          +(u.role==='engineer'?'<div class="uprops">'+u.props.map(function(p){return'<span class="pchip">'+p+'</span>'}).join('')+'</div>':'')
+        +'</div>'
+        +'<div style="display:flex;gap:6px;flex-shrink:0">'
+          +'<button class="btn-ghost" style="font-size:11px;padding:4px 10px" data-uid="'+uid+'" onclick="openEditUser(this.dataset.uid)">✏️ ערוך</button>'
+          +(uid!=='u1'?'<button class="btn-danger" style="font-size:11px;padding:4px 10px" data-uid="'+uid+'" onclick="deleteUser(this.dataset.uid)">🗑️</button>':'')
+        +'</div>'
+      +'</div>';
+    }).join('');
   });
   // Access codes section
   var codesEl = document.getElementById('ul-codes');
@@ -2146,7 +2176,7 @@ function renderUsersPage(){
         +'<div><div style="font-size:13px;font-weight:600;color:var(--navy)">'+prop+'</div></div>'
         +'<div style="display:flex;align-items:center;gap:10px">'
         +(code?'<span class="access-code-badge">'+code+'</span>':'<span style="font-size:12px;color:var(--g400)">ללא קוד</span>')
-        +'<button class="edit-btn" onclick="setNewCode(''+prop+'')">🔑 '+(code?'שנה':'הגדר')+'</button>'
+        +'<button class="edit-btn" data-prop="'+prop+'" onclick="setNewCode(this.dataset.prop)">🔑 '+(code?'שנה':'הגדר')+'</button>'
         +'</div></div>';
     }).join('');
   }
@@ -2198,26 +2228,12 @@ saveMaintRecord = function(){
 };
 
 
-function viewAttachmentDirect(attJson, idx, ctx){
-  // Called from detail modal where we pass att inline
-  // Better: look up from maintRecords
-  var att = null;
-  maintRecords.forEach(function(r){
-    if(r.attachments) r.attachments.forEach(function(a){
-      if(a.id && attJson.indexOf(a.id)>=0) att=a;
-    });
-  });
-  if(!att) return;
-  _currentViewerAtt = att;
-  document.getElementById('fv-title').textContent = att.name;
-  var body = document.getElementById('fv-body');
-  if(att.type === 'application/pdf'){
-    body.innerHTML = '<iframe src="'+att.data+'" style="width:100%;height:75vh;border:none"></iframe>';
-  } else {
-    body.innerHTML = '<img src="'+att.data+'" style="max-width:100%;max-height:75vh;display:block"/>';
-  }
-  document.getElementById('file-viewer-modal').classList.add('open');
+function viewStoredAttachment(recordId, idx){
+  var r = maintRecords.find(function(x){return x.id===recordId});
+  if(!r || !r.attachments || !r.attachments[idx]) return;
+  openFileViewer(r.attachments[idx]);
 }
+function viewAttachmentDirect(attJson, idx, ctx){}
 
 // ── MOBILE SIDEBAR TOGGLE ──
 function toggleSidebar(){
