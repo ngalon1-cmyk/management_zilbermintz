@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>זילברמינץ | מערכת ניהול נכסים</title>
+<title>זילברמינץ | ניהול נכסים</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -13,448 +13,968 @@
   --sh-sm:0 2px 8px rgba(15,31,61,.07);--sh-md:0 6px 24px rgba(15,31,61,.11);--sh-lg:0 16px 48px rgba(15,31,61,.15);
   --r:14px;--r-sm:8px;
 }
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);min-height:100vh;direction:rtl}
 
-/* LOGIN SYSTEM */
-#login-screen{position:fixed;inset:0;background:var(--navy);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
-.login-card{text-align:center;max-width:520px;width:100%;animation:fadeIn .4s ease;padding:10px 0}
-.login-logo{width:75px;height:75px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;color:var(--navy);margin:0 auto 22px;box-shadow:0 8px 24px rgba(201,168,76,0.25)}
-.login-title{color:#fff;font-size:28px;font-weight:800;margin-bottom:6px}
-.login-sub{color:var(--gold);font-size:15px;margin-bottom:40px;font-weight:500}
-.login-footer{margin-top:40px;color:rgba(255,255,255,.2);font-size:11px}
-.login-split-container {display:flex; flex-direction:column; gap:16px; width:100%;}
-.lbtn{border:1.5px solid rgba(255,255,255,.12); border-radius:16px; padding:22px 24px; cursor:pointer; font-family:'Heebo',sans-serif; background:rgba(255,255,255,.04); transition:all 0.22s ease; display:flex; align-items:center; gap:18px; width:100%; text-align:right;}
-.lbtn:hover{background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.3); transform:translateY(-2px); box-shadow:var(--sh-md)}
-.lav{width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;}
-.lbtn-text-wrap {flex:1; display:flex; flex-direction:column; gap:3px;}
-.lbtn-title-txt {font-size:17px; font-weight:700; color:#fff;}
-.lbtn-desc-txt {font-size:12px; color:rgba(255,255,255,.5); line-height:1.4;}
-.lbtn-arrow {color:rgba(255,255,255,.25); font-size:22px;}
-.sub-login-grid {display:none; flex-direction:column; gap:14px; animation:slideUp .25s ease; width:100%;}
-.back-login-btn {background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:var(--gold-light); font-size:13px; font-weight:600; padding:8px 16px; border-radius:20px; cursor:pointer; align-self:flex-start; margin-bottom:12px; transition:all 0.2s; font-family:'Heebo';}
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--navy);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{text-align:center;max-width:480px;width:100%;animation:fadeIn .4s ease}
+.login-logo{width:70px;height:70px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:var(--navy);margin:0 auto 20px}
+.login-title{color:#fff;font-size:26px;font-weight:800;margin-bottom:6px}
+.login-sub{color:var(--gold);font-size:14px;margin-bottom:48px}
+.login-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.login-btn{border:none;border-radius:14px;padding:28px 16px;cursor:pointer;font-family:'Heebo',sans-serif;transition:all .2s}
+.login-btn:hover{transform:translateY(-3px)}
+.login-btn-manager{background:linear-gradient(135deg,var(--gold),var(--gold-light));box-shadow:0 8px 24px rgba(201,168,76,.3)}
+.login-btn-engineer{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2)}
+.login-btn-tenant{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12)}
+.login-btn-icon{font-size:36px;margin-bottom:10px}
+.login-btn-title{font-size:15px;font-weight:800}
+.login-btn-manager .login-btn-title{color:var(--navy)}
+.login-btn-engineer .login-btn-title,.login-btn-tenant .login-btn-title{color:#fff}
+.login-btn-desc{font-size:11px;margin-top:4px}
+.login-btn-manager .login-btn-desc{color:var(--navy-light);opacity:.7}
+.login-btn-engineer .login-btn-desc,.login-btn-tenant .login-btn-desc{color:rgba(255,255,255,.5)}
+.login-footer{margin-top:32px;color:rgba(255,255,255,.2);font-size:11px}
 
-/* LAYOUT FIXED */
+/* LAYOUT */
 .layout{display:flex;min-height:100vh}
-.sidebar{width:220px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;right:0;height:100vh;z-index:200}
+.sidebar{width:220px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;right:0;height:100vh;z-index:200;overflow-y:auto}
 .sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
 .logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--navy);flex-shrink:0}
-.logo-text{color:#fff;font-size:15px;font-weight:800}
-.nav-section{padding:12px 10px 4px;font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;font-weight:600}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 8px;border-radius:9px;color:rgba(255,255,255,.55);font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;font-family:'Heebo',sans-serif;width:calc(100% - 16px);text-align:right}
+.logo-text{color:#fff;font-size:15px;font-weight:800;line-height:1.1}
+.logo-sub{color:var(--gold);font-size:10px;font-weight:400}
+.nav-section{padding:12px 10px 4px;font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 8px;border-radius:9px;color:rgba(255,255,255,.55);font-size:13px;font-weight:500;cursor:pointer;transition:all .18s;border:none;background:none;font-family:'Heebo',sans-serif;width:calc(100% - 16px);text-align:right}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
 .nav-item.active{background:rgba(201,168,76,.18);color:var(--gold-light);font-weight:600}
+.nav-item .ni{font-size:16px;flex-shrink:0}
+.nav-item .badge-nav{margin-right:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px}
 .sidebar-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,.08)}
-.logout-btn{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);padding:8px;border-radius:8px;cursor:pointer;font-size:12px}
-
-.content{margin-right:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;background:var(--cream);position:relative}
+.logout-btn{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);padding:8px;border-radius:8px;font-family:'Heebo',sans-serif;font-size:12px;cursor:pointer;transition:all .2s}
+.logout-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.content{margin-right:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
 .topbar{background:#fff;border-bottom:1px solid var(--g200);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--sh-sm)}
 .topbar-title{font-size:17px;font-weight:700;color:var(--navy)}
-.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-right{display:flex;align-items:center;gap:12px}
 .greeting{font-size:13px;color:var(--g400)}.greeting strong{color:var(--navy)}
-.topbar-avatar{width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
+.topbar-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-light));display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
+.role-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.role-manager{background:var(--gold-pale);color:#9a6f20}
+.role-engineer{background:#e0f5ed;color:var(--green)}
+.role-tenant{background:#e3f0ff;color:var(--blue)}
 
-/* NOTIFICATION BELL */
-.bell-btn {background:none; border:none; font-size:19px; cursor:pointer; position:relative; padding:4px;}
-.bell-badge {position:absolute; top:2px; right:2px; width:7px; height:7px; background:var(--red); border-radius:50%; display:none;}
+/* BUTTONS */
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy);border:none;padding:8px 18px;border-radius:8px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 10px rgba(201,168,76,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(201,168,76,.35)}
+.btn-ghost{background:none;border:1.5px solid var(--g200);color:var(--g600);padding:7px 16px;border-radius:8px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:var(--navy);color:var(--navy)}
+.btn-danger{background:none;border:1.5px solid #fde8e6;color:var(--red);padding:7px 16px;border-radius:8px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-danger:hover{background:#fde8e6}
 
-/* DASHBOARD BUILD */
-.page{padding:28px;display:none;animation:fadeIn 0.25s ease-in-out;width:100%}
-.page.active{display:block}
-.card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--sh-sm);overflow:hidden;margin-bottom:24px;width:100%}
+.page{padding:28px;display:none}.page.active{display:block}
+
+/* CARDS */
+.card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--sh-sm);overflow:hidden}
 .card-head{padding:14px 18px;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between}
 .card-head h3{font-size:14px;font-weight:700;color:var(--navy)}
 .card-body{padding:16px 18px}
 
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;width:100%}
-.kpi-card{background:#fff;border-radius:var(--r);padding:16px;border:1px solid var(--g200);box-shadow:var(--sh-sm)}
-.kpi-label{font-size:11px;color:var(--g400);margin-bottom:4px;font-weight:600}
-.kpi-val{font-size:24px;font-weight:800;color:var(--navy)}
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi-card{background:#fff;border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh-sm);border:1px solid var(--g200);position:relative}
+.kpi-icon{position:absolute;top:12px;left:12px;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.kpi-label{font-size:11px;color:var(--g400);font-weight:500;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;padding-top:2px}
+.kpi-val{font-size:24px;font-weight:800;color:var(--navy);line-height:1}
+.kpi-sub{font-size:11px;color:var(--g400);margin-top:4px}
+.ic-green{background:#e0f5ed;color:var(--green)}.ic-blue{background:#e3f0ff;color:var(--blue)}
+.ic-orange{background:#fff3e0;color:var(--orange)}.ic-red{background:#fde8e6;color:var(--red)}
 
-.property-dashboard-grid {display:grid; grid-template-columns: repeat(2, 1fr); gap:20px; margin-top:12px; width:100%;}
-.property-card-hub {background:#fff; border:1px solid var(--g200); border-radius:var(--r); padding:18px; box-shadow:var(--sh-sm); display:flex; flex-direction:column; justify-content:space-between; min-height:150px;}
-.property-hub-title {font-size:15px; font-weight:800; color:var(--navy); border-bottom:1px solid var(--g100); padding-bottom:8px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;}
+/* TICKETS TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{background:var(--g100);padding:9px 14px;font-size:11px;font-weight:600;color:var(--g400);text-align:right;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+.tbl tbody tr{border-bottom:1px solid var(--g200);transition:background .15s;cursor:pointer}
+.tbl tbody tr:last-child{border-bottom:none}
+.tbl tbody tr:hover{background:var(--g100)}
+.tbl tbody td{padding:12px 14px;font-size:13px;color:var(--g800);vertical-align:middle}
+.tid{font-family:monospace;color:var(--g400);font-size:11px}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.b-open{background:#fff3e0;color:var(--orange)}.b-prog{background:#e3f0ff;color:var(--blue)}
+.b-done{background:#e0f5ed;color:var(--green)}.b-urg{background:#fde8e6;color:var(--red)}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{padding:5px 13px;border-radius:20px;border:1px solid var(--g200);background:#fff;font-family:'Heebo',sans-serif;font-size:12px;color:var(--g600);cursor:pointer;transition:all .15s}
+.pill:hover,.pill.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.empty{text-align:center;padding:40px 20px;color:var(--g400)}
+.empty-icon{font-size:40px;margin-bottom:8px;opacity:.35}
+.empty-txt{font-size:14px;font-weight:500;color:var(--g600)}
 
-/* FILTER CHIPS STYLE (NEW) */
-.filter-pills {display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
-.filter-pill {background:#fff; border:1.5px solid var(--g200); padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; color:var(--g600); cursor:pointer; transition:all 0.15s; font-family:'Heebo';}
-.filter-pill:hover {border-color:var(--navy); color:var(--navy);}
-.filter-pill.active {background:var(--navy); color:#fff; border-color:var(--navy);}
-
-/* AI HUB & UPLOAD */
-.ai-scanner-zone {background:linear-gradient(135deg, #ffffff, #fbf9f3); border:1.5px dashed var(--gold); border-radius:var(--r); padding:20px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:20px;}
-.ai-scanner-left {display:flex; align-items:center; gap:14px;}
-.ai-stars-icon {font-size:26px; background:var(--gold-pale); width:50px; height:50px; border-radius:12px; display:flex; align-items:center; justify-content:center;}
-
-/* USERS & GRIDS */
-.users-list-grid {display:grid; grid-template-columns: repeat(2, 1fr); gap:16px; width:100%; margin-top:10px;}
-.ucard{background:#fff; border-radius:var(--r); border:1px solid var(--g200); padding:18px 20px; box-shadow:var(--sh-sm); display:flex; align-items:center; gap:16px; transition:box-shadow .2s; width:100%;}
-.uav{width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; flex-shrink:0;}
-.uprops{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
-.pchip{background:var(--g100); border-radius:20px; padding:3px 10px; font-size:11px; color:var(--g600); font-weight:600;}
-
-/* MAINTENANCE ROWS */
-.dash-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;width:100%;align-items:start;}
-.board-section-container {display:flex; flex-direction:column; gap:14px; margin-bottom:20px;}
-.board-sub-title {font-size:13px; font-weight:800; color:var(--navy); padding:4px 0; border-bottom:2px solid var(--g200); margin-bottom:4px;}
-
-.preventive-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r);padding:16px 18px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--sh-sm);margin-bottom:12px; border-right:4px solid var(--g300); width:100%}
-.preventive-card.upcoming {border-right-color: var(--orange); background: #fffcf5;}
-.preventive-card.overdue {border-right-color: var(--red); background: #fdf8f8;}
-.preventive-card.tenant-alert {border-right-color: var(--red); background: #fff9f9;}
-.preventive-card.completed-task {border-right-color: var(--green); background: #f6fbf9; opacity: 0.85;}
-
-.maint-record-card {padding:12px 16px; border-bottom:1px solid var(--g100); cursor:pointer;}
-.maint-record-card:hover {background:var(--g100);}
-
-/* BUTTON BANK GRID */
-.topic-bank-grid {display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-bottom:12px;}
-.bank-btn {background:var(--g100); border:1px solid var(--g200); padding:8px; font-size:12px; border-radius:6px; cursor:pointer; font-family:'Heebo'; font-weight:500; text-align:center; transition:all 0.15s;}
-.bank-btn:hover {background:var(--gold-pale); border-color:var(--gold);}
-
-/* FORMS & CATEGORIES */
-.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0 20px 0;width:100%}
-.cat-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;border:2px solid var(--g200);border-radius:var(--r);background:#fff;cursor:pointer;font-size:14px;font-weight:700;color:var(--g800)}
-.cat-btn.selected{border-color:var(--navy);background:var(--navy);color:#fff}
-.cat-btn .ci{font-size:32px;margin-bottom:2px}
-
-.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy);border:none;padding:10px 20px;border-radius:8px;font-weight:700;cursor:pointer;font-family:'Heebo';display:inline-flex;align-items:center;gap:6px;}
-.btn-ghost{background:none;border:1.5px solid var(--g200);color:var(--g600);padding:8px 18px;border-radius:8px;cursor:pointer;font-family:'Heebo'}
-.btn-danger{background:none;border:1.5px solid #fde8e6;color:var(--red);padding:8px 18px;border-radius:8px;cursor:pointer;font-family:'Heebo'}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%}
-.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;width:100%}
-.fg label {font-size:13px;font-weight:600;color:var(--navy)}
-.fg input,.fg select,.fg textarea{font-family:'Heebo';font-size:14px;padding:10px 14px;border:1.5px solid var(--g200);border-radius:var(--r-sm);outline:none;width:100%;background:#fff;color:var(--g800)}
+/* FORMS */
+.form-wrap{background:#fff;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--sh-sm);overflow:hidden;max-width:680px;margin:0 auto}
+.form-hdr{background:linear-gradient(135deg,var(--navy),var(--navy-light));padding:22px 28px;color:#fff}
+.form-hdr h2{font-size:18px;font-weight:700;margin-bottom:3px}
+.form-hdr p{font-size:12px;color:rgba(255,255,255,.6)}
+.form-bdy{padding:28px}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:18px}
+.fg label{font-size:13px;font-weight:600;color:var(--navy)}
+.fg label .req{color:var(--red);margin-right:2px}
+.fg input,.fg select,.fg textarea{font-family:'Heebo',sans-serif;font-size:14px;padding:10px 13px;border:1.5px solid var(--g200);border-radius:var(--r-sm);color:var(--g800);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;direction:inherit;width:100%}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.fg textarea{resize:vertical;min-height:80px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .full{grid-column:1/-1}
-.file-upload-zone{border:2px dashed var(--g200);border-radius:var(--r-sm);padding:16px;text-align:center;cursor:pointer;background:var(--g100);display:block;width:100%}
-.file-chip{background:#fff;border:1px solid var(--g200);border-radius:20px;padding:4px 10px;font-size:11px;display:inline-flex;align-items:center;gap:5px;margin:2px}
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:12px 22px;border-radius:12px;font-size:13px;transition:transform .4s;z-index:999}
+
+/* ══ TENANT PORTAL ══ */
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.cat-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px 10px;border:2px solid var(--g200);border-radius:var(--r);background:#fff;cursor:pointer;transition:all .2s;font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;color:var(--g800)}
+.cat-btn:hover{border-color:var(--gold);background:var(--gold-pale);transform:translateY(-2px);box-shadow:var(--sh-sm)}
+.cat-btn.selected{border-color:var(--navy);background:var(--navy);color:#fff}
+.cat-btn .ci{font-size:28px}
+.cat-btn span{font-size:12px}
+
+/* ══ MAINTENANCE / ENGINEER ══ */
+.maint-bank-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.maint-item{border:1.5px solid var(--g200);border-radius:10px;padding:14px 14px;display:flex;align-items:flex-start;gap:10px;background:#fff;cursor:pointer;transition:all .15s;position:relative}
+.maint-item:hover{border-color:var(--gold);background:var(--gold-pale)}
+.maint-item.checked{border-color:var(--navy);background:#eef2f9}
+.maint-item input[type=checkbox]{width:17px;height:17px;flex-shrink:0;margin-top:2px;accent-color:var(--navy);cursor:pointer}
+.maint-item-label{font-size:13px;font-weight:600;color:var(--navy);line-height:1.3}
+.maint-item-sub{font-size:11px;color:var(--g400);margin-top:2px}
+.maint-item-icon{font-size:20px;flex-shrink:0}
+.add-topic-wrap{margin-bottom:20px;display:flex;gap:8px}
+.add-topic-wrap input{flex:1;font-family:'Heebo',sans-serif;font-size:13px;padding:9px 12px;border:1.5px solid var(--g200);border-radius:var(--r-sm);outline:none;transition:border-color .2s}
+.add-topic-wrap input:focus{border-color:var(--gold)}
+.selected-items-wrap{background:var(--g100);border-radius:var(--r);padding:16px;margin-bottom:20px;display:none}
+.selected-items-wrap.show{display:block}
+.selected-items-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px}
+.sel-tag{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--g200);border-radius:20px;padding:4px 10px;font-size:12px;color:var(--navy);margin:3px}
+.sel-tag button{background:none;border:none;cursor:pointer;color:var(--g400);font-size:11px;padding:0;line-height:1}
+.sel-tag button:hover{color:var(--red)}
+.file-upload-zone{border:2px dashed var(--g200);border-radius:var(--r-sm);padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--g100);display:block;margin-bottom:8px}
+.file-upload-zone:hover{border-color:var(--gold);background:var(--gold-pale)}
+.uploaded-files{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.file-chip{background:#fff;border:1px solid var(--g200);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--navy);display:flex;align-items:center;gap:5px}
+.file-chip button{background:none;border:none;cursor:pointer;color:var(--g400);font-size:11px}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(15,31,61,.55);backdrop-filter:blur(5px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.modal-ov.open{display:flex}
+.modal{background:#fff;border-radius:var(--r);width:100%;max-width:580px;box-shadow:var(--sh-lg);overflow:hidden;animation:slideUp .28s ease}
+.modal-hdr{background:var(--navy);color:#fff;padding:18px 22px;display:flex;justify-content:space-between;align-items:center}
+.modal-hdr h3{font-size:15px;font-weight:700}
+.modal-close{background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
+.modal-bdy{padding:22px;max-height:80vh;overflow-y:auto}
+.detail-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--g200);font-size:13px}
+.detail-row:last-child{border-bottom:none}
+.dk{color:var(--g400);font-weight:500;flex-shrink:0}
+.dv{color:var(--navy);font-weight:600;max-width:62%;word-break:break-word}
+.steps{display:flex;align-items:flex-start;margin:14px 0 18px}
+.step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.step-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid var(--g200);background:#fff;color:var(--g400)}
+.step.done .step-dot{background:var(--green);border-color:var(--green);color:#fff}
+.step.cur .step-dot{background:var(--navy);border-color:var(--navy);color:#fff}
+.step-line{flex:1;height:2px;background:var(--g200);align-self:center;margin:0 3px;min-width:16px}
+.step-line.done{background:var(--green)}
+.step-lbl{font-size:10px;color:var(--g400);text-align:center}
+.tl{margin-top:14px;padding-top:14px;border-top:1px solid var(--g200)}
+.tl-ttl{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px}
+.tl-item{display:flex;gap:10px;margin-bottom:12px}
+.tl-dot{width:9px;height:9px;border-radius:50%;background:var(--gold);margin-top:4px;flex-shrink:0}
+.tl-action{font-weight:600;color:var(--navy);font-size:12px}
+.tl-time{color:var(--g400);font-size:11px;margin-top:2px}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:13px 22px;border-radius:12px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;box-shadow:var(--sh-lg);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:999}
 .toast.show{transform:translateX(-50%) translateY(0)}
-.sec-title{font-size:16px;font-weight:800;color:var(--navy);margin:20px 0 14px 0;display:flex;align-items:center;gap:10px}
-.empty{text-align:center;padding:32px;color:var(--g400);font-size:14px}
-@media(max-width:900px){.dash-row, .kpi-grid, .users-list-grid, .property-dashboard-grid, .topic-bank-grid {grid-template-columns: 1fr;}}
-</style>
 
-<!-- FIREBASE CONNECTIONS -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-  import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+/* NOTIF */
+.notif-bell{position:relative;cursor:pointer}
+.notif-dot{position:absolute;top:-2px;left:-2px;width:9px;height:9px;background:var(--red);border-radius:50%;border:2px solid #fff;display:none}
+.notif-dot.show{display:block}
+.notif-panel{position:absolute;top:44px;left:0;background:#fff;border:1px solid var(--g200);border-radius:var(--r);box-shadow:var(--sh-lg);width:320px;z-index:300;display:none;overflow:hidden}
+.notif-panel.open{display:block}
+.notif-panel-hdr{padding:12px 16px;border-bottom:1px solid var(--g200);font-size:13px;font-weight:700;color:var(--navy);display:flex;justify-content:space-between;align-items:center}
+.notif-item{padding:12px 16px;border-bottom:1px solid var(--g200);cursor:pointer;transition:background .15s}
+.notif-item:last-child{border-bottom:none}
+.notif-item:hover{background:var(--g100)}
+.notif-item.unread{background:#fffbf0}
+.notif-item-title{font-size:13px;font-weight:600;color:var(--navy)}
+.notif-item-sub{font-size:11px;color:var(--g400);margin-top:2px}
+.notif-clear{padding:10px 16px;text-align:center;font-size:12px;color:var(--blue);cursor:pointer;font-weight:600}
+.notif-clear:hover{background:var(--g100)}
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBJ1dbRc0_4UHUdExIxEocTJpRaDcZO2Ao",
-    authDomain: "zilbermintz-1938c.firebaseapp.com",
-    projectId: "zilbermintz-1938c",
-    storageBucket: "zilbermintz-1938c.firebasestorage.app",
-    messagingSenderId: "350076498890",
-    appId: "1:350076498890:web:2fcfd143d10f6572c55533",
-    measurementId: "G-7VWJQECYBC"
-  };
+/* MAINT RECORD CARDS */
+.maint-record-card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:16px 18px;box-shadow:var(--sh-sm);margin-bottom:12px;cursor:pointer;transition:all .2s}
+.maint-record-card:hover{box-shadow:var(--sh-md);transform:translateY(-1px)}
+.maint-record-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.maint-record-title{font-size:14px;font-weight:700;color:var(--navy)}
+.maint-record-meta{font-size:12px;color:var(--g400);margin-top:3px}
+.maint-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.maint-tag{background:var(--g100);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--g600);font-weight:500}
+.cost-badge{background:var(--gold-pale);color:#9a6f20;font-weight:700;font-size:12px;padding:3px 10px;border-radius:20px}
+.dash-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.sec-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--g200)}
+.prop-select-wrap{margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.prop-select-wrap label{font-size:13px;font-weight:600;color:var(--navy);white-space:nowrap}
+.prop-select-wrap select{font-family:'Heebo',sans-serif;font-size:13px;padding:8px 12px;border:1.5px solid var(--g200);border-radius:var(--r-sm);outline:none;flex:1;max-width:260px;background:#fff;color:var(--g800)}
+.prop-select-wrap select:focus{border-color:var(--gold)}
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+/* USER PAGE */
+.ucard{background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:16px 20px;box-shadow:var(--sh-sm);display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;transition:box-shadow .2s}
+.ucard:hover{box-shadow:var(--sh-md)}
+.uav{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0}
+.uname{font-size:15px;font-weight:700;color:var(--navy)}
+.urole{font-size:12px;color:var(--g400);margin-top:2px}
+.uprops{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.pchip{background:var(--g100);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--g600);font-weight:500}
+/* LOGIN USER BUTTONS */
+.lbtn{border:1.5px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 18px;cursor:pointer;font-family:'Heebo',sans-serif;background:rgba(255,255,255,.05);transition:all .2s;display:flex;align-items:center;gap:14px;width:100%;text-align:right}
+.lbtn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);transform:translateY(-1px)}
+.lbtn.lmgr{background:rgba(201,168,76,.1);border-color:rgba(201,168,76,.3)}
+.lbtn.lmgr:hover{background:rgba(201,168,76,.18)}
+.lav{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+.lav-m{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy)}
+.lav-e{background:rgba(26,127,90,.25);color:#4fc99a}
+.lav-t{background:rgba(26,95,159,.25);color:#6db3f2}
+/* PROP CHECKBOXES */
+.pcheck-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1.5px solid var(--g200);border-radius:8px;background:#fff;cursor:pointer;transition:all .15s;font-size:13px;color:var(--navy)}
+.pcheck-item:hover{border-color:var(--gold);background:var(--gold-pale)}
+.pcheck-item input{accent-color:var(--navy);width:15px;height:15px;cursor:pointer}
+/* PDF */
+.pdf-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pdf-field-item{display:flex;flex-direction:column;gap:4px}
+.pdf-field-item label{font-size:12px;font-weight:600;color:var(--navy)}
+.pdf-field-item input,.pdf-field-item select{font-family:'Heebo',sans-serif;font-size:13px;padding:8px 10px;border:1.5px solid var(--g200);border-radius:var(--r-sm);width:100%;background:#fff;color:var(--g800);outline:none;transition:border-color .2s}
+.pdf-field-item input:focus,.pdf-field-item select:focus{border-color:var(--gold)}
 
-  window.cloudSave = async (col, id, data) => { await setDoc(doc(db, col, id), data); };
-  window.cloudDelete = async (col, id) => { await deleteDoc(doc(db, col, id)); };
 
-  async function seedDatabaseIfEmpty() {
-      const snapshot = await getDocs(collection(db, "preventive"));
-      if(snapshot.empty) {
-          const props = ['מודיעין 5 בלוד','שלם 3 רמת גן','ההשכלה 5 תל אביב','כסלו 60 מודיעין','מע"ר מודיעין','זילברמינץ סנטר צור יצחק','אור יהודה','סגולה'];
-          const cats = ['חשמל','אינסטלציה','מיזוג','מעלית','בטיחות','כללי'];
-          const names = ['ישראל ישראלי', 'משה כהן', 'דוד לוי', 'רוני לוין', 'שירה אברהם'];
+/* ── FILE ATTACHMENT SYSTEM ── */
+.file-upload-zone{border:2px dashed var(--g200);border-radius:var(--r-sm);padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--g100);display:block;margin-bottom:10px;position:relative}
+.file-upload-zone:hover,.file-upload-zone.drag-over{border-color:var(--gold);background:var(--gold-pale)}
+.file-upload-zone .fuz-icon{font-size:28px;margin-bottom:6px}
+.file-upload-zone .fuz-txt{font-size:13px;font-weight:600;color:var(--navy)}
+.file-upload-zone .fuz-sub{font-size:11px;color:var(--g400);margin-top:3px}
 
-          for(let i=1; i<=30; i++) {
-              let p = props[i % props.length];
-              let id = 'ZB-T' + (100 + i);
-              await setDoc(doc(db, "tickets", id), {
-                  id: id, name: names[i % names.length], phone: '050-12345' + i, property: p, unit: String(10 + i),
-                  cat: cats[i % cats.length], desc: 'פניית דייר סימולטיבית לבדיקת עומס ומערך סינון מספר ' + i,
-                  date: '2026-05-' + (i % 25 + 1), status: 'open'
-              });
-          }
-          const taskTemplates = ['ביקורת לוחות חשמל', 'טיפול מסנני מיזוג', 'בדיקת משאבות לחץ מים', 'טיפול רבעוני במעליות', 'ביקורת מערכות ספרינקלרים'];
-          for(let j=1; j<=20; j++) {
-              let p = props[j % props.length];
-              let id = 'p-seed-' + (100 + j);
-              await setDoc(doc(db, "preventive", id), {
-                  id: id, name: taskTemplates[j % taskTemplates.length] + ' (סבב ' + j + ')', cat: cats[j % cats.length],
-                  property: p, cost: j * 150, dueDate: '2026-05-' + (j % 25 + 1), period: 'monthly', fileNames: []
-              });
-          }
-      }
+.attachments-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:10px}
+.attach-card{border:1.5px solid var(--g200);border-radius:10px;overflow:hidden;background:#fff;position:relative;cursor:pointer;transition:all .2s}
+.attach-card:hover{box-shadow:var(--sh-md);transform:translateY(-1px)}
+.attach-img-preview{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.attach-pdf-thumb{width:100%;aspect-ratio:1;background:linear-gradient(135deg,#fde8e6,#fff8f8);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.attach-pdf-thumb .pdf-icon{font-size:32px}
+.attach-pdf-thumb .pdf-ext{font-size:10px;font-weight:700;color:var(--red);letter-spacing:1px}
+.attach-name{font-size:10px;font-weight:600;color:var(--navy);padding:5px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-top:1px solid var(--g200)}
+.attach-remove{position:absolute;top:4px;left:4px;width:20px;height:20px;background:rgba(0,0,0,.55);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;border:none;cursor:pointer;opacity:0;transition:opacity .15s}
+.attach-card:hover .attach-remove{opacity:1}
+
+.storage-bar-wrap{margin-top:8px;display:none}
+.storage-bar-wrap.show{display:block}
+.storage-bar-bg{background:var(--g200);border-radius:4px;height:5px;overflow:hidden}
+.storage-bar-fill{height:100%;border-radius:4px;transition:width .3s}
+.storage-bar-txt{font-size:10px;color:var(--g400);margin-top:3px;text-align:left}
+
+/* Viewer modal */
+#file-viewer-modal .modal{max-width:90vw;max-height:90vh}
+#file-viewer-modal .modal-bdy{display:flex;align-items:center;justify-content:center;padding:0;background:#111;min-height:200px}
+#file-viewer-img{max-width:100%;max-height:75vh;display:block}
+#file-viewer-embed{width:100%;height:75vh;border:none}
+
+/* BUDGET TABS */
+.budget-tabs{display:flex;gap:0;margin-bottom:20px;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--g200)}
+.budget-tab{flex:1;padding:10px 8px;text-align:center;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:var(--g600);border:none;font-family:'Heebo',sans-serif;transition:all .18s;border-right:1px solid var(--g200)}
+.budget-tab:first-child{border-right:none}
+.budget-tab.active{background:var(--navy);color:#fff}
+.budget-tab .bt-icon{font-size:16px;display:block;margin-bottom:3px}
+.budget-tab .bt-val{font-size:11px;color:inherit;opacity:.7;display:block;margin-top:2px}
+
+/* BUDGET TYPE BADGES */
+.btype-a{background:#fde8e6;color:var(--red);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.btype-b{background:#e3f0ff;color:var(--blue);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.btype-c{background:#e8f5e9;color:#1a7f3c;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+
+/* RECURRING EXPENSE ITEMS */
+.recurring-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--g200);font-size:13px}
+.recurring-item:last-child{border-bottom:none}
+.recurring-item:hover{background:var(--g100)}
+.ri-name{font-weight:600;color:var(--navy)}
+.ri-meta{font-size:11px;color:var(--g400);margin-top:1px}
+
+/* PROPERTY BUDGET CARD */
+.prop-budget-card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--sh-sm);overflow:hidden;margin-bottom:20px}
+.pbc-header{padding:14px 18px;background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;display:flex;justify-content:space-between;align-items:center}
+.pbc-title{font-size:15px;font-weight:700}
+.pbc-total{font-size:18px;font-weight:800;color:var(--gold-light)}
+
+/* TENANT ACCESS CODE */
+.access-code-badge{display:inline-flex;align-items:center;gap:8px;background:var(--g100);border:1.5px solid var(--g200);border-radius:10px;padding:8px 14px;font-size:14px;font-weight:700;color:var(--navy);letter-spacing:3px;font-family:monospace}
+
+/* EXPORT PANEL */
+.export-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--g200)}
+.export-row:last-child{border-bottom:none}
+.export-label{font-size:14px;font-weight:600;color:var(--navy)}
+.export-sub{font-size:11px;color:var(--g400);margin-top:2px}
+
+/* EDIT HIGHLIGHT */
+.edit-btn{background:none;border:1px solid var(--g200);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--g600);cursor:pointer;font-family:'Heebo',sans-serif;transition:all .15s}
+.edit-btn:hover{border-color:var(--gold);color:var(--navy)}
+
+/* ══════════════════════════════════════
+   HAMBURGER BUTTON (mobile only)
+══════════════════════════════════════ */
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;flex-direction:column;gap:5px;flex-shrink:0}
+.hamburger span{display:block;width:22px;height:2px;background:var(--navy);border-radius:2px;transition:all .25s}
+
+/* Overlay that closes sidebar on mobile */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(15,31,61,.45);z-index:150;backdrop-filter:blur(2px)}
+.sidebar-overlay.show{display:block}
+
+/* ══ TABLET (≤ 1024px) ══ */
+@media(max-width:1024px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .dash-row{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .pdf-field-grid{grid-template-columns:1fr}
+}
+
+/* ══ MOBILE (≤ 768px) ══ */
+@media(max-width:768px){
+  /* Sidebar slides in/out — hidden by default */
+  .sidebar{
+    transform:translateX(100%);   /* RTL: sidebar is on the right */
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    z-index:200;
+    width:240px;
   }
-  seedDatabaseIfEmpty();
-  
-  onSnapshot(collection(db, "tickets"), (snapshot) => { window.tickets = snapshot.docs.map(doc => doc.data()); window.checkUnreadAlerts(); window.renderPageFull(window.currentPage); });
-  onSnapshot(collection(db, "maintenance"), (snapshot) => { window.maintRecords = snapshot.docs.map(doc => doc.data()); window.renderPageFull(window.currentPage); });
-  onSnapshot(collection(db, "preventive"), (snapshot) => { window.preventiveTasks = snapshot.docs.map(doc => doc.data()); window.renderPageFull(window.currentPage); });
-  onSnapshot(collection(db, "users_config"), (snapshot) => {
-      if(!snapshot.empty) {
-          window.users = snapshot.docs.map(doc => doc.data());
-          window.renderLoginScreen();
-          if(window.currentPage === 'users') window.renderUsersPage();
-      }
-  });
-</script>
+  .sidebar.open{transform:translateX(0)}
+
+  /* Content fills full width */
+  .content{margin-right:0 !important}
+
+  /* Topbar adjustments */
+  .topbar{padding:0 16px}
+  .greeting{display:none}          /* hide "היי, Name" on tiny screens */
+  .hamburger{display:flex}
+
+  /* Pages get less padding */
+  .page{padding:16px}
+
+  /* KPI stack */
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:10px}
+
+  /* Category buttons 2 per row */
+  .cat-grid{grid-template-columns:repeat(2,1fr)}
+
+  /* Maint bank 1 column */
+  .maint-bank-grid{grid-template-columns:1fr}
+
+  /* All grids collapse */
+  .dash-row{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .pdf-field-grid{grid-template-columns:1fr}
+
+  /* Modals full-screen on mobile */
+  .modal{
+    max-width:100% !important;
+    width:100%;
+    border-radius:var(--r) var(--r) 0 0;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    margin:0;
+  }
+  .modal-ov{align-items:flex-end;padding:0}
+  .modal-bdy{max-height:75vh}
+
+  /* Topbar title shorter */
+  .topbar-title{font-size:15px}
+
+  /* User cards stack */
+  .ucard{flex-wrap:wrap}
+
+  /* Login card padding */
+  .login-card{padding:0 8px}
+  .login-logo{width:56px;height:56px;font-size:26px}
+  .login-title{font-size:22px}
+  .login-sub{margin-bottom:28px;font-size:13px}
+
+  /* Prop check grid single col */
+  #prop-cg,#prop-check-grid,.pgrid2{grid-template-columns:1fr !important}
+
+  /* Notif panel width */
+  .notif-panel{width:calc(100vw - 32px);left:-8px}
+}
+
+/* ══ VERY SMALL (≤ 380px) ══ */
+@media(max-width:380px){
+  .kpi-grid{grid-template-columns:1fr}
+  .cat-grid{grid-template-columns:repeat(2,1fr)}
+  .topbar-right{gap:8px}
+}
+</style>
 </head>
 <body>
 
-<!-- LOGIN HUB -->
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">Z</div>
     <div class="login-title">זילברמינץ</div>
     <div class="login-sub">מערכת ניהול נכסים</div>
-    <div id="main-login-hub" class="login-split-container">
-        <button class="lbtn lmgr" onclick="openStaffSubLogin()">
-            <div class="lav" style="background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--navy)">⚙️</div>
-            <div class="lbtn-text-wrap"><div class="lbtn-title-txt">כניסת מנהלים וצוות תחזוקה</div><div class="lbtn-desc-txt">דשבורד נכסים, פיקוח עלויות ולוחות משימות שטח</div></div>
-            <span class="lbtn-arrow">‹</span>
-        </button>
-        <button class="lbtn" onclick="loginAsUser('u3')">
-            <div class="lav" style="background:rgba(26,95,159,.25); color:#6db3f2">🏠</div>
-            <div class="lbtn-text-wrap"><div class="lbtn-title-txt">פורטל דיירים</div><div class="lbtn-desc-txt">פתיחת קריאות שירות שוטפות ודיווח על תקלות בבניין</div></div>
-            <span class="lbtn-arrow">‹</span>
-        </button>
-    </div>
-    <div id="staff-login-hub" class="sub-login-grid">
-        <button class="back-login-btn" onclick="backToMainLoginHub()">🔀 חזור למסך הראשי</button>
-        <div id="staff-users-container" class="login-split-container"></div>
-    </div>
+    <div id="login-users-grid" style="display:grid;gap:10px;max-width:440px;margin:0 auto"></div>
     <div class="login-footer">© זילברמינץ ניהול נכסים</div>
   </div>
 </div>
 
 <div class="layout">
+<!-- Mobile sidebar overlay -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
 <nav class="sidebar" id="sidebar">
-  <div class="sidebar-logo"><div class="logo-icon">Z</div><div><div class="logo-text">זילברמינץ</div></div></div>
+  <div class="sidebar-logo">
+    <div class="logo-icon">Z</div>
+    <div><div class="logo-text">זילברמינץ</div><div class="logo-sub">ניהול נכסים</div></div>
+  </div>
+
   <div id="nav-manager" style="display:none">
-    <div class="nav-section">ניהול ומעקב</div>
-    <button class="nav-item" onclick="showPage('dashboard',this)"><span class="ni">📊</span>דשבורד נכסים</button>
-    <button class="nav-item" onclick="showPage('maintenance',this)"><span class="ni">🏗️</span>תחזוקה ומשימות</button>
-    <div class="nav-section">הגדרות מערכת</div>
+    <div class="nav-section">ניהול</div>
+    <button class="nav-item" onclick="showPage('dashboard',this)"><span class="ni">📊</span>דשבורד</button>
+    <button class="nav-item" onclick="showPage('tickets',this)"><span class="ni">🔧</span>קריאות שירות<span class="badge-nav" id="open-badge">0</span></button>
+    <button class="nav-item" onclick="showPage('maintenance',this)"><span class="ni">🏗️</span>תחזוקה</button>
+    <button class="nav-item" onclick="showPage('pdfpage',this)"><span class="ni">📄</span>ניתוח מסמכים AI</button>
+    <button class="nav-item" onclick="showPage('budget',this)"><span class="ni">💰</span>תקציב נכסים</button>
+    <div class="nav-section">הגדרות</div>
     <button class="nav-item" onclick="showPage('users',this)"><span class="ni">👥</span>ניהול משתמשים</button>
   </div>
+
   <div id="nav-engineer" style="display:none">
     <div class="nav-section">אב בית</div>
-    <button class="nav-item" onclick="showPage('maintenance',this)"><span class="ni">🏗️</span>לוח משימות שטח</button>
+    <button class="nav-item" onclick="showPage('maintenance',this)"><span class="ni">🏗️</span>תחזוקה ושבר</button>
+    <button class="nav-item" onclick="showPage('tickets',this)"><span class="ni">🔧</span>קריאות דיירים<span class="badge-nav" id="open-badge2">0</span></button>
+    <button class="nav-item" onclick="showPage('pdfpage',this)"><span class="ni">📄</span>ניתוח חשבוניות AI</button>
   </div>
+
   <div id="nav-tenant" style="display:none">
     <div class="nav-section">דייר</div>
     <button class="nav-item" onclick="showPage('tenant',this)"><span class="ni">📝</span>פתיחת קריאה</button>
+    <button class="nav-item" onclick="showPage('mytickets',this)"><span class="ni">📋</span>הקריאות שלי</button>
   </div>
-  <div class="sidebar-footer"><button class="logout-btn" onclick="doLogout()">🚪 התנתק</button></div>
+
+  <div class="sidebar-footer">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div id="sb-av" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;background:rgba(201,168,76,.2);color:var(--gold)"></div>
+      <div><div style="font-size:12px;font-weight:600;color:#fff;line-height:1.2" id="sb-name"></div><div style="font-size:10px;color:rgba(255,255,255,.4)" id="sb-role-txt"></div></div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">🚪 התנתק</button>
+  </div>
 </nav>
 
 <div class="content">
 <div class="topbar">
-  <div class="topbar-title" id="topbar-title">דשבורד נכסים</div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="hamburger" id="hamburger-btn" onclick="toggleSidebar()" aria-label="תפריט">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="topbar-title" id="topbar-title">דשבורד</div>
+  </div>
   <div class="topbar-right">
-    <button class="bell-btn" onclick="clearAlerts()"><span class="bell-icon">🔔</span><span class="bell-badge" id="bell-badge"></span></button>
     <div class="greeting">היי, <strong id="user-name">—</strong></div>
     <span class="role-badge" id="role-badge"></span>
+    <div class="notif-bell" id="notif-bell-wrap">
+      <button style="background:none;border:none;cursor:pointer;font-size:20px;position:relative;padding:4px" onclick="toggleNotifPanel()">🔔<div class="notif-dot" id="notif-dot"></div></button>
+      <div class="notif-panel" id="notif-panel">
+        <div class="notif-panel-hdr"><span>התראות</span><span id="notif-count" style="background:var(--red);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px"></span></div>
+        <div id="notif-list"><div style="padding:24px;text-align:center;color:var(--g400);font-size:13px">אין התראות</div></div>
+        <div class="notif-clear" onclick="clearNotifs()">נקה הכל</div>
+      </div>
+    </div>
     <div class="topbar-avatar" id="topbar-av">?</div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
+<!-- ══ DASHBOARD (manager) ══ -->
 <div class="page" id="page-dashboard">
-  <div class="ai-scanner-zone" id="ai-mgr-zone" style="display:none;">
-      <div class="ai-scanner-left">
-          <div class="ai-stars-icon">✨</div>
-          <div>
-              <div style="font-size:15px; font-weight:800; color:var(--navy)">ניתוח חשבוניות ודוחות ספקים (AI)</div>
-              <div style="font-size:12px; color:var(--g600)">גרור דוח בדיקה או חשבונית PDF - המערכת תחלץ עלויות ותסנכרן אוטומטית לענן</div>
-          </div>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-icon ic-blue">🏠</div><div class="kpi-label">סה"כ נכסים</div><div class="kpi-val">8</div><div class="kpi-sub">פעילים</div></div>
+    <div class="kpi-card"><div class="kpi-icon ic-red">🚨</div><div class="kpi-label">קריאות פתוחות</div><div class="kpi-val" id="kpi-open">0</div><div class="kpi-sub">דיירים</div></div>
+    <div class="kpi-card"><div class="kpi-icon ic-orange">🏗️</div><div class="kpi-label">משימות תחזוקה</div><div class="kpi-val" id="kpi-maint">0</div><div class="kpi-sub">השנה</div></div>
+    <div class="kpi-card"><div class="kpi-icon ic-green">💰</div><div class="kpi-label">עלות תחזוקה</div><div class="kpi-val" id="kpi-cost">₪0</div><div class="kpi-sub">מצטבר</div></div>
+  </div>
+  <div class="dash-row">
+    <div class="card">
+      <div class="card-head"><h3>🔧 קריאות אחרונות</h3><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showPage('tickets',document.querySelector('[onclick*=tickets]'))">הצג הכל</button></div>
+      <div id="dash-tickets-list"><div class="empty"><div class="empty-icon">📭</div><div class="empty-txt">אין קריאות</div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>🏗️ תחזוקה אחרונה</h3><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showPage('maintenance',document.querySelector('[onclick*=maintenance]'))">הצג הכל</button></div>
+      <div id="dash-maint-list"><div class="empty"><div class="empty-icon">🏗️</div><div class="empty-txt">אין רשומות</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TICKETS (manager view) ══ -->
+<div class="page" id="page-tickets">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+    <div class="pills" id="ticket-pills">
+      <button class="pill active" onclick="filterTickets('all',this)">הכל</button>
+      <button class="pill" onclick="filterTickets('open',this)">פתוח</button>
+      <button class="pill" onclick="filterTickets('inprogress',this)">בטיפול</button>
+      <button class="pill" onclick="filterTickets('done',this)">טופל</button>
+    </div>
+  </div>
+  <div class="card">
+    <table class="tbl">
+      <thead><tr><th>מזהה</th><th>קטגוריה</th><th>נכס</th><th>יחידה</th><th>פירוט</th><th>תאריך</th><th>סטטוס</th></tr></thead>
+      <tbody id="tickets-tbody"></tbody>
+    </table>
+    <div class="empty" id="tickets-empty" style="display:none"><div class="empty-icon">📭</div><div class="empty-txt">אין קריאות</div></div>
+  </div>
+</div>
+
+<!-- ══ TENANT: open ticket ══ -->
+<div class="page" id="page-tenant">
+  <div class="form-wrap">
+    <div class="form-hdr"><h2>📝 פתיחת קריאת שירות</h2><p>בחר קטגוריה, הוסף פירוט ושלח — נחזור אליך בהקדם</p></div>
+    <div class="form-bdy">
+      <div class="form-grid" style="margin-bottom:20px">
+        <div class="fg"><label>שם מלא <span class="req">*</span></label><input type="text" id="t-name" placeholder="ישראל ישראלי"/></div>
+        <div class="fg"><label>טלפון <span class="req">*</span></label><input type="tel" id="t-phone" placeholder="050-0000000"/></div>
+        <div class="fg"><label>נכס <span class="req">*</span></label>
+          <select id="t-property">
+            <option value="">בחר נכס</option>
+            <option>מודיעין 5 בלוד</option><option>שלם 3 רמת גן</option><option>ההשכלה 5 תל אביב</option>
+            <option>כסלו 60 מודיעין</option><option>מע"ר מודיעין</option><option>זילברמינץ סנטר צור יצחק</option>
+            <option>אור יהודה</option><option>סגולה</option>
+          </select>
+        </div>
+        <div class="fg"><label>מספר דירה / משרד <span class="req">*</span></label><input type="text" id="t-unit" placeholder="12"/></div>
       </div>
-      <div>
-          <label class="btn-primary" style="cursor:pointer;" for="ai-pdf-uploader">
-              <input type="file" id="ai-pdf-uploader" accept=".pdf" style="display:none;" onchange="triggerAIScan(this)">
-              <span>📁 סרוק קובץ PDF</span>
-          </label>
+
+      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px">סוג הפנייה <span class="req">*</span></div>
+      <div class="cat-grid" id="cat-grid">
+        <button class="cat-btn" data-cat="ניקיון" onclick="selectCat(this)"><span class="ci">🧹</span><span>ניקיון</span></button>
+        <button class="cat-btn" data-cat="שבר" onclick="selectCat(this)"><span class="ci">🔨</span><span>שבר</span></button>
+        <button class="cat-btn" data-cat="מעלית" onclick="selectCat(this)"><span class="ci">🛗</span><span>מעלית</span></button>
+        <button class="cat-btn" data-cat="מיזוג אוויר" onclick="selectCat(this)"><span class="ci">❄️</span><span>מיזוג</span></button>
+        <button class="cat-btn" data-cat="חשמל" onclick="selectCat(this)"><span class="ci">⚡</span><span>חשמל</span></button>
+        <button class="cat-btn" data-cat="אינסטלציה" onclick="selectCat(this)"><span class="ci">🚰</span><span>אינסטלציה</span></button>
+        <button class="cat-btn" data-cat="נייר טואלט / חומרי ניקיון" onclick="selectCat(this)"><span class="ci">🧻</span><span>חומרי ניקיון</span></button>
+        <button class="cat-btn" data-cat="אחר" onclick="selectCat(this)"><span class="ci">📝</span><span>אחר</span></button>
       </div>
+
+      <div class="fg">
+        <label>פירוט הבעיה <span class="req">*</span></label>
+        <textarea id="t-desc" placeholder="תאר בפירוט מה קרה..."></textarea>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end">
+        <button class="btn-primary" onclick="submitTenantTicket()">🚀 שלח קריאה</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MY TICKETS (tenant) ══ -->
+<div class="page" id="page-mytickets">
+  <div class="sec-title">📋 הקריאות שלי</div>
+  <div class="pills" style="margin-bottom:16px" id="mytickets-pills">
+    <button class="pill active" onclick="filterMyTickets('all',this)">הכל</button>
+    <button class="pill" onclick="filterMyTickets('open',this)">פתוח</button>
+    <button class="pill" onclick="filterMyTickets('inprogress',this)">בטיפול</button>
+    <button class="pill" onclick="filterMyTickets('done',this)">טופל</button>
+  </div>
+  <div class="card">
+    <table class="tbl">
+      <thead><tr><th>מזהה</th><th>קטגוריה</th><th>נכס</th><th>פירוט</th><th>תאריך</th><th>סטטוס</th></tr></thead>
+      <tbody id="mytickets-tbody"></tbody>
+    </table>
+    <div class="empty" id="mytickets-empty" style="display:none"><div class="empty-icon">📭</div><div class="empty-txt">אין קריאות עדיין</div></div>
+  </div>
+</div>
+
+<!-- ══ MAINTENANCE / ENGINEER PAGE ══ -->
+<div class="page" id="page-maintenance">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div style="font-size:15px;font-weight:700;color:var(--navy)">🏗️ תחזוקה ושבר</div>
+    <button class="btn-primary" onclick="openMaintForm()">+ רשום טיפול</button>
   </div>
 
-  <div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-label">סה"כ עלות מנוהלת</div><div class="kpi-val" id="kpi-cost">₪0</div></div>
-    <div class="kpi-card"><div class="kpi-label">קריאות דיירים פעילות</div><div class="kpi-val" id="kpi-tickets-count">0</div></div>
-    <div class="kpi-card"><div class="kpi-label">משימות מבוצעות היסטוריה</div><div class="kpi-val" id="kpi-maint">0</div></div>
-    <div class="kpi-card"><div class="kpi-label">משימות פתוחות בלוח</div><div class="kpi-val" id="kpi-pending-tasks">0</div></div>
+  <!-- summary cards -->
+  <div class="kpi-grid" style="margin-bottom:24px">
+    <div class="kpi-card"><div class="kpi-icon ic-orange">📋</div><div class="kpi-label">רשומות השנה</div><div class="kpi-val" id="m-kpi-count">0</div></div>
+    <div class="kpi-card"><div class="kpi-icon ic-green">💰</div><div class="kpi-label">עלות מצטברת</div><div class="kpi-val" id="m-kpi-cost">₪0</div></div>
+    <div class="kpi-card"><div class="kpi-icon ic-blue">🏠</div><div class="kpi-label">נכסים בטיפול</div><div class="kpi-val" id="m-kpi-props">0</div></div>
+    <div class="kpi-card"><div class="kpi-icon ic-red">📎</div><div class="kpi-label">קבצים מצורפים</div><div class="kpi-val" id="m-kpi-files">0</div></div>
   </div>
-  <div class="sec-title">🏠 ריכוז סטטוס ותקציבים מפולח לפי נכסים</div>
-  <div class="property-dashboard-grid" id="property-dashboard-nodes"></div>
+
+  <!-- filter by property -->
+  <div class="prop-select-wrap">
+    <label>סנן לפי נכס:</label>
+    <select id="maint-filter-prop" onchange="renderMaintRecords()">
+      <option value="">כל הנכסים</option>
+      <option>מודיעין 5 בלוד</option><option>שלם 3 רמת גן</option><option>ההשכלה 5 תל אביב</option>
+      <option>כסלו 60 מודיעין</option><option>מע"ר מודיעין</option><option>זילברמינץ סנטר צור יצחק</option>
+      <option>אור יהודה</option><option>סגולה</option>
+    </select>
+  </div>
+
+  <div id="maint-records-list"></div>
 </div>
 
 <!-- USERS PAGE -->
 <div class="page" id="page-users">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-    <div>
-        <div style="font-size:16px; font-weight:700; color:var(--navy);">👥 ניהול משתמשים, אבות בית והרשאות נכסים</div>
-        <div style="font-size:12px; color:var(--g400)">סווג אבות בית וקבע אילו נכסים יופיעו להם בלוח העבודה</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div><div style="font-size:15px;font-weight:700;color:var(--navy)">👥 ניהול משתמשים והרשאות</div>
+    <div style="font-size:12px;color:var(--g400);margin-top:3px">קבע לכל אב בית לאילו נכסים יש לו גישה</div></div>
+    <button class="btn-primary" onclick="openAddUserModal()">+ הוסף משתמש</button>
+  </div>
+  <div class="sec-title">🔑 מנהלים</div><div id="ul-manager"></div>
+  <div class="sec-title" style="margin-top:20px">🔧 אבות בית</div><div id="ul-engineer"></div>
+  <div class="sec-title" style="margin-top:20px">🏠 דיירים</div><div id="ul-tenant"></div>
+  <div class="sec-title" style="margin-top:20px">🔑 קודי גישה לפורטל דיירים</div>
+  <div class="card"><div class="card-body" id="ul-codes"></div></div>
+</div>
+
+<!-- PDF AI PAGE -->
+<div class="page" id="page-pdfpage">
+  <div style="max-width:820px;margin:0 auto">
+    <div class="card" style="margin-bottom:20px;overflow:visible">
+      <div class="card-head"><h3>📄 ניתוח מסמכים עם AI</h3></div>
+      <div style="padding:24px">
+        <label id="pdf-dropzone" for="pdf-file-input" ondragover="event.preventDefault();this.style.borderColor='var(--gold)';this.style.background='var(--gold-pale)'" ondragleave="this.style.borderColor='var(--g200)';this.style.background='var(--g100)'" ondrop="handlePdfDrop(event)" style="border:2.5px dashed var(--g200);border-radius:var(--r);padding:48px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--g100);display:block">
+          <input type="file" id="pdf-file-input" accept=".pdf,image/*" style="display:none" onchange="handlePdfFile(this.files[0])">
+          <div style="font-size:48px;margin-bottom:12px">📁</div>
+          <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px">גרור לכאן PDF או תמונה</div>
+          <div style="font-size:12px;color:var(--g400);margin-bottom:16px">חשבוניות, דוחות בדיקה, הצעות מחיר</div>
+          <div style="display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:center">
+            <span style="background:var(--gold-pale);color:#9a6f20;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600">📋 חשבונית</span>
+            <span style="background:#e0f5ed;color:var(--green);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600">🔍 דוח בדיקה</span>
+            <span style="background:#e3f0ff;color:var(--blue);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600">💰 הצעת מחיר</span>
+          </div>
+        </label>
+        <div id="pdf-loading" style="display:none;text-align:center;padding:40px">
+          <div style="font-size:40px;margin-bottom:12px;animation:spin 1.5s linear infinite;display:inline-block">⚙️</div>
+          <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px">מנתח את המסמך...</div>
+          <div style="font-size:12px;color:var(--g400)" id="pdf-loading-sub">Claude קורא ומחלץ מידע</div>
+        </div>
+      </div>
     </div>
-    <button class="btn-primary" onclick="openAddUserModal()">+ הוסף איש צוות חדש</button>
-  </div>
-  <div class="users-list-grid" id="users-list-container"></div>
-</div>
-
-<!-- TENANT PORTAL -->
-<div class="page" id="page-tenant">
-  <div class="card">
-    <div class="card-head"><h3>📝 פתיחת קריאת שירות לניהול הבניין</h3></div>
-    <div class="card-body">
-      <div class="form-grid" style="margin-bottom:12px">
-        <div class="fg"><label>שם מלא</label><input type="text" id="t-name" placeholder="ישראל ישראלי"/></div>
-        <div class="fg"><label>טלפון</label><input type="tel" id="t-phone" placeholder="050-0000000"/></div>
-        <div class="fg"><label>נכס</label><select id="t-property"><option value="">בחר נכס</option></select></div>
-        <div class="fg"><label>מספר דירה / משרד</label><input type="text" id="t-unit" placeholder="12"/></div>
+    <div id="pdf-result-area" style="display:none">
+      <div id="pdf-type-banner" style="border-radius:var(--r);padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px;font-weight:700;font-size:14px"></div>
+      <div class="card" style="margin-bottom:16px;overflow:visible">
+        <div class="card-head"><h3>✨ שדות שחולצו</h3><span style="font-size:11px;color:var(--g400)">ניתן לערוך לפני שמירה</span></div>
+        <div style="padding:20px" id="pdf-fields-container"></div>
       </div>
-      <div class="cat-grid" id="cat-grid">
-        <button class="cat-btn" data-cat="ניקיון" onclick="selectTenantCat(this)"><span class="ci">🧹</span><span>ניקיון</span></button>
-        <button class="cat-btn" data-cat="שבר" onclick="selectTenantCat(this)"><span class="ci">🔨</span><span>שבר</span></button>
-        <button class="cat-btn" data-cat="מעלית" onclick="selectTenantCat(this)"><span class="ci">🛗</span><span>מעלית</span></button>
-        <button class="cat-btn" data-cat="מיזוג אוויר" onclick="selectTenantCat(this)"><span class="ci">❄️</span><span>מיזוג</span></button>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-head"><h3>📝 תקציר AI</h3></div>
+        <div style="padding:18px 20px;font-size:13px;color:var(--g800);line-height:1.7" id="pdf-summary-text"></div>
       </div>
-      <div class="fg"><label>פירוט הבעיה והערות בכתב</label><textarea id="t-desc" placeholder="פרט כאן מה הבעיה..."></textarea></div>
-      <div style="display:flex;justify-content:flex-end"><button class="btn-primary" onclick="submitTenantTicket()">🚀 שלח קריאת שירות</button></div>
+      <div style="background:#fff;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--sh-sm);padding:18px 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+        <div style="font-size:12px;color:var(--g400)">שמור כ:</div>
+        <div style="display:flex;gap:10px">
+          <button class="btn-ghost" onclick="resetPdfAnalyzer()">🔄 נתח שוב</button>
+          <button class="btn-primary" onclick="savePdfAsMaint()">🔧 שמור כרשומת תחזוקה</button>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:28px">
+      <div class="sec-title">📂 מסמכים שנותחו</div>
+      <div class="card"><table class="tbl"><thead><tr><th>תאריך</th><th>סוג</th><th>ספק</th><th>נכס</th><th>סכום</th></tr></thead>
+      <tbody id="pdf-hist-body"></tbody></table>
+      <div class="empty" id="pdf-hist-empty"><div class="empty-icon">📄</div><div class="empty-txt">אין מסמכים שנותחו עדיין</div></div></div>
     </div>
   </div>
 </div>
 
-<!-- MAINTENANCE -->
-<div class="page" id="page-maintenance">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-    <div style="font-size:15px;font-weight:700;color:var(--navy)">🏗️ ניהול תחזוקה שוטפת, שבר ומחזוריות מונעת</div>
-    <button class="btn-primary" onclick="openMaintForm()">+ רשום טיפול שבר ידני</button>
-  </div>
+</div><!-- /content -->
+</div><!-- /layout -->
 
-  <div class="card" id="mgr-preventive-hub">
-      <div class="card-head" style="background:var(--g100)"><h3>➕ הקצאה / תזמון משימה מונעת לענן</h3></div>
-      <div class="card-body form-grid">
-          <div class="fg"><label>תיאור המשימה המונעת</label><input type="text" id="p-new-name" placeholder="תיאור הטיפול..."/></div>
-          <div class="fg"><label>נכס יעד</label><select id="p-new-prop"></select></div>
-          <div class="fg"><label>תאריך יעד לביצוע (Deadline) *</label><input type="date" id="p-new-duedate"/></div>
-          <div class="fg"><label>מחזוריות *</label>
-              <select id="p-new-period">
-                  <option value="once">חד-פעמי</option><option value="monthly">כל חודש</option><option value="half-year">כל חצי שנה</option><option value="yearly">כל שנה</option>
-              </select>
-          </div>
-          <div class="fg"><label>עלות משוערת (₪)</label><input type="number" id="p-new-cost" placeholder="0"/></div>
-          <div class="fg"><label>קטגוריה</label>
-              <select id="p-new-cat"><option>חשמל</option><option>אינסטלציה</option><option>מיזוג</option><option>מעלית</option></select>
-          </div>
-          <div style="grid-column:1/-1; display:flex; justify-content:flex-end; width:100%">
-              <button class="btn-primary" onclick="savePreventiveTaskHub()">הוסף משימה ללוח הענן 🚀</button>
-          </div>
-      </div>
-  </div>
-
-  <!-- 🎛️ 1. NEW FILTER CHIPS HUB INSTALLED FOR SEAMLESS QA FILTERING -->
-  <div class="filter-pills" id="board-filter-pills-wrap">
-      <button class="filter-pill active" onclick="setBoardStatusFilter('all', this)">📋 הכל</button>
-      <button class="filter-pill" onclick="setBoardStatusFilter('pending', this)">🚨 באיחור / פתוח</button>
-      <button class="filter-pill" onclick="setBoardStatusFilter('active', this)">🗓️ בתוכנית / בטיפול</button>
-      <button class="filter-pill" onclick="setBoardStatusFilter('closed', this)">✓ טופלו / סגורות</button>
-  </div>
-
-  <div class="dash-row">
-      <div class="card">
-          <div class="card-head"><h3>🗓️ לוח משימות שטח מסונכרן לבניין</h3></div>
-          <div class="card-body">
-              <div class="board-section-container">
-                  <div class="board-sub-title">🚨 פניות וקריאות שירות פתוחות מדיירים (מענה מהיר)</div>
-                  <div id="tenant-alerts-board-container"></div>
-              </div>
-              <div class="board-section-container" style="margin-top:20px;">
-                  <div class="board-sub-title">🗓️ סבבי מונע ותוכנית עבודה חודשית / שנתית (Preventive)</div>
-                  <div id="preventive-tasks-board-container"></div>
-              </div>
-          </div>
-      </div>
-      
-      <div class="card">
-          <div class="card-head">
-              <h3>📜 היסטוריית ביצועים ותיקונים</h3>
-              <div style="font-size:12px; color:var(--green); font-weight:700;" id="m-stats-badge"><span id="m-kpi-count">0</span> טיפולים • <span id="m-kpi-cost">₪0</span></div>
-          </div>
-          <div class="card-body" id="maint-records-list" style="padding:0"></div>
-      </div>
-  </div>
-</div>
-
-</div>
-</div>
-
-<!-- WORK UPDATE MODAL -->
-<div class="modal-ov" id="engineer-action-modal" onclick="closeModalOv(event,'engineer-action-modal')">
+<!-- ══ TICKET DETAIL MODAL ══ -->
+<div class="modal-ov" id="ticket-detail-modal" onclick="closeModalOv(event,'ticket-detail-modal')">
   <div class="modal">
-    <div class="modal-hdr"><h3>🔧 עדכון משימה מונעת לפני ביצוע</h3><button class="modal-close" onclick="closeModal('engineer-action-modal')">✕</button></div>
-    <div class="modal-bdy">
-       <div style="font-size:14px; font-weight:700; color:var(--navy); margin-bottom:12px;" id="eng-m-title"></div>
-       <div class="fg"><label>הערות מהשטח / דיווח אב הבית</label><textarea id="eng-m-notes" placeholder="פירוט הטיפול או חלפים שהוחלפו..."></textarea></div>
-       <div class="fg">
-          <label class="file-upload-zone" for="eng-m-files">
-             <input type="file" id="eng-m-files" multiple accept="image/*,.pdf" onchange="handleEngineerFiles(this)" style="display:none">
-             <div style="font-size:13px; color:var(--g600)">📸 לחץ לצילום ישיר או העלאת מסמך</div>
-          </label>
-          <div class="uploaded-files" id="eng-m-files-list"></div>
-       </div>
-       <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;"><button class="btn-ghost" onclick="closeModal('engineer-action-modal')">ביטול</button><button class="btn-primary" id="eng-m-submit-btn">סמן כבוצע ✓</button></div>
-    </div>
+    <div class="modal-hdr"><h3 id="td-title"></h3><button class="modal-close" onclick="closeModal('ticket-detail-modal')">✕</button></div>
+    <div class="modal-bdy" id="td-body"></div>
   </div>
 </div>
 
-<!-- USER CONFIGURATION MODAL -->
-<div class="modal-ov" id="user-modal" onclick="if(event.target===this)closeModal('user-modal')">
-  <div class="modal">
-    <div class="modal-hdr"><h3 id="um-modal-title">הוספת איש צוות</h3><button class="modal-close" onclick="closeModal('user-modal')">✕</button></div>
+<!-- ══ MAINTENANCE FORM MODAL ══ -->
+<div class="modal-ov" id="maint-form-modal" onclick="closeModalOv(event,'maint-form-modal')">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-hdr"><h3>🏗️ רישום טיפול תחזוקה</h3><button class="modal-close" onclick="closeModal('maint-form-modal')">✕</button></div>
     <div class="modal-bdy">
+
+      <!-- property select -->
+      <div class="fg">
+        <label>נכס <span class="req">*</span></label>
+        <select id="mf-property">
+          <option value="">—</option>
+          <option>מודיעין 5 בלוד</option><option>שלם 3 רמת גן</option><option>ההשכלה 5 תל אביב</option>
+          <option>כסלו 60 מודיעין</option><option>מע"ר מודיעין</option><option>זילברמינץ סנטר צור יצחק</option>
+          <option>אור יהודה</option><option>סגולה</option>
+        </select>
+      </div>
+
+      <!-- topic bank -->
+      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px">בחר נושאי טיפול (ניתן לסמן כמה) <span class="req">*</span></div>
+      <div class="maint-bank-grid" id="maint-bank-grid">
+        <!-- rendered by JS -->
+      </div>
+
+      <!-- add custom topic -->
+      <div class="add-topic-wrap">
+        <input type="text" id="new-topic-input" placeholder="הוסף נושא חדש למאגר..."/>
+        <button class="btn-ghost" onclick="addCustomTopic()">+ הוסף</button>
+      </div>
+
+      <!-- selected summary -->
+      <div class="selected-items-wrap" id="sel-items-wrap">
+        <div class="selected-items-title">נושאים שנבחרו:</div>
+        <div id="sel-items-list"></div>
+      </div>
+
       <div class="form-grid">
-        <div class="fg"><label>שם מלא *</label><input type="text" id="um-name"/></div>
-        <div class="fg"><label>תפקיד / סיווג *</label>
-          <select id="um-role" onchange="togglePropSec()">
-            <option value="manager">מנהל מערכת</option>
-            <option value="engineer">אב בית (צוות שטח)</option>
+        <div class="fg"><label>תאריך ביצוע <span class="req">*</span></label><input type="date" id="mf-date"/></div>
+        <div class="fg"><label>עלות (₪)</label><input type="number" id="mf-cost" placeholder="0"/></div>
+        <div class="fg"><label>ספק / קבלן</label><input type="text" id="mf-vendor" placeholder="שם הספק"/></div>
+        <div class="fg"><label>מספר חשבונית</label><input type="text" id="mf-invoice" placeholder="123456"/></div>
+        <div class="fg full"><label>הערות נוספות</label><textarea id="mf-notes" placeholder="פרט מה בוצע, מה הוחלף, הערות..."></textarea></div>
+      </div>
+
+      <!-- file upload -->
+      <div class="fg">
+        <label>קבצים מצורפים (תמונות + PDF)</label>
+        <label class="file-upload-zone" for="mf-files"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleFileDrop(event,'mf-attachments')">
+          <input type="file" id="mf-files" multiple accept="image/*,.pdf" onchange="handleFileSelect(this,'mf-attachments')" style="display:none">
+          <div class="fuz-icon">📎</div>
+          <div class="fuz-txt">לחץ או גרור קבצים לכאן</div>
+          <div class="fuz-sub">תמונות (JPG/PNG) ו-PDF — עד 3MB לקובץ</div>
+        </label>
+        <div class="attachments-grid" id="mf-attachments"></div>
+        <div class="storage-bar-wrap" id="mf-storage-bar">
+          <div class="storage-bar-bg"><div class="storage-bar-fill" id="mf-bar-fill" style="background:var(--green)"></div></div>
+          <div class="storage-bar-txt" id="mf-bar-txt"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+        <button class="btn-ghost" onclick="closeModal('maint-form-modal')">ביטול</button>
+        <button class="btn-primary" onclick="saveMaintRecord()">✅ שמור רשומה</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAINTENANCE DETAIL MODAL ══ -->
+<div class="modal-ov" id="maint-detail-modal" onclick="closeModalOv(event,'maint-detail-modal')">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-hdr"><h3 id="md-title">פרטי טיפול</h3><button class="modal-close" onclick="closeModal('maint-detail-modal')">✕</button></div>
+    <div class="modal-bdy" id="md-body"></div>
+  </div>
+</div>
+
+
+<!-- BUDGET PAGE -->
+<div class="page" id="page-budget">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div style="font-size:15px;font-weight:700;color:var(--navy)">💰 תקציב לפי נכסים</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-ghost" onclick="showPage('export',null)" style="font-size:12px">📊 ייצוא לאקסל</button>
+    </div>
+  </div>
+  <div class="budget-tabs" id="budget-tabs">
+    <button class="budget-tab active" onclick="setBudgetType('A',this)"><span class="bt-icon">🔧</span>תקלות שוטפות<span class="bt-val" id="bt-total-A">₪0</span></button>
+    <button class="budget-tab" onclick="setBudgetType('B',this)"><span class="bt-icon">🔄</span>טיפולים קבועים<span class="bt-val" id="bt-total-B">₪0</span></button>
+    <button class="budget-tab" onclick="setBudgetType('C',this)"><span class="bt-icon">🏗️</span>השקעות בעלים<span class="bt-val" id="bt-total-C">₪0</span></button>
+  </div>
+  <div id="budget-content"></div>
+</div>
+
+<!-- EXPORT PAGE -->
+<div class="page" id="page-export">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+    <button class="btn-ghost" onclick="showPage('budget',null)" style="font-size:12px">← חזרה</button>
+    <div style="font-size:15px;font-weight:700;color:var(--navy)">📊 ייצוא נתונים לאקסל</div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h3>בחר מה לייצא</h3></div>
+    <div class="card-body">
+      <div class="export-row">
+        <div><div class="export-label">🔧 קריאות שירות דיירים</div><div class="export-sub" id="ex-tickets-count">0 רשומות</div></div>
+        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('tickets')">⬇️ ייצא</button>
+      </div>
+      <div class="export-row">
+        <div><div class="export-label">🏗️ רשומות תחזוקה שוטפת</div><div class="export-sub" id="ex-maint-count">0 רשומות</div></div>
+        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('maint')">⬇️ ייצא</button>
+      </div>
+      <div class="export-row">
+        <div><div class="export-label">🔄 הוצאות קבועות (חשמל/מים/שמירה)</div><div class="export-sub" id="ex-recurring-count">0 רשומות</div></div>
+        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('recurring')">⬇️ ייצא</button>
+      </div>
+      <div class="export-row">
+        <div><div class="export-label">🏗️ השקעות בעלים ושיפוצים</div><div class="export-sub" id="ex-invest-count">0 רשומות</div></div>
+        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('investments')">⬇️ ייצא</button>
+      </div>
+      <div class="export-row">
+        <div><div class="export-label">💰 סיכום תקציב לפי נכסים</div><div class="export-sub">כל 3 תקציבים מאוחדים</div></div>
+        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('budget_summary')">⬇️ ייצא</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- FILE VIEWER MODAL -->
+<div class="modal-ov" id="file-viewer-modal" onclick="if(event.target===this)closeModal('file-viewer-modal')" style="z-index:600">
+  <div class="modal" style="max-width:92vw;overflow:hidden">
+    <div class="modal-hdr">
+      <h3 id="fv-title">תצוגת קובץ</h3>
+      <div style="display:flex;gap:8px">
+        <button class="btn-ghost" style="font-size:11px;padding:4px 10px;color:#fff;border-color:rgba(255,255,255,.3)" onclick="downloadCurrentFile()">⬇️ הורד</button>
+        <button class="modal-close" onclick="closeModal('file-viewer-modal')">✕</button>
+      </div>
+    </div>
+    <div class="modal-bdy" id="fv-body" style="padding:0;background:#111;min-height:300px;display:flex;align-items:center;justify-content:center">
+    </div>
+  </div>
+</div>
+
+<!-- EDIT TICKET MODAL -->
+<div class="modal-ov" id="edit-ticket-modal" onclick="if(event.target===this)closeModal('edit-ticket-modal')">
+  <div class="modal">
+    <div class="modal-hdr"><h3>✏️ עריכת קריאה</h3><button class="modal-close" onclick="closeModal('edit-ticket-modal')">✕</button></div>
+    <div class="modal-bdy">
+      <input type="hidden" id="et-id"/>
+      <div class="form-grid">
+        <div class="fg"><label>שם</label><input type="text" id="et-name"/></div>
+        <div class="fg"><label>טלפון</label><input type="tel" id="et-phone"/></div>
+        <div class="fg"><label>נכס</label><select id="et-property"></select></div>
+        <div class="fg"><label>יחידה</label><input type="text" id="et-unit"/></div>
+        <div class="fg"><label>קטגוריה</label>
+          <select id="et-cat">
+            <option>ניקיון</option><option>שבר</option><option>מעלית</option><option>מיזוג</option>
+            <option>חשמל</option><option>אינסטלציה</option><option>חומרי ניקיון</option><option>אחר</option>
           </select>
         </div>
-        <div class="fg"><label>טלפון</label><input type="tel" id="um-phone"/></div>
+        <div class="fg"><label>סטטוס</label>
+          <select id="et-status">
+            <option value="open">פתוח</option><option value="inprogress">בטיפול</option><option value="done">טופל</option>
+          </select>
+        </div>
+        <div class="fg full"><label>פירוט</label><textarea id="et-desc"></textarea></div>
       </div>
-      <div id="prop-access-sec" style="margin-top:14px">
-        <div style="font-size:13px; font-weight:600; color:var(--navy); margin-bottom:8px;">שיוך נכסים (אב הבית יראה רק אותם):</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;" id="prop-cg"></div>
-      </div>
-      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
-        <button class="btn-ghost" onclick="closeModal('user-modal')">ביטול</button>
-        <button class="btn-primary" onclick="saveUserFromModal()">✅ שמור לענן</button>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+        <button class="btn-ghost" onclick="closeModal('edit-ticket-modal')">ביטול</button>
+        <button class="btn-primary" onclick="saveEditTicket()">✅ שמור שינויים</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MANUAL MAINTENANCE MODAL -->
-<div class="modal-ov" id="maint-form-modal" onclick="closeModalOv(event,'maint-form-modal')">
-  <div class="modal">
-    <div class="modal-hdr"><h3>🏗️ רישום טיפול תחזוקה ידני</h3><button class="modal-close" onclick="closeModal('maint-form-modal')">✕</button></div>
+<!-- EDIT MAINT MODAL -->
+<div class="modal-ov" id="edit-maint-modal" onclick="if(event.target===this)closeModal('edit-maint-modal')">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-hdr"><h3>✏️ עריכת רשומת תחזוקה</h3><button class="modal-close" onclick="closeModal('edit-maint-modal')">✕</button></div>
     <div class="modal-bdy">
-      <div class="fg"><label>נכס *</label><select id="mf-property"></select></div>
-      <div class="fg">
-          <label>בחר נושא מהיר או הקלד חופשי</label>
-          <div class="topic-bank-grid">
-              <button class="bank-btn" onclick="applyQuickTopic('💡 החלפת נורות / גופי תאורה')">💡 החלפת נורות</button>
-              <button class="bank-btn" onclick="applyQuickTopic('🚰 תיקון נזילה / החלפת גומיה')">🚰 תיקון נזילה</button>
-              <button class="bank-btn" onclick="applyQuickTopic('❄️ ניקוי מסננים ושטיפת מעבה')">❄️ ניקוי מסננים</button>
-              <button class="bank-btn" onclick="applyQuickTopic('🔑 החלפת מנעול / צילינדר בדלת')">🔑 החלפת מנעול</button>
-              <button class="bank-btn" onclick="applyQuickTopic('🪵 תיקון ציר / ידית שבורה')">🪵 תיקון ידית</button>
-              <button class="bank-btn" onclick="applyQuickTopic('🧹 ניקיון יסודי לאחר תקלה')">🧹 ניקיון שטח</button>
-          </div>
-          <input type="text" id="mf-edit-topic-string" placeholder="נושא הטיפול..."/>
-      </div>
+      <input type="hidden" id="em-id"/>
       <div class="form-grid">
-        <div class="fg"><label>תאריך ביצוע *</label><input type="date" id="mf-date"/></div>
-        <div class="fg"><label>עלות (₪)</label><input type="number" id="mf-cost" value="0"/></div>
-        <div class="fg full"><label>הערות נוספות</label><textarea id="mf-notes"></textarea></div>
+        <div class="fg"><label>נכס</label><select id="em-property"></select></div>
+        <div class="fg"><label>תאריך</label><input type="date" id="em-date"/></div>
+        <div class="fg"><label>עלות (₪)</label><input type="number" id="em-cost"/></div>
+        <div class="fg"><label>ספק</label><input type="text" id="em-vendor"/></div>
+        <div class="fg"><label>חשבונית</label><input type="text" id="em-invoice"/></div>
+        <div class="fg"><label>סוג תקציב</label>
+          <select id="em-budget-type">
+            <option value="A">🔧 תקלות שוטפות</option>
+            <option value="B">🔄 טיפולים קבועים</option>
+            <option value="C">🏗️ השקעות בעלים</option>
+          </select>
+        </div>
+        <div class="fg full"><label>הערות</label><textarea id="em-notes"></textarea></div>
       </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button class="btn-ghost" onclick="closeModal('maint-form-modal')">ביטול</button><button class="btn-primary" onclick="saveMaintRecord()">✅ שמור לענן</button></div>
+      <div class="fg">
+        <label>קבצים מצורפים (תמונות + PDF)</label>
+        <label class="file-upload-zone" for="em-files"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleFileDrop(event,'em-attachments')">
+          <input type="file" id="em-files" multiple accept="image/*,.pdf" onchange="handleFileSelect(this,'em-attachments')" style="display:none">
+          <div class="fuz-icon">📎</div>
+          <div class="fuz-txt">לחץ או גרור</div>
+          <div class="fuz-sub">תמונות + PDF</div>
+        </label>
+        <div class="attachments-grid" id="em-attachments"></div>
+        <div class="storage-bar-wrap" id="em-storage-bar">
+          <div class="storage-bar-bg"><div class="storage-bar-fill" id="em-bar-fill" style="background:var(--green)"></div></div>
+          <div class="storage-bar-txt" id="em-bar-txt"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+        <button class="btn-ghost" onclick="closeModal('edit-maint-modal')">ביטול</button>
+        <button class="btn-primary" onclick="saveEditMaint()">✅ שמור שינויים</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RECURRING EXPENSE MODAL -->
+<div class="modal-ov" id="recurring-modal" onclick="if(event.target===this)closeModal('recurring-modal')">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hdr"><h3 id="rec-modal-title">הוסף הוצאה קבועה</h3><button class="modal-close" onclick="closeModal('recurring-modal')">✕</button></div>
+    <div class="modal-bdy">
+      <input type="hidden" id="rec-id"/>
+      <div class="form-grid">
+        <div class="fg full"><label>שם ההוצאה *</label>
+          <input type="text" id="rec-name" placeholder="חשמל, מים, שמירה, ועד בית..."/>
+        </div>
+        <div class="fg"><label>נכס *</label><select id="rec-property"></select></div>
+        <div class="fg"><label>סכום חודשי (₪) *</label><input type="number" id="rec-amount" placeholder="0"/></div>
+        <div class="fg"><label>ספק / חברה</label><input type="text" id="rec-vendor" placeholder="חברת חשמל, מקורות..."/></div>
+        <div class="fg"><label>מחזוריות</label>
+          <select id="rec-period">
+            <option value="monthly">חודשי</option><option value="quarterly">רבעוני</option>
+            <option value="yearly">שנתי</option><option value="once">חד פעמי</option>
+          </select>
+        </div>
+        <div class="fg full"><label>הערות</label><textarea id="rec-notes" placeholder="פרטים נוספים..."></textarea></div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+        <button class="btn-ghost" onclick="closeModal('recurring-modal')">ביטול</button>
+        <button class="btn-primary" onclick="saveRecurring()">✅ שמור</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- USER MODAL -->
+<div class="modal-ov" id="user-modal" onclick="if(event.target===this)closeModal('user-modal')">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-hdr"><h3 id="um-modal-title">הוספת משתמש</h3><button class="modal-close" onclick="closeModal('user-modal')">✕</button></div>
+    <div class="modal-bdy">
+      <div class="form-grid">
+        <div class="fg"><label>שם מלא <span class="req">*</span></label><input type="text" id="um-name" placeholder="ישראל ישראלי"/></div>
+        <div class="fg"><label>תפקיד <span class="req">*</span></label>
+          <select id="um-role" onchange="togglePropSec()">
+            <option value="manager">מנהל</option><option value="engineer">אב בית</option><option value="tenant">דייר</option>
+          </select>
+        </div>
+        <div class="fg"><label>סיסמה <span class="req">*</span></label><input type="text" id="um-pass" placeholder="סיסמה לכניסה"/></div>
+        <div class="fg"><label>טלפון</label><input type="tel" id="um-phone" placeholder="050-0000000"/></div>
+      </div>
+      <div id="prop-access-sec">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px">גישה לנכסים
+          <span style="font-size:11px;font-weight:400;color:var(--g400)">(בחר אילו נכסים יוצגו לאב הבית)</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px" id="prop-cg"></div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+        <button class="btn-ghost" onclick="closeModal('user-modal')">ביטול</button>
+        <button class="btn-primary" onclick="saveUserFromModal()">✅ שמור משתמש</button>
+      </div>
     </div>
   </div>
 </div>
@@ -462,316 +982,1270 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 <div class="toast" id="toast"><span>✅</span><span id="toast-msg"></span></div>
 
 <script>
-window.tickets = []; window.maintRecords = []; window.preventiveTasks = [];
-var engineerActionFiles = []; var editingUID = null; var selectedTenantCategory = ''; var currentPage = 'dashboard';
-var boardGlobalStatusFilter = 'all'; // Filter switch holder
-var ALL_PROPS = ['מודיעין 5 בלוד','שלם 3 רמת גן','ההשכלה 5 תל אביב','כסלו 60 מודיעין','מע"ר מודיעין','זילברמינץ סנטר צור יצחק','אור יהודה','סגולה'];
+// ── DATA ──
+var tickets = JSON.parse(localStorage.getItem('zb_tickets_v4') || '[]');
+var maintRecords = JSON.parse(localStorage.getItem('zb_maint_v2') || '[]');
+var notifs = JSON.parse(localStorage.getItem('zb_notifs_v2') || '[]');
+var currentRole = 'manager';
+var ticketFilter = 'all';
+var myTicketFilter = 'all';
+var selectedCat = '';
+var selectedMaintTopics = [];
+var maintFiles = [];
 
-var users = [
-  {id:'u1',name:'Nitsan Gal-On',role:'manager',props:ALL_PROPS, phone:'—'},
-  {id:'u2',name:'יעקב דוידי',role:'engineer',props:['שלם 3 רמת גן','מודיעין 5 בלוד','ההשכלה 5 תל אביב'], phone:'054-123456'},
-  {id:'u3',name:'דייר בבניין',role:'tenant',props:ALL_PROPS, phone:'—'}
+// TOPIC BANK — persisted
+var DEFAULT_TOPICS = [
+  {id:'t1', icon:'🛗', name:'טיפול שנתי במעלית', cat:'מעלית'},
+  {id:'t2', icon:'🔥', name:'טיפול שנתי מערכות גילוי אש', cat:'בטיחות'},
+  {id:'t3', icon:'💧', name:'בדיקת ברזים ואינסטלציה', cat:'אינסטלציה'},
+  {id:'t4', icon:'⚡', name:'בדיקת לוחות חשמל', cat:'חשמל'},
+  {id:'t5', icon:'❄️', name:'תחזוקה שנתית מיזוג', cat:'מיזוג'},
+  {id:'t6', icon:'🧹', name:'ניקיון מרכזי בניין', cat:'ניקיון'},
+  {id:'t7', icon:'🔦', name:'החלפת תאורה לדיים', cat:'חשמל'},
+  {id:'t8', icon:'🚿', name:'קביעת לחץ מים', cat:'אינסטלציה'},
+  {id:'t9', icon:'🔑', name:'תחזוקת דלתות ומנעולים', cat:'כללי'},
+  {id:'t10', icon:'🪟', name:'בדיקת חלונות וחיתומים', cat:'כללי'},
+  {id:'t11', icon:'🏗️', name:'שבר / תיקון כללי', cat:'שבר'},
+  {id:'t12', icon:'📋', name:'בדיקת חוזי ספקים', cat:'מנהלי'},
 ];
-var currentUser = null;
+var topicBank = JSON.parse(localStorage.getItem('zb_topics_v2') || JSON.stringify(DEFAULT_TOPICS));
 
-function renderLoginScreen(){
-  var container = document.getElementById('staff-users-container'); if(!container) return;
-  container.innerHTML = users.filter(u => u.role !== 'tenant').map(u => {
-      var avBg = u.role === 'manager' ? 'background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--navy); font-weight:800;' : 'background:rgba(26,127,90,.25); color:#4fc99a;';
-      return `<button class="lbtn" onclick="loginAsUser('${u.id}')"><div class="lav" style="${avBg}">${u.name[0]}</div><div class="lbtn-text-wrap"><div class="lbtn-title-txt">${u.name}</div><div class="lbtn-desc-txt">${u.role === 'manager' ? 'מנהל נכסים' : 'אב בית'}</div></div><span class="lbtn-arrow">‹</span></button>`;
+function save(){
+  localStorage.setItem('zb_tickets_v4', JSON.stringify(tickets));
+  localStorage.setItem('zb_maint_v2', JSON.stringify(maintRecords));
+  localStorage.setItem('zb_notifs_v2', JSON.stringify(notifs));
+  localStorage.setItem('zb_topics_v2', JSON.stringify(topicBank));
+}
+
+// ── LOGIN ──
+function enterAs(role){
+  currentRole = role;
+  document.getElementById('login-screen').style.display = 'none';
+  var names = {manager:'Nitsan Gal-On', engineer:'אב הבית', tenant:'דייר'};
+  var labels = {manager:'מנהל', engineer:'אב בית', tenant:'דייר'};
+  var clss = {manager:'role-manager', engineer:'role-engineer', tenant:'role-tenant'};
+  document.getElementById('user-name').textContent = names[role];
+  document.getElementById('topbar-av').textContent = names[role][0];
+  var badge = document.getElementById('role-badge');
+  badge.textContent = labels[role];
+  badge.className = 'role-badge ' + clss[role];
+  document.getElementById('nav-manager').style.display = role === 'manager' ? 'block' : 'none';
+  document.getElementById('nav-engineer').style.display = role === 'engineer' ? 'block' : 'none';
+  document.getElementById('nav-tenant').style.display = role === 'tenant' ? 'block' : 'none';
+  var defaultPage = {manager:'dashboard', engineer:'maintenance', tenant:'tenant'};
+  var firstNav = document.querySelector('#nav-' + role + ' .nav-item');
+  showPage(defaultPage[role], firstNav);
+}
+
+function logout(){
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+// ── NAVIGATION ──
+var PAGE_TITLES = {dashboard:'דשבורד', tickets:'קריאות שירות', tenant:'פתיחת קריאה', mytickets:'הקריאות שלי', maintenance:'תחזוקה ושבר', budget:'תקציב נכסים', export:'ייצוא לאקסל', users:'ניהול משתמשים', pdfpage:'ניתוח מסמכים AI'};
+
+
+function renderPage(id){
+  if(id === 'dashboard') renderDashboard();
+  if(id === 'tickets') renderTickets();
+  if(id === 'mytickets') renderMyTickets();
+  if(id === 'maintenance') renderMaintPage();
+  if(id === 'budget') renderBudgetPage();
+  if(id === 'export') renderExportPage();
+  if(id === 'users') renderUsersPage();
+  if(id === 'pdfpage') renderPdfHist();
+}
+
+// ── NOTIFICATIONS ──
+function addNotif(title, sub, ticketId){
+  notifs.unshift({id:Date.now(), title:title, sub:sub, ticketId:ticketId, read:false});
+  save();
+  renderNotifs();
+}
+function renderNotifs(){
+  var unread = notifs.filter(function(n){return !n.read}).length;
+  document.getElementById('notif-dot').classList.toggle('show', unread > 0);
+  var cnt = document.getElementById('notif-count');
+  cnt.textContent = unread || '';
+  cnt.style.display = unread ? 'inline' : 'none';
+  var list = document.getElementById('notif-list');
+  if(!notifs.length){list.innerHTML='<div style="padding:24px;text-align:center;color:var(--g400);font-size:13px">אין התראות</div>';return;}
+  list.innerHTML = notifs.map(function(n){
+    return '<div class="notif-item '+(n.read?'':'unread')+'" onclick="clickNotif('+n.id+')">'
+      +'<div class="notif-item-title">'+n.title+'</div>'
+      +'<div class="notif-item-sub">'+(n.sub||'')+'</div></div>';
+  }).join('');
+}
+function clickNotif(nid){var n=notifs.find(function(x){return x.id===nid});if(n)n.read=true;save();renderNotifs();}
+function clearNotifs(){notifs=[];save();renderNotifs();}
+function toggleNotifPanel(){document.getElementById('notif-panel').classList.toggle('open')}
+document.addEventListener('click',function(e){if(!e.target.closest('#notif-bell-wrap'))document.getElementById('notif-panel').classList.remove('open')});
+
+// ── BADGES ──
+function updateBadges(){
+  var open = tickets.filter(function(t){return t.status !== 'done'}).length;
+  document.getElementById('open-badge').textContent = open;
+  var b2 = document.getElementById('open-badge2');
+  if(b2) b2.textContent = open;
+  var kpi = document.getElementById('kpi-open');
+  if(kpi) kpi.textContent = open;
+}
+
+// ── TOAST ──
+function showToast(msg, isErr){
+  var el = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  el.style.background = isErr ? 'var(--red)' : 'var(--navy)';
+  el.classList.add('show');
+  setTimeout(function(){el.classList.remove('show')}, 3200);
+}
+
+// ── MODALS ──
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function closeModalOv(e, id){if(e.target === document.getElementById(id)) closeModal(id)}
+
+// ── TENANT: select category ──
+function selectCat(btn){
+  document.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('selected')});
+  btn.classList.add('selected');
+  selectedCat = btn.dataset.cat;
+}
+
+// ── TENANT: submit ticket ──
+function submitTenantTicket(){
+  var name = document.getElementById('t-name').value.trim();
+  var phone = document.getElementById('t-phone').value.trim();
+  var property = document.getElementById('t-property').value;
+  var unit = document.getElementById('t-unit').value.trim();
+  var desc = document.getElementById('t-desc').value.trim();
+  if(!name || !phone || !property || !unit){showToast('⚠️ יש למלא שם, טלפון, נכס ויחידה', true);return}
+  if(!selectedCat){showToast('⚠️ בחר קטגוריה', true);return}
+  if(!desc){showToast('⚠️ יש להוסיף פירוט', true);return}
+  var t = {
+    id: 'ZB-' + String(Date.now()).slice(-5),
+    name: name, phone: phone, property: property, unit: unit,
+    cat: selectedCat, desc: desc,
+    date: new Date().toLocaleDateString('he-IL'),
+    status: 'open',
+    timeline: [{action:'נפתחה', time: nowStr()}]
+  };
+  tickets.unshift(t);
+  addNotif('קריאה חדשה: '+t.id, selectedCat+' — '+property, t.id);
+  save();
+  updateBadges();
+  // reset
+  ['t-name','t-phone','t-unit','t-desc'].forEach(function(id){document.getElementById(id).value = ''});
+  document.getElementById('t-property').value = '';
+  document.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('selected')});
+  selectedCat = '';
+  showToast('✅ קריאה נפתחה: ' + t.id);
+  // switch to my tickets
+  showPage('mytickets', document.querySelector('#nav-tenant .nav-item:nth-child(2)'));
+}
+
+// ── TICKETS: render ──
+function renderTickets(){
+  updateBadges();
+  var filtered = ticketFilter === 'all' ? tickets : tickets.filter(function(t){return t.status === ticketFilter});
+  var tbody = document.getElementById('tickets-tbody');
+  var empty = document.getElementById('tickets-empty');
+  if(!filtered.length){tbody.innerHTML='';empty.style.display='';return}
+  empty.style.display = 'none';
+  tbody.innerHTML = filtered.map(function(t){
+    return '<tr onclick="openTicketDetail(\''+t.id+'\')"><td><span class="tid">'+t.id+'</span></td>'
+      +'<td>'+t.cat+'</td>'
+      +'<td style="font-size:12px;color:var(--g600)">'+(t.property||'')+'</td>'
+      +'<td style="font-size:12px">'+(t.unit||'')+'</td>'
+      +'<td style="font-size:12px;color:var(--g600);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(t.desc||'')+'</td>'
+      +'<td style="font-size:12px">'+(t.date||'')+'</td>'
+      +'<td>'+statusBadge(t.status)+'</td></tr>';
   }).join('');
 }
 
-function openStaffSubLogin() { document.getElementById('main-login-hub').style.display = 'none'; document.getElementById('staff-login-hub').style.display = 'flex'; }
-function backToMainLoginHub() { document.getElementById('staff-login-hub').style.display = 'none'; document.getElementById('main-login-hub').style.display = 'flex'; }
-
-function loginAsUser(uid){
-  currentUser = users.find(x => x.id===uid); if(!currentUser) return;
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('user-name').textContent = currentUser.name;
-  document.getElementById('topbar-av').textContent=currentUser.name[0];
-  document.getElementById('role-badge').textContent = currentUser.role==='manager'?'מנהל':(currentUser.role==='engineer'?'אב בית':'דייר');
-  
-  document.getElementById('nav-manager').style.display = currentUser.role==='manager'?'block':'none';
-  document.getElementById('nav-engineer').style.display = currentUser.role==='engineer'?'block':'none';
-  document.getElementById('nav-tenant').style.display = currentUser.role==='tenant'?'block':'none';
-  document.getElementById('ai-mgr-zone').style.display = currentUser.role==='manager'?'flex':'none';
-  
-  fillPropSelects(); fillPreventiveAddSelect();
-  showPage(currentUser.role==='manager'?'dashboard':(currentUser.role==='engineer'?'maintenance':'tenant'));
+function renderMyTickets(){
+  var filtered = myTicketFilter === 'all' ? tickets : tickets.filter(function(t){return t.status === myTicketFilter});
+  var tbody = document.getElementById('mytickets-tbody');
+  var empty = document.getElementById('mytickets-empty');
+  if(!filtered.length){tbody.innerHTML='';empty.style.display='';return}
+  empty.style.display = 'none';
+  tbody.innerHTML = filtered.map(function(t){
+    return '<tr onclick="openTicketDetail(\''+t.id+'\')"><td><span class="tid">'+t.id+'</span></td>'
+      +'<td>'+t.cat+'</td>'
+      +'<td style="font-size:12px;color:var(--g600)">'+(t.property||'')+'</td>'
+      +'<td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(t.desc||'')+'</td>'
+      +'<td style="font-size:12px">'+(t.date||'')+'</td>'
+      +'<td>'+statusBadge(t.status)+'</td></tr>';
+  }).join('');
 }
 
-function doLogout(){ currentUser=null; document.getElementById('login-screen').style.display='flex'; backToMainLoginHub(); }
-function getUserProps(){ return currentUser?currentUser.props:ALL_PROPS; }
+function filterTickets(f, btn){
+  ticketFilter = f;
+  document.querySelectorAll('#ticket-pills .pill').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  renderTickets();
+}
+function filterMyTickets(f, btn){
+  myTicketFilter = f;
+  document.querySelectorAll('#mytickets-pills .pill').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  renderMyTickets();
+}
+
+function openTicketDetail(id){
+  var t = tickets.find(function(tk){return tk.id === id});
+  if(!t) return;
+  var statuses = ['open','inprogress','done'];
+  var labels = ['נפתחה','בטיפול','טופל'];
+  var cur = statuses.indexOf(t.status);
+  var sh = '<div class="steps">';
+  statuses.forEach(function(s, i){
+    var cls = i < cur ? 'done' : i === cur ? 'cur' : '';
+    sh += '<div class="step '+cls+'"><div class="step-dot">'+(i < cur ? '✓' : i+1)+'</div><div class="step-lbl">'+labels[i]+'</div></div>';
+    if(i < 2) sh += '<div class="step-line '+(i < cur ? 'done' : '')+'"></div>';
+  });
+  sh += '</div>';
+  var tl = (t.timeline||[]).map(function(ev){
+    return '<div class="tl-item"><div class="tl-dot"></div><div><div class="tl-action">'+ev.action+'</div><div class="tl-time">'+ev.time+'</div></div></div>';
+  }).join('');
+  var editBtn = (currentRole !== 'tenant') ? '<button class="edit-btn" style="margin-bottom:10px" onclick="openEditTicket(\'' + t.id + '\')">✏️ ערוך קריאה</button>' : '';
+  var sb = currentRole !== 'tenant' ? '<div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">'
+    +'<button class="btn-ghost" style="font-size:12px" onclick="changeTicketStatus(\''+t.id+'\',\'open\')">🔓 פתוח</button>'
+    +'<button class="btn-ghost" style="font-size:12px" onclick="changeTicketStatus(\''+t.id+'\',\'inprogress\')">⏳ בטיפול</button>'
+    +'<button class="btn-primary" style="font-size:12px" onclick="changeTicketStatus(\''+t.id+'\',\'done\')">✅ טופל</button>'
+    +'</div>' : '';
+  document.getElementById('td-title').textContent = 'קריאה ' + t.id;
+  document.getElementById('td-body').innerHTML = editBtn + sh
+    +(t.name?'<div class="detail-row"><span class="dk">שם</span><span class="dv">'+t.name+'</span></div>':'')
+    +(t.phone?'<div class="detail-row"><span class="dk">טלפון</span><span class="dv">'+t.phone+'</span></div>':'')
+    +'<div class="detail-row"><span class="dk">נכס</span><span class="dv">'+(t.property||'')+' '+(t.unit?'/ '+t.unit:'')+'</span></div>'
+    +'<div class="detail-row"><span class="dk">קטגוריה</span><span class="dv">'+t.cat+'</span></div>'
+    +'<div class="detail-row"><span class="dk">פירוט</span><span class="dv">'+(t.desc||'')+'</span></div>'
+    +'<div class="detail-row"><span class="dk">תאריך</span><span class="dv">'+(t.date||'')+'</span></div>'
+    + sb
+    +'<div class="tl"><div class="tl-ttl">היסטוריה</div>'+tl+'</div>';
+  document.getElementById('ticket-detail-modal').classList.add('open');
+}
+
+function openEditTicket(id){
+  var t = tickets.find(function(x){return x.id===id}); if(!t) return;
+  document.getElementById('et-id').value = t.id;
+  document.getElementById('et-name').value = t.name||'';
+  document.getElementById('et-phone').value = t.phone||'';
+  document.getElementById('et-unit').value = t.unit||'';
+  document.getElementById('et-desc').value = t.desc||'';
+  document.getElementById('et-status').value = t.status||'open';
+  document.getElementById('et-cat').value = t.cat||'אחר';
+  // fill property select
+  var ps = document.getElementById('et-property');
+  ps.innerHTML = ALL_PROPS.map(function(p){return'<option'+(p===t.property?' selected':'')+'>'+p+'</option>'}).join('');
+  closeModal('ticket-detail-modal');
+  document.getElementById('edit-ticket-modal').classList.add('open');
+}
+
+function saveEditTicket(){
+  var id = document.getElementById('et-id').value;
+  var t = tickets.find(function(x){return x.id===id}); if(!t) return;
+  t.name = document.getElementById('et-name').value.trim();
+  t.phone = document.getElementById('et-phone').value.trim();
+  t.property = document.getElementById('et-property').value;
+  t.unit = document.getElementById('et-unit').value.trim();
+  t.cat = document.getElementById('et-cat').value;
+  t.desc = document.getElementById('et-desc').value.trim();
+  var newStatus = document.getElementById('et-status').value;
+  if(newStatus !== t.status){
+    t.status = newStatus;
+    t.timeline = t.timeline||[];
+    t.timeline.push({action:{open:'נפתחה',inprogress:'בטיפול',done:'טופל'}[newStatus]||newStatus, time:nowStr()});
+  }
+  saveAll(); closeModal('edit-ticket-modal'); renderPage(currentPage); updateBadges();
+  showToast('✅ קריאה עודכנה');
+}
+
+function changeTicketStatus(id, status){
+  var t = tickets.find(function(tk){return tk.id === id});
+  if(!t) return;
+  t.status = status;
+  var label = {open:'נפתחה',inprogress:'בטיפול',done:'טופל'}[status] || status;
+  t.timeline = t.timeline || [];
+  t.timeline.push({action:label, time:nowStr()});
+  if(status === 'done') addNotif('קריאה '+t.id+' טופלה ✅', t.cat + ' — ' + t.property, t.id);
+  save();
+  closeModal('ticket-detail-modal');
+  renderPage(currentPage);
+  updateBadges();
+  showToast('✅ סטטוס עודכן');
+}
+
+// ── MAINTENANCE BANK ──
+function renderTopicBank(){
+  var grid = document.getElementById('maint-bank-grid');
+  if(!grid) return;
+  grid.innerHTML = topicBank.map(function(topic){
+    var checked = selectedMaintTopics.indexOf(topic.id) !== -1;
+    return '<label class="maint-item'+(checked?' checked':'')+'"><input type="checkbox" '+(checked?'checked':'')
+      +' onchange="toggleMaintTopic(\''+topic.id+'\')" />'
+      +'<span class="maint-item-icon">'+topic.icon+'</span>'
+      +'<div><div class="maint-item-label">'+topic.name+'</div>'
+      +'<div class="maint-item-sub">'+topic.cat+'</div></div></label>';
+  }).join('');
+}
+
+function toggleMaintTopic(id){
+  var idx = selectedMaintTopics.indexOf(id);
+  if(idx === -1) selectedMaintTopics.push(id);
+  else selectedMaintTopics.splice(idx, 1);
+  renderTopicBank();
+  renderSelectedTopics();
+}
+
+function renderSelectedTopics(){
+  var wrap = document.getElementById('sel-items-wrap');
+  var list = document.getElementById('sel-items-list');
+  if(!selectedMaintTopics.length){wrap.classList.remove('show');return}
+  wrap.classList.add('show');
+  list.innerHTML = selectedMaintTopics.map(function(id){
+    var t = topicBank.find(function(x){return x.id === id});
+    if(!t) return '';
+    return '<span class="sel-tag">'+t.icon+' '+t.name+'<button onclick="toggleMaintTopic(\''+id+'\')">✕</button></span>';
+  }).join('');
+}
+
+function addCustomTopic(){
+  var input = document.getElementById('new-topic-input');
+  var val = input.value.trim();
+  if(!val) return;
+  var newId = 'tc-' + Date.now();
+  topicBank.push({id:newId, icon:'📌', name:val, cat:'מותאם'});
+  save();
+  input.value = '';
+  renderTopicBank();
+  showToast('✅ נושא נוסף למאגר');
+}
+
+// ── FILE ATTACHMENT SYSTEM (base64) ──
+// Each attachment store: {id, name, type, data (base64 dataURL)}
+var attachmentStores = {}; // keyed by grid element id
+
+function getStore(gridId){
+  if(!attachmentStores[gridId]) attachmentStores[gridId]=[];
+  return attachmentStores[gridId];
+}
+
+function handleFileDrop(e, gridId){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  var files = Array.from(e.dataTransfer.files).filter(function(f){
+    return f.type.startsWith('image/') || f.type === 'application/pdf';
+  });
+  processFiles(files, gridId);
+}
+
+function handleFileSelect(input, gridId){
+  processFiles(Array.from(input.files), gridId);
+  input.value = '';
+}
+
+function processFiles(files, gridId){
+  files.forEach(function(file){
+    if(file.size > 3 * 1024 * 1024){
+      showToast('⚠️ "' + file.name.slice(0,20) + '" גדול מ-3MB — דלג', true);
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      var store = getStore(gridId);
+      store.push({id: 'att-'+Date.now()+'-'+Math.random().toString(36).slice(2,6), name: file.name, type: file.type, data: ev.target.result});
+      renderAttachmentsGrid(gridId);
+      updateStorageBar(gridId);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderAttachmentsGrid(gridId){
+  var store = getStore(gridId);
+  var grid = document.getElementById(gridId); if(!grid) return;
+  grid.innerHTML = store.map(function(att){
+    var thumb = att.type === 'application/pdf'
+      ? '<div class="attach-pdf-thumb"><div class="pdf-icon">📄</div><div class="pdf-ext">PDF</div></div>'
+      : '<img class="attach-img-preview" src="'+att.data+'" alt="'+att.name+'"/>';
+    return '<div class="attach-card" onclick="viewAttachment(''+gridId+'',''+att.id+'')">'+thumb
+      +'<button class="attach-remove" onclick="event.stopPropagation();removeAttachment(''+gridId+'',''+att.id+'')">✕</button>'
+      +'<div class="attach-name">'+att.name.slice(0,18)+(att.name.length>18?'…':'')+'</div>'
+    +'</div>';
+  }).join('');
+}
+
+function removeAttachment(gridId, attId){
+  var store = getStore(gridId);
+  attachmentStores[gridId] = store.filter(function(a){return a.id !== attId});
+  renderAttachmentsGrid(gridId);
+  updateStorageBar(gridId);
+}
+
+function updateStorageBar(gridId){
+  var store = getStore(gridId);
+  var totalBytes = store.reduce(function(s,a){return s + (a.data||'').length * 0.75},0);
+  var maxBytes = 4 * 1024 * 1024; // 4MB per session
+  var pct = Math.min(100, (totalBytes/maxBytes)*100);
+  var barWrap = document.getElementById(gridId.replace('-attachments','-storage-bar') || '');
+  var barFill = document.getElementById(gridId.replace('-attachments','-bar-fill') || '');
+  var barTxt  = document.getElementById(gridId.replace('-attachments','-bar-txt') || '');
+  if(!barWrap||!barFill||!barTxt) return;
+  barWrap.classList.toggle('show', store.length > 0);
+  barFill.style.width = pct + '%';
+  barFill.style.background = pct > 80 ? 'var(--red)' : pct > 50 ? 'var(--orange)' : 'var(--green)';
+  var kb = (totalBytes/1024).toFixed(0);
+  barTxt.textContent = kb + 'KB בשימוש מתוך ~4MB';
+  if(pct > 85) showToast('⚠️ מתקרבים למגבלת האחסון', true);
+}
+
+var _currentViewerAtt = null;
+function viewAttachment(gridId, attId){
+  var store = getStore(gridId);
+  var att = store.find(function(a){return a.id===attId}); if(!att) return;
+  _currentViewerAtt = att;
+  document.getElementById('fv-title').textContent = att.name;
+  var body = document.getElementById('fv-body');
+  if(att.type === 'application/pdf'){
+    body.innerHTML = '<iframe id="file-viewer-embed" src="'+att.data+'" style="width:100%;height:75vh;border:none"></iframe>';
+  } else {
+    body.innerHTML = '<img src="'+att.data+'" style="max-width:100%;max-height:75vh;display:block" />';
+  }
+  document.getElementById('file-viewer-modal').classList.add('open');
+}
+
+function downloadCurrentFile(){
+  if(!_currentViewerAtt) return;
+  var a = document.createElement('a');
+  a.href = _currentViewerAtt.data;
+  a.download = _currentViewerAtt.name;
+  a.click();
+}
+
+function getAttachmentsForSave(gridId){
+  return getStore(gridId).map(function(a){return {id:a.id,name:a.name,type:a.type,data:a.data}});
+}
+
+function loadAttachmentsToGrid(gridId, atts){
+  attachmentStores[gridId] = atts || [];
+  renderAttachmentsGrid(gridId);
+}
+
+// Legacy compatibility
+function handleMaintFiles(input){ handleFileSelect(input, 'mf-attachments'); }
+function removeFile(i){}
+
+function openMaintForm(){
+  selectedMaintTopics = [];
+  maintFiles = [];
+  document.getElementById('mf-property').value = '';
+  document.getElementById('mf-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('mf-cost').value = '';
+  document.getElementById('mf-vendor').value = '';
+  document.getElementById('mf-invoice').value = '';
+  document.getElementById('mf-notes').value = '';
+  // reset attachment store
+  attachmentStores['mf-attachments'] = [];
+  renderAttachmentsGrid('mf-attachments');
+  var bw = document.getElementById('mf-storage-bar'); if(bw) bw.classList.remove('show');
+  renderTopicBank();
+  renderSelectedTopics();
+  document.getElementById('maint-form-modal').classList.add('open');
+}
+
+function saveMaintRecord(){
+  var property = document.getElementById('mf-property').value;
+  var date = document.getElementById('mf-date').value;
+  if(!property){showToast('⚠️ בחר נכס', true);return}
+  if(!selectedMaintTopics.length){showToast('⚠️ בחר לפחות נושא אחד', true);return}
+  if(!date){showToast('⚠️ בחר תאריך', true);return}
+  var topicNames = selectedMaintTopics.map(function(id){
+    var t = topicBank.find(function(x){return x.id === id});
+    return t ? t.name : id;
+  });
+  var rec = {
+    id: 'MR-' + String(Date.now()).slice(-5),
+    property: property,
+    date: date,
+    topics: topicNames,
+    cost: parseFloat(document.getElementById('mf-cost').value) || 0,
+    vendor: document.getElementById('mf-vendor').value.trim(),
+    invoice: document.getElementById('mf-invoice').value.trim(),
+    notes: document.getElementById('mf-notes').value.trim(),
+    fileNames: maintFiles.map(function(f){return f.name}),
+    createdAt: nowStr()
+  };
+  maintRecords.unshift(rec);
+  save();
+  closeModal('maint-form-modal');
+  renderMaintPage();
+  updateDashKpis();
+  showToast('✅ רשומה נשמרה: ' + rec.id);
+}
+
+function renderMaintPage(){
+  var filterProp = (document.getElementById('maint-filter-prop') || {}).value || '';
+  var filtered = filterProp ? maintRecords.filter(function(r){return r.property === filterProp}) : maintRecords;
+  // KPIs
+  var totalCost = maintRecords.reduce(function(a,r){return a + (r.cost||0)}, 0);
+  var props = [...new Set(maintRecords.map(function(r){return r.property}))].length;
+  var files = maintRecords.reduce(function(a,r){return a + (r.fileNames||[]).length}, 0);
+  document.getElementById('m-kpi-count').textContent = maintRecords.length;
+  document.getElementById('m-kpi-cost').textContent = '₪' + totalCost.toLocaleString('he-IL');
+  document.getElementById('m-kpi-props').textContent = props;
+  document.getElementById('m-kpi-files').textContent = files;
+  var list = document.getElementById('maint-records-list');
+  if(!filtered.length){
+    list.innerHTML = '<div class="empty"><div class="empty-icon">🏗️</div><div class="empty-txt">אין רשומות עדיין — לחץ "+ רשום טיפול" להתחלה</div></div>';
+    return;
+  }
+  list.innerHTML = filtered.map(function(r){
+    return '<div class="maint-record-card" onclick="openMaintDetail(\''+r.id+'\')">'+
+      '<div class="maint-record-header">'+
+      '<div><div class="maint-record-title">'+r.property+'</div><div class="maint-record-meta">'+r.date+(r.vendor?' • '+r.vendor:'')+'</div></div>'+
+      '<div style="display:flex;gap:8px;align-items:center">'+
+      (r.cost?'<span class="cost-badge">₪'+Number(r.cost).toLocaleString('he-IL')+'</span>':'')+
+      (r.fileNames&&r.fileNames.length?'<span style="font-size:12px;color:var(--g400)">📎 '+r.fileNames.length+'</span>':'')+
+      '</div></div>'+
+      '<div class="maint-tags">'+r.topics.map(function(t){return'<span class="maint-tag">'+t+'</span>'}).join('')+'</div>'+
+      '</div>';
+  }).join('');
+}
+
+function openMaintDetail(id){
+  var r = maintRecords.find(function(x){return x.id === id});
+  if(!r) return;
+  document.getElementById('md-title').textContent = 'רשומת תחזוקה ' + r.id;
+  document.getElementById('md-body').innerHTML =
+    '<div class="detail-row"><span class="dk">נכס</span><span class="dv">'+r.property+'</span></div>'+
+    '<div class="detail-row"><span class="dk">תאריך</span><span class="dv">'+r.date+'</span></div>'+
+    (r.vendor?'<div class="detail-row"><span class="dk">ספק</span><span class="dv">'+r.vendor+'</span></div>':'')+
+    (r.invoice?'<div class="detail-row"><span class="dk">חשבונית</span><span class="dv">'+r.invoice+'</span></div>':'')+
+    (r.cost?'<div class="detail-row"><span class="dk">עלות</span><span class="dv">₪'+Number(r.cost).toLocaleString('he-IL')+'</span></div>':'')+
+    '<div class="detail-row"><span class="dk">נושאים</span><span class="dv">'+r.topics.join(', ')+'</span></div>'+
+    (r.notes?'<div class="detail-row"><span class="dk">הערות</span><span class="dv">'+r.notes+'</span></div>':'')+
+    (r.attachments&&r.attachments.length?'<div class="detail-row" style="flex-direction:column;gap:8px"><span class="dk" style="margin-bottom:4px">📎 קבצים מצורפים</span><div class="attachments-grid" style="margin:0">'+r.attachments.map(function(att,i){var thumb=att.type==='application/pdf'?'<div class="attach-pdf-thumb"><div class="pdf-icon">📄</div><div class="pdf-ext">PDF</div></div>':'<img class="attach-img-preview" src="'+att.data+'"/>';return'<div class="attach-card" onclick="viewAttachmentDirect(''+JSON.stringify({id:att.id}).replace(/"/g,'&quot;')+'''+',''+i+'','detail')">'+thumb+'<div class="attach-name">'+att.name.slice(0,18)+(att.name.length>18?'…':'')+'</div></div>';}).join('')+'</div></div>':'')+(r.fileNames&&r.fileNames.length&&!(r.attachments&&r.attachments.length)?'<div class="detail-row"><span class="dk">קבצים</span><span class="dv">'+r.fileNames.map(function(f){return'<div style="font-size:12px;color:var(--blue)">📎 '+f+'</div>'}).join('')+'</span></div>':'')+
+    '<div style="display:flex;gap:8px;margin-top:16px">'+
+    '<button class="edit-btn" onclick="openEditMaint(\''+r.id+'\')">✏️ ערוך</button>'+
+    '<button class="btn-danger" style="font-size:12px" onclick="deleteMaintRecord(\''+r.id+'\')">🗑️ מחק רשומה</button>'+
+    '</div>';
+  document.getElementById('maint-detail-modal').classList.add('open');
+}
+
+function deleteMaintRecord(id){
+  maintRecords = maintRecords.filter(function(r){return r.id !== id});
+  save();
+  closeModal('maint-detail-modal');
+  renderMaintPage();
+  showToast('🗑️ רשומה נמחקה');
+}
+
+// ── DASHBOARD ──
+function renderDashboard(){
+  updateBadges();
+  updateDashKpis();
+  // recent tickets
+  var tl = document.getElementById('dash-tickets-list');
+  var recent = tickets.slice(0,5);
+  if(!recent.length){tl.innerHTML='<div class="empty"><div class="empty-icon">📭</div><div class="empty-txt">אין קריאות</div></div>'}
+  else{tl.innerHTML='<table class="tbl"><thead><tr><th>מזהה</th><th>קטגוריה</th><th>נכס</th><th>סטטוס</th></tr></thead><tbody>'
+    +recent.map(function(t){return'<tr onclick="openTicketDetail(\''+t.id+'\')">'
+    +'<td><span class="tid">'+t.id+'</span></td><td>'+t.cat+'</td>'
+    +'<td style="font-size:12px;color:var(--g600)">'+(t.property||'')+'</td>'
+    +'<td>'+statusBadge(t.status)+'</td></tr>'}).join('')+'</tbody></table>'}
+  // recent maint
+  var ml = document.getElementById('dash-maint-list');
+  var recentM = maintRecords.slice(0,4);
+  if(!recentM.length){ml.innerHTML='<div class="empty"><div class="empty-icon">🏗️</div><div class="empty-txt">אין רשומות תחזוקה</div></div>'}
+  else{ml.innerHTML='<div style="padding:12px">'+recentM.map(function(r){
+    return '<div style="padding:8px 0;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:center">'
+    +'<div><div style="font-size:13px;font-weight:600;color:var(--navy)">'+r.property+'</div>'
+    +'<div style="font-size:11px;color:var(--g400)">'+r.date+' • '+r.topics.slice(0,2).join(', ')+(r.topics.length>2?' ועוד…':'')+'</div></div>'
+    +(r.cost?'<span class="cost-badge">₪'+Number(r.cost).toLocaleString('he-IL')+'</span>':'')+
+    '</div>';
+  }).join('')+'</div>'}
+}
+
+function updateDashKpis(){
+  var totalCost = maintRecords.reduce(function(a,r){return a+(r.cost||0)},0);
+  var kpiCost = document.getElementById('kpi-cost');
+  if(kpiCost) kpiCost.textContent = '₪' + totalCost.toLocaleString('he-IL');
+  var kpiMaint = document.getElementById('kpi-maint');
+  if(kpiMaint) kpiMaint.textContent = maintRecords.length;
+}
+
+// ── HELPERS ──
+function nowStr(){return new Date().toLocaleString('he-IL')}
+function statusBadge(s){
+  var m={open:'<span class="badge b-open">🔓 פתוח</span>',inprogress:'<span class="badge b-prog">⏳ בטיפול</span>',done:'<span class="badge b-done">✅ טופל</span>'};
+  return m[s]||m.open;
+}
+
+// ── USER MANAGEMENT ──
+var ALL_PROPS = ['מודיעין 5 בלוד','שלם 3 רמת גן','ההשכלה 5 תל אביב','כסלו 60 מודיעין','מע"ר מודיעין','זילברמינץ סנטר צור יצחק','אור יהודה','סגולה'];
+var DEFAULT_USERS = [
+  {id:'u1',name:'Nitsan Gal-On',role:'manager',pass:'admin',phone:'',props:ALL_PROPS},
+  {id:'u2',name:'יעקב דוידי',role:'engineer',pass:'yakovi',phone:'054-1234567',props:['שלם 3 רמת גן','מודיעין 5 בלוד','כסלו 60 מודיעין']},
+  {id:'u3',name:'דייר לדוגמה',role:'tenant',pass:'1234',phone:'',props:ALL_PROPS}
+];
+var users = JSON.parse(localStorage.getItem('zb_users_v1') || JSON.stringify(DEFAULT_USERS));
+var currentUser = null;
+var editingUID = null;
+var pdfAnalyzed = null;
+var pdfHistArr = JSON.parse(localStorage.getItem('zb_pdf_h1') || '[]');
+
+// patch save to use saveAll
+save = saveAll;
+
+PAGE_TITLES['users'] = 'ניהול משתמשים';
+PAGE_TITLES['pdfpage'] = 'ניתוח מסמכים AI';
+
+function renderLoginScreen(){
+  var g = document.getElementById('login-users-grid'); if(!g) return;
+  g.innerHTML = users.map(function(u){
+    var avc = {manager:'lav-m', engineer:'lav-e', tenant:'lav-t'}[u.role]||'lav-t';
+    var rl = {manager:'מנהל — גישה לכל הנכסים', engineer:'אב בית — '+u.props.length+' נכסים', tenant:'דייר'}[u.role]||u.role;
+    var cls = u.role==='manager'?'lmgr':'';
+    return '<button class="lbtn '+cls+'" onclick="loginAsUser(\''+u.id+'\')"><div class="lav '+avc+'">'+u.name[0]+'</div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:#fff">'+u.name+'</div><div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">'+rl+'</div>'+(u.role==='engineer'?'<div style="font-size:11px;color:rgba(255,255,255,.28);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+u.props.slice(0,3).join(' • ')+(u.props.length>3?' ועוד…':'')+'</div>':'')+'</div><span style="margin-right:auto;color:rgba(255,255,255,.2);font-size:20px">›</span></button>';
+  }).join('');
+}
+
+function loginAsUser(uid){
+  var u = users.find(function(x){return x.id===uid}); if(!u) return;
+  currentUser = u;
+  document.getElementById('login-screen').style.display = 'none';
+  var rl={manager:'מנהל',engineer:'אב בית',tenant:'דייר'};
+  var rc={manager:'role-manager',engineer:'role-engineer',tenant:'role-tenant'};
+  var ab={manager:'linear-gradient(135deg,var(--gold),var(--gold-light))',engineer:'#1a7f5a',tenant:'#1a5f9f'};
+  var ac={manager:'var(--navy)',engineer:'#fff',tenant:'#fff'};
+  document.getElementById('user-name').textContent = u.name;
+  var ta=document.getElementById('topbar-av'); ta.textContent=u.name[0]; ta.style.background=ab[u.role]||ab.tenant; ta.style.color=ac[u.role]||ac.tenant;
+  var badge=document.getElementById('role-badge'); badge.textContent=rl[u.role]||u.role; badge.className='role-badge '+(rc[u.role]||'role-tenant');
+  var sa=document.getElementById('sb-av'); if(sa) sa.textContent=u.name[0];
+  var sn=document.getElementById('sb-name'); if(sn) sn.textContent=u.name;
+  var sr=document.getElementById('sb-role-txt'); if(sr) sr.textContent=rl[u.role]||u.role;
+  ['manager','engineer','tenant'].forEach(function(r){ document.getElementById('nav-'+r).style.display = u.role===r?'block':'none'; });
+  fillPropSelects();
+  var defaultPage={manager:'dashboard',engineer:'maintenance',tenant:'tenant'}[u.role]||'dashboard';
+  var firstNav=document.querySelector('#nav-'+u.role+' .nav-item');
+  showPage(defaultPage, firstNav);
+}
+
+function doLogout(){
+  currentUser=null;
+  document.getElementById('login-screen').style.display='flex';
+  renderLoginScreen();
+}
+
+function getUserProps(){ return currentUser?(currentUser.props||ALL_PROPS):ALL_PROPS; }
 
 function fillPropSelects(){
   var p=getUserProps();
-  [['t-property','<option value="">בחר נכס</option>'],['mf-property','<option value="">—</option>']].forEach(s => {
-    var el=document.getElementById(s[0]); if(el) el.innerHTML=s[1]+p.map(v=>`<option>${v}</option>`).join('');
+  [['t-property','<option value="">בחר נכס</option>'],['mf-property','<option value="">—</option>'],['maint-filter-prop','<option value="">כל הנכסים</option>']].forEach(function(s){
+    var el=document.getElementById(s[0]); if(!el) return;
+    el.innerHTML=s[1]+p.map(function(v){return'<option>'+v+'</option>'}).join('');
   });
 }
-function fillPreventiveAddSelect(){
-    var el = document.getElementById('p-new-prop'); if(el) el.innerHTML = getUserProps().map(v=>`<option>${v}</option>`).join('');
+
+// ── OVERRIDE renderPage to add new pages ──
+var currentPage = 'dashboard';
+function showPage(id, btn){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('active')});
+  var pg=document.getElementById('page-'+id); if(pg) pg.classList.add('active');
+  if(btn) btn.classList.add('active');
+  currentPage=id;
+  document.getElementById('topbar-title').textContent = PAGE_TITLES[id]||id;
+  // close sidebar on mobile after navigation
+  if(window.innerWidth <= 768) closeSidebar();
+  renderPageFull(id);
 }
-function showPage(id){
-  document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  var pg = document.getElementById('page-' + id); if(pg) pg.classList.add('active');
-  currentPage = id; renderPageFull(id);
-}
+
 function renderPageFull(id){
-  if(id === 'dashboard') renderDashboard();
-  else if(id === 'maintenance') { renderMaintFiltered(); renderPreventiveTasks(); document.getElementById('mgr-preventive-hub').style.display = currentUser.role==='manager'?'block':'none'; }
-  else if(id === 'users') { renderUsersPage(); }
+  if(id==='dashboard') renderDashboard();
+  else if(id==='tickets') renderTicketsFiltered();
+  else if(id==='mytickets') renderMyTickets();
+  else if(id==='maintenance') renderMaintFiltered();
+  else if(id==='users') renderUsersPage();
+  else if(id==='pdfpage') renderPdfHist();
 }
 
-function checkUnreadAlerts() {
-    var openCount = tickets.filter(t => t.status === 'open').length;
-    var bell = document.getElementById('bell-badge');
-    if(bell) { bell.style.display = openCount > 0 ? 'block' : 'none'; }
-}
-function clearAlerts() { document.getElementById('bell-badge').style.display = 'none'; showToast('🔔 כל ההתראות נקראו בהצלחה!'); }
-
-function setBoardStatusFilter(statusType, btnEl) {
-    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-    btnEl.classList.add('active');
-    boardGlobalStatusFilter = statusType;
-    renderPreventiveTasks();
-}
-
-function triggerAIScan(input) {
-    if(!input.files.length) return;
-    showToast('✨ סורק AI מנתח את ה-PDF ומחלץ נתונים...');
-    setTimeout(async () => {
-        var randomCost = Math.floor(Math.random() * 2400) + 450;
-        var id = 'MR-AI' + String(Date.now()).slice(-3);
-        await window.cloudSave("maintenance", id, {
-            id: id, property: ALL_PROPS[0], date: new Date().toISOString().split('T')[0],
-            topics: ['🧾 סריקת AI: חשבונית ספק קבלן תקופתית'], cost: randomCost, notes: 'חולץ אוטומטית מקובץ: ' + input.files[0].name, fileNames: [input.files[0].name]
-        });
-        showToast('✅ החשבונית עובדה וסונכרנה בענן! סכום: ₪' + randomCost);
-    }, 1500);
-}
-
-function applyQuickTopic(txt) { document.getElementById('mf-edit-topic-string').value = txt; }
-
-function renderUsersPage(){
-  var container = document.getElementById('users-list-container'); if(!container) return;
-  container.innerHTML = users.filter(u => u.role !== 'tenant').map(u => {
-      var avStyle = u.role === 'manager' ? 'background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--navy);' : 'background:#e0f5ed; color:var(--green);';
-      return `<div class="ucard"><div class="uav" style="${avStyle}">${u.name[0]}</div><div style="flex:1">`
-            +`<div style="font-weight:700; color:var(--navy); font-size:15px;">${u.name} <span style="font-size:11px; font-weight:400; color:var(--g400)">(${u.role === 'manager'?'מנהל':'אב בית'})</span></div>`
-            +`<div style="font-size:12px; color:var(--g600); margin-top:2px;">📞 טלפון: ${u.phone || '—'}</div>`
-            +`<div class="uprops">${u.props.map(p => `<span class="pchip">${p}</span>`).join('')}</div></div>`
-            +`<div><button class="btn-ghost" style="font-size:11px; padding:4px 10px;" onclick="openEditUser('${u.id}')">✏️ הרשאות</button></div></div>`;
-  }).join('');
-}
-function openAddUserModal(){
-  editingUID = null; document.getElementById('um-modal-title').textContent = '➕ הוספת איש צוות חדש לענן';
-  document.getElementById('um-name').value = ''; document.getElementById('um-phone').value = '';
-  document.getElementById('um-role').value = 'engineer'; renderPropCheckboxes([]); togglePropSec();
-  document.getElementById('user-modal').classList.add('open');
-}
-function openEditUser(uid){
-  var u = users.find(x => x.id === uid); if(!u) return;
-  editingUID = uid; document.getElementById('um-modal-title').textContent = '✏️ עריכת סיווג והרשאות: ' + u.name;
-  document.getElementById('um-name').value = u.name; document.getElementById('um-phone').value = u.phone || '';
-  document.getElementById('um-role').value = u.role; renderPropCheckboxes(u.props || []); togglePropSec();
-  document.getElementById('user-modal').classList.add('open');
-}
-function renderPropCheckboxes(selected){
-  var container = document.getElementById('prop-cg'); if(!container) return;
-  container.innerHTML = ALL_PROPS.map(p => `<label class="pcheck-item"><input type="checkbox" value="${p}" ${selected.indexOf(p)!==-1?'checked':''}> ${p}</label>`).join('');
-}
-function togglePropSec(){ document.getElementById('prop-access-sec').style.display = document.getElementById('um-role').value === 'engineer' ? 'block' : 'none'; }
-async function saveUserFromModal(){
-  var name = document.getElementById('um-name').value.trim(); var role = document.getElementById('um-role').value; var phone = document.getElementById('um-phone').value.trim(); if(!name) return;
-  var props = role === 'manager' ? ALL_PROPS : Array.from(document.querySelectorAll('#prop-cg input:checked')).map(cb => cb.value);
-  var id = editingUID || 'u-' + Date.now();
-  await window.cloudSave("users_config", id, { id:id, name:name, role:role, phone:phone, props:props });
-  closeModal('user-modal'); showToast('👥 הגדרות המשתמש והסיווג שלו סונכרנו בענן!');
-}
-
-function handleHubPreFiles(input) { hubPreFiles = hubPreFiles.concat(Array.from(input.files).map(f => f.name)); document.getElementById('hub-pre-files-list').innerHTML = hubPreFiles.map(n => `<div class="file-chip">📎 ${n}</div>`).join(''); }
-function handleEngineerFiles(input) { engineerActionFiles = engineerActionFiles.concat(Array.from(input.files).map(f => f.name)); document.getElementById('eng-m-files-list').innerHTML = engineerActionFiles.map(n => `<div class="file-chip">📎 ${n}</div>`).join(''); }
-function handleMaintFiles(input) { maintFiles = Array.from(input.files).map(f => f.name); }
-function selectTenantCat(btn) { document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selectedTenantCategory = btn.dataset.cat; }
-
-/* 🧠 2. NEW INTELLIGENT DUPLICATE DETECTOR INTERACTOR FOR TENANTS */
-async function submitTenantTicket(){
-  var name = document.getElementById('t-name').value.trim(); 
-  var property = document.getElementById('t-property').value; 
-  var desc = document.getElementById('t-desc').value.trim();
-  if(!name || !property || !selectedTenantCategory) return;
-  
-  // SCAN UNRESOLVED CLOUD TICKETS FOR ACTIVE SAME-PROPERTY SIMILAR ALERTS
-  var isDuplicated = window.tickets.some(t => t.property === property && t.cat === selectedTenantCategory && t.status !== 'done');
-  if(isDuplicated) {
-      alert(`🛑 שים לב! דייר אחר כבר פתח פנייה פעילה בבניין זה בנושא "${selectedTenantCategory}".\nצוות התחזוקה כבר עודכן ומטפל במפגע ברגעים אלו, אין צורך בדיווח כפול. תודה!`);
-      return; // HALT EXECUTION
-  }
-  
-  var id = 'ZB-' + String(Date.now()).slice(-5);
-  await window.cloudSave("tickets", id, { id:id, name:name, phone:document.getElementById('t-phone').value, property:property, unit:document.getElementById('t-unit').value, cat:selectedTenantCategory, desc:desc, date:new Date().toLocaleDateString('he-IL'), status:'open' });
-  alert('🚀 קריאת השירות נשלחה בהצלחה! הפורטל יתנתק כעת.'); doLogout();
-}
-
-async function savePreventiveTaskHub(){
-    var name = document.getElementById('p-new-name').value.trim(); var prop = document.getElementById('p-new-prop').value; var duedate = document.getElementById('p-new-duedate').value;
-    if(!name || !duedate) return;
-    var id = 'p-' + Date.now();
-    await window.cloudSave("preventive", id, { id:id, name:name, property:prop, dueDate:duedate, period:document.getElementById('p-new-period').value, cost:parseFloat(document.getElementById('p-new-cost').value)||0, cat:document.getElementById('p-new-cat').value, fileNames:[] });
-    showToast('🚀 משימה מחזורית נוספה לענן בהצלחה');
-}
-
-function openEngineerActionModal(id) {
-    var task = preventiveTasks.find(t=>t.id === id); if(!task) return;
-    window.targetActionTaskID = id; engineerActionFiles = [];
-    document.getElementById('eng-m-title').textContent = task.name;
-    document.getElementById('eng-m-files-list').innerHTML = '';
-    document.getElementById('eng-m-submit-btn').onclick = function() { executePreventive(window.targetActionTaskID); };
-    document.getElementById('engineer-action-modal').classList.add('open');
-}
-async function executePreventive(taskId){
-    var task = preventiveTasks.find(t=>t.id === taskId); if(!task) return;
-    var id = 'MR-' + String(Date.now()).slice(-5);
-    var notes = 'סבב מונע. ' + (document.getElementById('eng-m-notes').value.trim() || '');
-    await window.cloudSave("maintenance", id, { id:id, property:task.property, date:new Date().toISOString().split('T')[0], topics:[task.name], cost:task.cost||0, notes:notes, fileNames:engineerActionFiles });
-    if(task.period === 'once') { await window.cloudDelete("preventive", taskId); } 
-    else {
-        var nextDate = new Date(task.dueDate); nextDate.setMonth(nextDate.getMonth() + 1); task.dueDate = nextDate.toISOString().split('T')[0];
-        await window.cloudSave("preventive", taskId, task);
-    }
-    closeModal('engineer-action-modal');
-}
-
-function openMaintForm() { document.getElementById('mf-date').value = new Date().toISOString().split('T')[0]; document.getElementById('maint-form-modal').classList.add('open'); }
-async function saveMaintRecord(){
-  var property = document.getElementById('mf-property').value; var date = document.getElementById('mf-date').value; if(!property || !date) return;
-  var id = 'MR-' + String(Date.now()).slice(-5);
-  await window.cloudSave("maintenance", id, { id: id, property: property, date: date, topics: [document.getElementById('mf-edit-topic-string').value], cost: parseFloat(document.getElementById('mf-cost').value) || 0, notes: document.getElementById('mf-notes').value.trim(), fileNames: [] });
-  closeModal('maint-form-modal'); showToast('✓ טיפול שבר נרשם בהצלחה!');
-}
-
-function renderDashboard(){
-  var up = getUserProps(), isMgr = currentUser && currentUser.role === 'manager';
-  var flMaint = isMgr ? maintRecords : maintRecords.filter(r=>up.indexOf(r.property) !== -1);
-  var openTickets = tickets.filter(t => t.status !== 'done' && (isMgr || up.indexOf(t.property) !== -1));
-  var flTasks = preventiveTasks.filter(t => isMgr || up.indexOf(t.property) !== -1);
-
-  document.getElementById('kpi-cost').textContent = '₪' + flMaint.reduce((a,r)=>a+(r.cost||0),0).toLocaleString();
-  document.getElementById('kpi-maint').textContent = flMaint.length;
-  document.getElementById('kpi-pending-tasks').textContent = flTasks.length;
-  document.getElementById('kpi-tickets-count').textContent = openTickets.length;
-  
-  var hubGrid = document.getElementById('property-dashboard-nodes'); if(!hubGrid) return;
-  hubGrid.innerHTML = up.map(prop => {
-      var propMaint = maintRecords.filter(r => r.property === prop); var propPending = preventiveTasks.filter(t => t.property === prop); var propTickets = tickets.filter(t => t.property === prop && t.status !== 'done');
-      return `<div class="property-card-hub"><div class="property-hub-title"><span>🏢 ${prop}</span><span style="color:var(--green)">₪${propMaint.reduce((a,r)=>a+(r.cost||0),0).toLocaleString()}</span></div>`
-            +`<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:11px;"><div style="background:var(--cream); padding:6px; border-radius:6px;">📋 בוצעו: <strong>${propMaint.length}</strong></div>`
-            +`<div style="background:var(--gold-pale); padding:6px; border-radius:6px; color:#9a6f20">🗓️ משימות: <strong>${propPending.length}</strong></div>`
-            +`<div style="background:#fde8e6; padding:6px; border-radius:6px; color:var(--red); grid-column:1/-1;">🚨 קריאות: <strong>${propTickets.length}</strong></div></div></div>`;
-  }).join('');
+function renderTicketsFiltered(){
+  updateBadges();
+  var up=getUserProps(), isMgr=currentUser&&currentUser.role==='manager';
+  var all=tickets.filter(function(t){return isMgr||up.indexOf(t.property)!==-1});
+  var fl=ticketFilter==='all'?all:all.filter(function(t){return t.status===ticketFilter});
+  var tbody=document.getElementById('tickets-tbody'), empty=document.getElementById('tickets-empty');
+  if(!fl.length){tbody.innerHTML='';empty.style.display='';return} empty.style.display='none';
+  tbody.innerHTML=fl.map(function(t){return'<tr onclick="openTicketDetail(\''+t.id+'\')"><td><span class="tid">'+t.id+'</span></td><td>'+t.cat+'</td><td style="font-size:12px;color:var(--g600)">'+(t.property||'')+'</td><td style="font-size:12px">'+(t.unit||'')+'</td><td style="font-size:12px;color:var(--g600);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(t.desc||'')+'</td><td style="font-size:12px">'+(t.date||'')+'</td><td>'+statusBadge(t.status)+'</td></tr>'}).join('');
 }
 
 function renderMaintFiltered(){
-  var up = getUserProps(), isMgr = currentUser && currentUser.role === 'manager';
-  var fl = isMgr ? maintRecords : maintRecords.filter(r=>up.indexOf(r.property) !== -1);
-  var list = document.getElementById('maint-records-list'); if(!list) return;
-  document.getElementById('m-kpi-count').textContent = fl.length; document.getElementById('m-kpi-cost').textContent = '₪' + fl.reduce((a,r)=>a+(r.cost||0),0).toLocaleString();
-  if(!fl.length){list.innerHTML='<div class="empty">אין רשומות בענן</div>';return}
-  list.innerHTML = fl.map(r => `<div class="maint-record-card"><strong>${r.property}</strong><div>₪${r.cost} • ${r.date}</div><div style="font-size:12px; color:var(--g600);">${r.topics.join(', ')}</div></div>`).join('');
+  var up=getUserProps(), isMgr=currentUser&&currentUser.role==='manager';
+  var all=isMgr?maintRecords:maintRecords.filter(function(r){return up.indexOf(r.property)!==-1});
+  var fp=(document.getElementById('maint-filter-prop')||{}).value||'';
+  var fl=fp?all.filter(function(r){return r.property===fp}):all;
+  var tc=all.reduce(function(a,r){return a+(r.cost||0)},0);
+  var pp=[...new Set(all.map(function(r){return r.property}))].length;
+  var ff=all.reduce(function(a,r){return a+(r.fileNames||[]).length},0);
+  document.getElementById('m-kpi-count').textContent=all.length;
+  document.getElementById('m-kpi-cost').textContent='₪'+tc.toLocaleString('he-IL');
+  document.getElementById('m-kpi-props').textContent=pp;
+  document.getElementById('m-kpi-files').textContent=ff;
+  var list=document.getElementById('maint-records-list');
+  if(!fl.length){list.innerHTML='<div class="empty"><div class="empty-icon">🏗️</div><div class="empty-txt">אין רשומות עדיין — לחץ "+ רשום טיפול"</div></div>';return}
+  list.innerHTML=fl.map(function(r){return'<div class="maint-record-card" onclick="openMaintDetail(\''+r.id+'\')"><div class="maint-record-header"><div><div class="maint-record-title">'+r.property+'</div><div class="maint-record-meta">'+r.date+(r.vendor?' • '+r.vendor:'')+'</div></div><div style="display:flex;gap:8px;align-items:center">'+(r.cost?'<span class="cost-badge">₪'+Number(r.cost).toLocaleString('he-IL')+'</span>':'')+(r.fileNames&&r.fileNames.length?'<span style="font-size:12px;color:var(--g400)">📎 '+r.fileNames.length+'</span>':'')+'</div></div><div class="maint-tags">'+r.topics.map(function(t){return'<span class="maint-tag">'+t+'</span>'}).join('')+'</div></div>'}).join('');
 }
 
-/* 📋 🎛️ MODIFIED TO SUPPORT DYNAMIC MULTI-LEVEL STATUS FILTERING CHIPS */
-function renderPreventiveTasks(){
-    var tContainer = document.getElementById('tenant-alerts-board-container');
-    var pContainer = document.getElementById('preventive-tasks-board-container');
-    if(!tContainer || !pContainer) return;
-    
-    var up = getUserProps(), isMgr = currentUser && currentUser.role === 'manager';
-    var filterProp = (document.getElementById('maint-filter-prop') || {}).value || '';
-    var todayStr = new Date().toISOString().split('T')[0];
-    
-    // 1. Core Cloud Fetch Filters
-    var flTasks = preventiveTasks.filter(r => (isMgr || up.indexOf(r.property) !== -1) && (filterProp ? r.property === filterProp : true));
-    var flTickets = tickets.filter(t => (isMgr || up.indexOf(t.property) !== -1) && (filterProp ? t.property === filterProp : true));
-    
-    // 2. Apply Symmetrical Status Filter Pills logic (all | pending | active | closed)
-    if(boardGlobalStatusFilter === 'pending') {
-        flTickets = flTickets.filter(t => t.status === 'open');
-        flTasks = flTasks.filter(t => t.dueDate < todayStr); // Overdue ONLY
-    } else if(boardGlobalStatusFilter === 'active') {
-        flTickets = flTickets.filter(t => t.status === 'inprogress');
-        flTasks = flTasks.filter(t => t.dueDate >= todayStr); // Upcoming ONLY
-    } else if(boardGlobalStatusFilter === 'closed') {
-        flTickets = flTickets.filter(t => t.status === 'done');
-        flTasks = []; // Done preventive tasks go straight into the permanent right ledger card
-    } else {
-        // 'all' scenario: only fetch unresolved assets for active workspace
-        flTickets = flTickets.filter(t => t.status !== 'done');
+// ── USERS PAGE ──
+
+function openAddUserModal(){
+  editingUID=null; document.getElementById('um-modal-title').textContent='הוספת משתמש';
+  ['um-name','um-pass','um-phone'].forEach(function(id){document.getElementById(id).value=''});
+  document.getElementById('um-role').value='engineer'; renderPropCG([]); togglePropSec();
+  document.getElementById('user-modal').classList.add('open');
+}
+
+function openEditUser(uid){
+  var u=users.find(function(x){return x.id===uid}); if(!u) return;
+  editingUID=uid; document.getElementById('um-modal-title').textContent='עריכת '+u.name;
+  document.getElementById('um-name').value=u.name; document.getElementById('um-role').value=u.role;
+  document.getElementById('um-pass').value=u.pass||''; document.getElementById('um-phone').value=u.phone||'';
+  renderPropCG(u.props||[]); togglePropSec(); document.getElementById('user-modal').classList.add('open');
+}
+
+function renderPropCG(sel){
+  document.getElementById('prop-cg').innerHTML=ALL_PROPS.map(function(p){return'<label class="pcheck-item"><input type="checkbox" value="'+p+'" '+(sel.indexOf(p)!==-1?'checked':'')+' />'+p+'</label>'}).join('');
+}
+
+function togglePropSec(){
+  var r=document.getElementById('um-role').value;
+  document.getElementById('prop-access-sec').style.display=r==='engineer'?'block':'none';
+}
+
+function getCheckedP(){ return Array.from(document.querySelectorAll('#prop-cg input:checked')).map(function(cb){return cb.value}); }
+
+function saveUserFromModal(){
+  var n=document.getElementById('um-name').value.trim(), r=document.getElementById('um-role').value, pw=document.getElementById('um-pass').value.trim();
+  if(!n){showToast('⚠️ יש להזין שם',true);return} if(!pw){showToast('⚠️ יש להזין סיסמה',true);return}
+  var p=r==='engineer'?getCheckedP():ALL_PROPS;
+  if(r==='engineer'&&!p.length){showToast('⚠️ בחר לפחות נכס אחד',true);return}
+  if(editingUID){var u=users.find(function(x){return x.id===editingUID});if(u){u.name=n;u.role=r;u.pass=pw;u.phone=document.getElementById('um-phone').value.trim();u.props=p}}
+  else users.push({id:'u'+Date.now(),name:n,role:r,pass:pw,phone:document.getElementById('um-phone').value.trim(),props:p});
+  saveAll(); closeModal('user-modal'); renderUsersPage(); renderLoginScreen(); showToast('✅ משתמש נשמר');
+}
+
+function deleteUser(uid){
+  if(!confirm('למחוק משתמש זה?')) return;
+  users=users.filter(function(u){return u.id!==uid}); saveAll(); renderUsersPage(); renderLoginScreen(); showToast('🗑️ משתמש נמחק');
+}
+
+// ── PDF AI ──
+function handlePdfDrop(e){
+  e.preventDefault(); document.getElementById('pdf-dropzone').style.borderColor='var(--g200)'; document.getElementById('pdf-dropzone').style.background='var(--g100)';
+  var f=e.dataTransfer.files[0]; if(f) handlePdfFile(f);
+}
+function handlePdfFile(file){
+  if(!file) return;
+  if(file.size>10*1024*1024){showToast('⚠️ הקובץ גדול מדי (מקס 10MB)',true);return}
+  document.getElementById('pdf-dropzone').style.display='none';
+  document.getElementById('pdf-loading').style.display='block';
+  document.getElementById('pdf-result-area').style.display='none';
+  var msgs=['Claude קורא את המסמך...','מזהה שדות חשובים...','מחלץ נתונים פיננסיים...','כמעט מוכן ✨'];
+  var mi=0, intv=setInterval(function(){document.getElementById('pdf-loading-sub').textContent=msgs[Math.min(mi++,msgs.length-1)]},1400);
+  var rd=new FileReader();
+  rd.onload=function(ev){
+    var b64=ev.target.result.split(',')[1], isI=file.type.startsWith('image/'), mt=isI?file.type:'application/pdf';
+    var ci=isI?{type:'image',source:{type:'base64',media_type:mt,data:b64}}:{type:'document',source:{type:'base64',media_type:mt,data:b64}};
+    var body={model:'claude-sonnet-4-20250514',max_tokens:1000,system:'אתה מנתח מסמכים. ענה אך ורק ב-JSON ללא markdown: {"docType":"invoice|inspection|quote|other","docTypeLabel":"חשבונית ספק|דוח בדיקה|הצעת מחיר|אחר","vendor":"","property":"","date":"YYYY-MM-DD","amount":0,"invoiceNumber":"","categoryLabel":"","urgency":"low|medium|high","summary":"","items":[{"desc":"","qty":1,"price":0}]}',messages:[{role:'user',content:[ci,{type:'text',text:'נתח את המסמך וענה ב-JSON בלבד.'}]}]};
+    fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    .then(function(r){return r.json()})
+    .then(function(data){
+      clearInterval(intv);
+      var raw=(data.content||[]).filter(function(c){return c.type==='text'}).map(function(c){return c.text}).join('');
+      var parsed; try{parsed=JSON.parse(raw.replace(/```json|```/g,'').trim())}catch(e){throw new Error('שגיאה בניתוח התשובה')}
+      pdfAnalyzed=Object.assign({},parsed,{fileName:file.name,analyzedAt:new Date().toLocaleDateString('he-IL')});
+      renderPdfResult(pdfAnalyzed);
+    })
+    .catch(function(err){clearInterval(intv);document.getElementById('pdf-dropzone').style.display='block';document.getElementById('pdf-loading').style.display='none';showToast('⚠️ '+(err.message||'שגיאה'),true)});
+  };
+  rd.readAsDataURL(file);
+}
+function renderPdfResult(d){
+  document.getElementById('pdf-loading').style.display='none'; document.getElementById('pdf-result-area').style.display='block';
+  var tc={invoice:'background:#fff8e1;color:#9a6f20;border:1.5px solid var(--gold)',inspection:'background:#e0f5ed;color:var(--green);border:1.5px solid var(--green)',quote:'background:#e3f0ff;color:var(--blue);border:1.5px solid var(--blue)',other:'background:var(--g100);color:var(--g600);border:1.5px solid var(--g300)'};
+  var ti={invoice:'📋',inspection:'🔍',quote:'💰',other:'📄'};
+  var bn=document.getElementById('pdf-type-banner');
+  bn.style.cssText=(tc[d.docType]||tc.other)+';border-radius:var(--r);padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px;font-weight:700;font-size:14px';
+  bn.innerHTML='<span style="font-size:24px">'+(ti[d.docType]||'📄')+'</span><div><div>'+(d.docTypeLabel||'מסמך')+'</div><div style="font-size:11px;font-weight:400;opacity:.7">'+d.fileName+'</div></div>';
+  var flds=[{k:'vendor',l:'🏢 ספק',t:'text',v:d.vendor||''},{k:'property',l:'🏠 נכס',t:'text',v:d.property||''},{k:'date',l:'📅 תאריך',t:'date',v:d.date||''},{k:'amount',l:'💰 סכום (₪)',t:'number',v:d.amount||0},{k:'invoiceNumber',l:'#️⃣ מספר חשבונית',t:'text',v:d.invoiceNumber||''},{k:'categoryLabel',l:'🔧 קטגוריה',t:'text',v:d.categoryLabel||''}];
+  var urgOpts=[['low','נמוכה'],['medium','בינונית'],['high','גבוהה']];
+  var fh='<div class="pdf-field-grid">';
+  flds.forEach(function(f){fh+='<div class="pdf-field-item"><label>'+f.l+'</label><input type="'+f.t+'" id="pf-'+f.k+'" value="'+f.v+'"/></div>'});
+  fh+='<div class="pdf-field-item"><label>⚡ דחיפות</label><select id="pf-urgency">'+urgOpts.map(function(o){return'<option value="'+o[0]+'"'+(d.urgency===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>';
+  if(d.items&&d.items.length){fh+='<div style="grid-column:1/-1;margin-top:8px"><div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:8px">📦 פירוט פריטים</div><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:var(--g100)"><th style="padding:6px 10px;text-align:right">פריט</th><th style="padding:6px 10px;text-align:center">כמות</th><th style="padding:6px 10px;text-align:left">מחיר</th></tr></thead><tbody>'+d.items.map(function(it){return'<tr style="border-bottom:1px solid var(--g200)"><td style="padding:7px 10px">'+(it.desc||'')+'</td><td style="padding:7px 10px;text-align:center">'+(it.qty||1)+'</td><td style="padding:7px 10px;text-align:left">₪'+Number(it.price||0).toLocaleString()+'</td></tr>'}).join('')+'</tbody></table></div>'}
+  fh+='</div>';
+  document.getElementById('pdf-fields-container').innerHTML=fh;
+  document.getElementById('pdf-summary-text').textContent=d.summary||'לא נמצא תקציר.';
+}
+function getPdfVals(){var ks=['vendor','property','date','amount','invoiceNumber','categoryLabel','urgency'],o=Object.assign({},pdfAnalyzed);ks.forEach(function(k){var el=document.getElementById('pf-'+k);if(el)o[k]=el.value});return o}
+function savePdfAsMaint(){
+  var d=getPdfVals();
+  var r={id:'MR-'+String(Date.now()).slice(-5),property:d.property||'לא צוין',date:d.date||new Date().toISOString().split('T')[0],topics:[d.docTypeLabel||'מסמך'+(d.invoiceNumber?' #'+d.invoiceNumber:'')],cost:parseFloat(d.amount)||0,vendor:d.vendor||'',invoice:d.invoiceNumber||'',notes:d.summary||'',fileNames:[d.fileName],createdAt:nowStr()};
+  maintRecords.unshift(r);
+  pdfHistArr.unshift({dt:d.analyzedAt,type:d.docTypeLabel||'מסמך',vendor:d.vendor||'—',prop:d.property||'—',amount:d.amount||0});
+  if(pdfHistArr.length>20)pdfHistArr.pop();
+  saveAll(); updateDashKpis(); showToast('✅ נשמר כרשומת תחזוקה!');
+  setTimeout(function(){showPage('maintenance',document.querySelector('#nav-'+((currentUser&&currentUser.role)||'manager')+' .nav-item[onclick*="maintenance"]'))},900);
+}
+function renderPdfHist(){
+  var tb=document.getElementById('pdf-hist-body'),em=document.getElementById('pdf-hist-empty');
+  if(!pdfHistArr.length){if(tb)tb.innerHTML='';if(em)em.style.display='';return}
+  if(em)em.style.display='none';
+  if(tb)tb.innerHTML=pdfHistArr.map(function(h){return'<tr><td style="font-size:12px">'+(h.dt||'')+'</td><td>'+(h.type||'')+'</td><td style="font-weight:500">'+(h.vendor||'')+'</td><td style="font-size:12px;color:var(--g600)">'+(h.prop||'')+'</td><td>'+(h.amount?'₪'+Number(h.amount).toLocaleString():'—')+'</td></tr>'}).join('');
+}
+function resetPdfAnalyzer(){pdfAnalyzed=null;document.getElementById('pdf-file-input').value='';document.getElementById('pdf-dropzone').style.display='block';document.getElementById('pdf-loading').style.display='none';document.getElementById('pdf-result-area').style.display='none'}
+
+
+// ── EDIT MAINT ──
+function openEditMaint(id){
+  var r = maintRecords.find(function(x){return x.id===id}); if(!r) return;
+  document.getElementById('em-id').value = r.id;
+  document.getElementById('em-date').value = r.date||'';
+  document.getElementById('em-cost').value = r.cost||0;
+  document.getElementById('em-vendor').value = r.vendor||'';
+  document.getElementById('em-invoice').value = r.invoice||'';
+  document.getElementById('em-notes').value = r.notes||'';
+  document.getElementById('em-budget-type').value = r.budgetType||'A';
+  var ps = document.getElementById('em-property');
+  ps.innerHTML = ALL_PROPS.map(function(p){return'<option'+(p===r.property?' selected':'')+'>'+p+'</option>'}).join('');
+  closeModal('maint-detail-modal');
+  // load existing attachments into grid
+  attachmentStores['em-attachments'] = [];
+  renderAttachmentsGrid('em-attachments');
+  var bw = document.getElementById('em-storage-bar'); if(bw) bw.classList.remove('show');
+  if(r.attachments && r.attachments.length){
+    loadAttachmentsToGrid('em-attachments', r.attachments);
+    updateStorageBar('em-attachments');
+  }
+  document.getElementById('edit-maint-modal').classList.add('open');
+}
+function saveEditMaint(){
+  var id = document.getElementById('em-id').value;
+  var r = maintRecords.find(function(x){return x.id===id}); if(!r) return;
+  r.property = document.getElementById('em-property').value;
+  r.date = document.getElementById('em-date').value;
+  r.cost = parseFloat(document.getElementById('em-cost').value)||0;
+  r.vendor = document.getElementById('em-vendor').value.trim();
+  r.invoice = document.getElementById('em-invoice').value.trim();
+  r.notes = document.getElementById('em-notes').value.trim();
+  r.budgetType = document.getElementById('em-budget-type').value;
+  var newAtts = getAttachmentsForSave('em-attachments');
+  // merge: keep existing atts that weren't changed, add new ones
+  var existing = r.attachments || [];
+  r.attachments = existing.concat(newAtts.filter(function(a){ return !existing.find(function(e){return e.id===a.id}); }));
+  r.fileNames = r.attachments.map(function(a){return a.name});
+  saveAll(); closeModal('edit-maint-modal'); renderMaintPage(); updateDashKpis();
+  showToast('✅ רשומה עודכנה');
+}
+
+// ── RECURRING EXPENSES ──
+var recurringExpenses = JSON.parse(localStorage.getItem('zb_recurring_v1') || '[]');
+var investmentRecords = JSON.parse(localStorage.getItem('zb_invest_v1') || '[]');
+var propAccessCodes = JSON.parse(localStorage.getItem('zb_codes_v1') || '{}');
+var editingRecurringId = null;
+
+function saveAll(){
+  localStorage.setItem('zb_tickets_v4', JSON.stringify(tickets));
+  localStorage.setItem('zb_maint_v2', JSON.stringify(maintRecords));
+  localStorage.setItem('zb_notifs_v2', JSON.stringify(notifs));
+  localStorage.setItem('zb_topics_v2', JSON.stringify(topicBank));
+  localStorage.setItem('zb_users_v1', JSON.stringify(users));
+  localStorage.setItem('zb_pdf_h1', JSON.stringify(pdfHistArr));
+  localStorage.setItem('zb_recurring_v1', JSON.stringify(recurringExpenses));
+  localStorage.setItem('zb_invest_v1', JSON.stringify(investmentRecords));
+  localStorage.setItem('zb_codes_v1', JSON.stringify(propAccessCodes));
+}
+
+function openAddRecurring(prop){
+  editingRecurringId = null;
+  document.getElementById('rec-modal-title').textContent = 'הוסף הוצאה קבועה';
+  document.getElementById('rec-id').value = '';
+  document.getElementById('rec-name').value = '';
+  document.getElementById('rec-amount').value = '';
+  document.getElementById('rec-vendor').value = '';
+  document.getElementById('rec-notes').value = '';
+  document.getElementById('rec-period').value = 'monthly';
+  var ps = document.getElementById('rec-property');
+  ps.innerHTML = ALL_PROPS.map(function(p){return'<option'+(p===prop?' selected':'')+'>'+p+'</option>'}).join('');
+  document.getElementById('recurring-modal').classList.add('open');
+}
+function openEditRecurring(id){
+  var r = recurringExpenses.find(function(x){return x.id===id}); if(!r) return;
+  editingRecurringId = id;
+  document.getElementById('rec-modal-title').textContent = 'עריכת הוצאה קבועה';
+  document.getElementById('rec-id').value = r.id;
+  document.getElementById('rec-name').value = r.name||'';
+  document.getElementById('rec-amount').value = r.amount||0;
+  document.getElementById('rec-vendor').value = r.vendor||'';
+  document.getElementById('rec-notes').value = r.notes||'';
+  document.getElementById('rec-period').value = r.period||'monthly';
+  var ps = document.getElementById('rec-property');
+  ps.innerHTML = ALL_PROPS.map(function(p){return'<option'+(p===r.property?' selected':'')+'>'+p+'</option>'}).join('');
+  document.getElementById('recurring-modal').classList.add('open');
+}
+function saveRecurring(){
+  var name = document.getElementById('rec-name').value.trim();
+  var amount = parseFloat(document.getElementById('rec-amount').value)||0;
+  var property = document.getElementById('rec-property').value;
+  if(!name||!property){showToast('⚠️ יש למלא שם ונכס',true);return}
+  if(editingRecurringId){
+    var r = recurringExpenses.find(function(x){return x.id===editingRecurringId});
+    if(r){r.name=name;r.amount=amount;r.property=property;r.vendor=document.getElementById('rec-vendor').value.trim();r.period=document.getElementById('rec-period').value;r.notes=document.getElementById('rec-notes').value.trim();}
+  } else {
+    recurringExpenses.push({id:'RC-'+Date.now(),name:name,amount:amount,property:property,vendor:document.getElementById('rec-vendor').value.trim(),period:document.getElementById('rec-period').value,notes:document.getElementById('rec-notes').value.trim(),createdAt:nowStr()});
+  }
+  saveAll(); closeModal('recurring-modal'); renderBudgetPage(); showToast('✅ הוצאה נשמרה');
+}
+function deleteRecurring(id){
+  recurringExpenses = recurringExpenses.filter(function(r){return r.id!==id});
+  saveAll(); renderBudgetPage(); showToast('🗑️ הוצאה נמחקה');
+}
+
+// ── BUDGET PAGE ──
+var currentBudgetType = 'A';
+function setBudgetType(type, btn){
+  currentBudgetType = type;
+  document.querySelectorAll('.budget-tab').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  renderBudgetContent();
+}
+
+function renderBudgetPage(){
+  // update tab totals
+  var totA = maintRecords.filter(function(r){return (r.budgetType||'A')==='A'}).reduce(function(a,r){return a+(r.cost||0)},0)
+           + tickets.filter(function(t){return t.status==='done'}).length * 0; // tickets no cost tracked here
+  var totB = recurringExpenses.reduce(function(a,r){return a+(r.amount||0)},0)
+           + maintRecords.filter(function(r){return r.budgetType==='B'}).reduce(function(a,r){return a+(r.cost||0)},0);
+  var totC = investmentRecords.reduce(function(a,r){return a+(r.cost||0)},0)
+           + maintRecords.filter(function(r){return r.budgetType==='C'}).reduce(function(a,r){return a+(r.cost||0)},0);
+  var ta = document.getElementById('bt-total-A'); if(ta) ta.textContent='₪'+totA.toLocaleString('he-IL');
+  var tb = document.getElementById('bt-total-B'); if(tb) tb.textContent='₪'+totB.toLocaleString('he-IL');
+  var tc2 = document.getElementById('bt-total-C'); if(tc2) tc2.textContent='₪'+totC.toLocaleString('he-IL');
+  renderBudgetContent();
+}
+
+function renderBudgetContent(){
+  var container = document.getElementById('budget-content'); if(!container) return;
+  var html2 = '';
+  var props = ALL_PROPS;
+
+  if(currentBudgetType === 'A'){
+    // Ticket costs + maint type A per property
+    html2 = props.map(function(prop){
+      var propMaintA = maintRecords.filter(function(r){return r.property===prop&&(r.budgetType||'A')==='A'});
+      var propTickets = tickets.filter(function(t){return t.property===prop});
+      var total = propMaintA.reduce(function(a,r){return a+(r.cost||0)},0);
+      if(!propMaintA.length && !propTickets.length) return '';
+      return '<div class="prop-budget-card">'
+        +'<div class="pbc-header"><span class="pbc-title">🏢 '+prop+'</span><span class="pbc-total">₪'+total.toLocaleString('he-IL')+'</span></div>'
+        +'<div style="padding:14px 18px">'
+        +'<div style="font-size:12px;font-weight:700;color:var(--g400);margin-bottom:8px">🔧 קריאות שירות ('+propTickets.length+')</div>'
+        +propTickets.slice(0,5).map(function(t){return'<div class="recurring-item"><div><div class="ri-name">'+t.cat+' — '+t.desc.slice(0,40)+'</div><div class="ri-meta">'+t.date+' • '+t.name+'</div></div>'+statusBadge(t.status)+'</div>'}).join('')
+        +(propTickets.length>5?'<div style="font-size:12px;color:var(--g400);padding:8px 14px">ועוד '+(propTickets.length-5)+' קריאות...</div>':'')
+        +(propMaintA.length?'<div style="font-size:12px;font-weight:700;color:var(--g400);margin:12px 0 8px">🏗️ תחזוקה שוטפת</div>'+propMaintA.map(function(r){return'<div class="recurring-item"><div><div class="ri-name">'+r.topics.slice(0,2).join(', ')+'</div><div class="ri-meta">'+r.date+(r.vendor?' • '+r.vendor:'')+'</div></div><span class="cost-badge">₪'+Number(r.cost||0).toLocaleString('he-IL')+'</span></div>'}).join(''):'')
+        +'</div></div>';
+    }).filter(Boolean).join('') || '<div class="empty"><div class="empty-icon">🔧</div><div class="empty-txt">אין נתונים</div></div>';
+
+  } else if(currentBudgetType === 'B'){
+    // Recurring + maint type B per property
+    html2 = props.map(function(prop){
+      var propRec = recurringExpenses.filter(function(r){return r.property===prop});
+      var propMaintB = maintRecords.filter(function(r){return r.property===prop&&r.budgetType==='B'});
+      var total = propRec.reduce(function(a,r){return a+(r.amount||0)},0) + propMaintB.reduce(function(a,r){return a+(r.cost||0)},0);
+      if(!propRec.length && !propMaintB.length) return '';
+      return '<div class="prop-budget-card">'
+        +'<div class="pbc-header"><span class="pbc-title">🏢 '+prop+'</span><span class="pbc-total">₪'+total.toLocaleString('he-IL')+'</span></div>'
+        +'<div style="padding:14px 18px">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
+        +'<div style="font-size:12px;font-weight:700;color:var(--g400)">🔄 הוצאות קבועות</div>'
+        +'<button class="btn-primary" style="font-size:11px;padding:4px 10px" onclick="openAddRecurring(''+prop+'')">+ הוסף</button></div>'
+        +propRec.map(function(r){
+          var periodLbl = {monthly:'חודשי',quarterly:'רבעוני',yearly:'שנתי',once:'חד פעמי'}[r.period]||r.period;
+          return'<div class="recurring-item"><div><div class="ri-name">'+r.name+'</div><div class="ri-meta">'+(r.vendor?r.vendor+' • ':'')+periodLbl+'</div></div>'
+            +'<div style="display:flex;align-items:center;gap:8px"><span class="cost-badge">₪'+Number(r.amount||0).toLocaleString('he-IL')+'</span>'
+            +'<button class="edit-btn" onclick="openEditRecurring(''+r.id+'')">✏️</button>'
+            +'<button class="edit-btn" style="color:var(--red)" onclick="deleteRecurring(''+r.id+'')">✕</button></div></div>';
+        }).join('')
+        +(propMaintB.length?'<div style="font-size:12px;font-weight:700;color:var(--g400);margin:12px 0 8px">🏗️ טיפולים קבועים</div>'+propMaintB.map(function(r){return'<div class="recurring-item"><div><div class="ri-name">'+r.topics.slice(0,2).join(', ')+'</div><div class="ri-meta">'+r.date+'</div></div><span class="cost-badge">₪'+Number(r.cost||0).toLocaleString('he-IL')+'</span></div>'}).join(''):'')
+        +'</div></div>';
+    }).filter(Boolean).join('')
+    + '<div style="margin-top:16px"><button class="btn-primary" onclick="openAddRecurring('')">+ הוסף הוצאה קבועה לנכס</button></div>';
+    if(!recurringExpenses.length && !maintRecords.filter(function(r){return r.budgetType==='B'}).length){
+      html2 = '<div class="empty"><div class="empty-icon">🔄</div><div class="empty-txt">אין הוצאות קבועות — לחץ "+ הוסף" על נכס</div></div><div style="margin-top:16px"><button class="btn-primary" onclick="openAddRecurring('')">+ הוסף הוצאה קבועה</button></div>';
     }
-    
-    // Render Board Part 1: Tenant Tickets
-    if(!flTickets.length) {
-        tContainer.innerHTML = '<div class="empty" style="padding:14px;">אין פניות דיירים פתוחות בקבוצה זו 👍</div>';
-    } else {
-        tContainer.innerHTML = flTickets.map(t => {
-            var alertLabel = t.status === 'inprogress' ? '⚙️ בטיפול צוות' : '🚨 קריאה פתוחה';
-            var cardColor = t.status === 'inprogress' ? 'border-right-color:var(--blue); background:#f4f9ff;' : '';
-            var actionBtn = t.status === 'open' 
-                ? `<button class="btn-primary" style="background:var(--blue); font-size:12px; padding:6px 12px;" onclick="setTicketInMaintenanceProgress('${t.id}')">טפל פנייה ⚙️</button>` 
-                : `<button class="btn-primary" style="background:var(--green); font-size:12px; padding:6px 12px;" onclick="closeTenantTicket('${t.id}')">סגור קריאה ✓</button>`;
-            
-            return `<div class="preventive-card" style="${cardColor}">`
-                 + `<div style="flex:1">`
-                 + `<div style="font-size:11px; font-weight:800; color:var(--navy); display:flex; gap:6px; align-items:center;"><span>${alertLabel}</span> • <span style="background:var(--g200); padding:1px 6px; border-radius:4px;">${t.cat}</span></div>`
-                 + `<div style="font-size:14px; font-weight:700; color:var(--navy); margin-top:4px;">דירה ${t.unit}: ${t.desc}</div>`
-                 + `<div style="font-size:12px; color:var(--g600); margin-top:2px;">🏢 נכס: <strong>${t.property}</strong> • מדווח: ${t.name} (${t.date})</div>`
-                 + `</div><div>${actionBtn}</div></div>`;
-        }).join('');
-    }
 
-    // Render Board Part 2: Preventive Submissions
-    if(!flTasks.length) {
-        pContainer.innerHTML = '<div class="empty" style="padding:14px;">אין משימות מונעות בחתך הנבחר</div>';
-    } else {
-        pContainer.innerHTML = flTasks.map(t => {
-            var statusLabel = t.dueDate < todayStr ? '⚠️ באיחור חורג' : 'בתוכנית שבועית';
-            return `<div class="preventive-card ${t.dueDate < todayStr ? 'overdue' : 'upcoming'}">`
-                 + `<div style="flex:1">`
-                 + `<div style="font-size:14px; font-weight:700; color:var(--navy);">${t.name}</div>`
-                 + `<div style="font-size:12px; color:var(--g600); margin-top:2px;">🏠 נכס: <strong>${t.property}</strong> • 📅 יעד: <strong>${t.dueDate}</strong> (${statusLabel})</div>`
-                 + `<div style="margin-top:4px;"><span class="preventive-badge">${t.cat}</span> <span class="recurrence-badge">🔄 מחזור: ${t.period}</span></div>`
-                 + `</div><div><button class="btn-primary" style="font-size:12px; padding:6px 14px;" onclick="openEngineerActionModal('${t.id}')">בצע ✓</button></div></div>`;
-        }).join('');
-    }
+  } else if(currentBudgetType === 'C'){
+    var maintC = maintRecords.filter(function(r){return r.budgetType==='C'});
+    html2 = '<div style="display:flex;justify-content:flex-end;margin-bottom:16px">'
+      +'<button class="btn-primary" onclick="openMaintFormWithType('C')">+ רשום השקעה / שיפוץ</button></div>'
+      +props.map(function(prop){
+        var propC = maintC.filter(function(r){return r.property===prop});
+        if(!propC.length) return '';
+        var total = propC.reduce(function(a,r){return a+(r.cost||0)},0);
+        return '<div class="prop-budget-card">'
+          +'<div class="pbc-header"><span class="pbc-title">🏢 '+prop+'</span><span class="pbc-total">₪'+total.toLocaleString('he-IL')+'</span></div>'
+          +'<div style="padding:14px 18px">'
+          +propC.map(function(r){return'<div class="recurring-item"><div><div class="ri-name">'+r.topics.join(', ')+'</div><div class="ri-meta">'+r.date+(r.notes?' • '+r.notes.slice(0,40):'')+'</div></div>'
+            +'<div style="display:flex;gap:8px;align-items:center"><span class="cost-badge">₪'+Number(r.cost||0).toLocaleString('he-IL')+'</span><button class="edit-btn" onclick="openEditMaint(''+r.id+'')">✏️</button></div></div>'}).join('')
+          +'</div></div>';
+      }).filter(Boolean).join('')
+    +(maintC.length===0?'<div class="empty"><div class="empty-icon">🏗️</div><div class="empty-txt">אין השקעות רשומות</div></div>':'');
+  }
+  container.innerHTML = html2;
 }
 
-async function setTicketInMaintenanceProgress(id) {
-    var t = tickets.find(x => x.id === id); if(!t) return;
-    t.status = 'inprogress';
-    await window.cloudSave("tickets", id, t);
-    showToast('⚙️ הסטטוס עודכן: הקריאה הועברה למצב "בטיפול אב בית"');
+function openMaintFormWithType(type){
+  openMaintForm();
+  setTimeout(function(){
+    var sel = document.getElementById('mf-budget-type'); if(sel) sel.value=type;
+  },50);
 }
-async function closeTenantTicket(id) { 
-    var t = tickets.find(x => x.id === id); if(!t) return; 
-    t.status = 'done'; 
-    await window.cloudSave("tickets", id, t); 
-    showToast('קריאת דייר נסגרה וסומנה כטופלה בהצלחה!'); 
+
+// ── TENANT ACCESS CODES ──
+function getTenantCode(prop){
+  return propAccessCodes[prop] || null;
 }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-function closeModalOv(e, id){ if(e.target === document.getElementById(id)) closeModal(id); }
-function showToast(m){ var el=document.getElementById('toast'); document.getElementById('toast-msg').textContent=m; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3000); }
+function setTenantCode(prop, code){
+  propAccessCodes[prop] = code;
+  saveAll();
+}
+function generateCode(){
+  return String(Math.floor(1000+Math.random()*9000));
+}
 
-window.openStaffSubLogin = openStaffSubLogin;
-window.backToMainLoginHub = backToMainLoginHub;
-window.loginAsUser = loginAsUser;
-window.renderPageFull = renderPageFull;
-window.checkUnreadAlerts = checkUnreadAlerts;
-window.setBoardStatusFilter = setBoardStatusFilter;
+// ── EXPORT TO EXCEL ──
+function exportToExcel(type){
+  var rows = [], headers = [], filename = '';
+  if(type === 'tickets'){
+    headers = ['מזהה','קטגוריה','נכס','יחידה','פירוט','תאריך','סטטוס','שם דייר','טלפון'];
+    rows = tickets.map(function(t){return [t.id,t.cat,t.property,t.unit,t.desc,t.date,{open:'פתוח',inprogress:'בטיפול',done:'טופל'}[t.status]||t.status,t.name,t.phone]});
+    filename = 'קריאות_שירות';
+  } else if(type === 'maint'){
+    headers = ['מזהה','נכס','תאריך','נושאים','עלות','ספק','חשבונית','סוג תקציב','הערות'];
+    rows = maintRecords.map(function(r){return [r.id,r.property,r.date,(r.topics||[]).join('; '),r.cost||0,r.vendor||'',r.invoice||'',{A:'תקלות שוטפות',B:'טיפולים קבועים',C:'השקעות בעלים'}[r.budgetType||'A'],r.notes||'']});
+    filename = 'תחזוקה_שוטפת';
+  } else if(type === 'recurring'){
+    headers = ['מזהה','נכס','שם הוצאה','ספק','סכום','מחזוריות','הערות'];
+    rows = recurringExpenses.map(function(r){return [r.id,r.property,r.name,r.vendor||'',r.amount||0,{monthly:'חודשי',quarterly:'רבעוני',yearly:'שנתי',once:'חד פעמי'}[r.period]||r.period,r.notes||'']});
+    filename = 'הוצאות_קבועות';
+  } else if(type === 'investments'){
+    headers = ['מזהה','נכס','תאריך','תיאור','עלות','ספק','הערות'];
+    rows = maintRecords.filter(function(r){return r.budgetType==='C'}).map(function(r){return [r.id,r.property,r.date,(r.topics||[]).join('; '),r.cost||0,r.vendor||'',r.notes||'']});
+    filename = 'השקעות_בעלים';
+  } else if(type === 'budget_summary'){
+    headers = ['נכס','תקלות_שוטפות_₪','טיפולים_קבועים_₪','השקעות_בעלים_₪','סה_כ_₪'];
+    rows = ALL_PROPS.map(function(prop){
+      var a = maintRecords.filter(function(r){return r.property===prop&&(r.budgetType||'A')==='A'}).reduce(function(s,r){return s+(r.cost||0)},0);
+      var b = recurringExpenses.filter(function(r){return r.property===prop}).reduce(function(s,r){return s+(r.amount||0)},0) + maintRecords.filter(function(r){return r.property===prop&&r.budgetType==='B'}).reduce(function(s,r){return s+(r.cost||0)},0);
+      var c = maintRecords.filter(function(r){return r.property===prop&&r.budgetType==='C'}).reduce(function(s,r){return s+(r.cost||0)},0);
+      return [prop,a,b,c,a+b+c];
+    });
+    filename = 'סיכום_תקציב';
+  }
+  // Build CSV with BOM for Hebrew Excel
+  var bom = '\uFEFF';
+  var csv = bom + headers.join(',') + '\n' + rows.map(function(row){
+    return row.map(function(cell){
+      var s = String(cell||'').replace(/"/g,'""');
+      return s.indexOf(',')>=0||s.indexOf('\n')>=0||s.indexOf('"')>=0 ? '"'+s+'"' : s;
+    }).join(',');
+  }).join('\n');
+  var blob = new Blob([csv],{type:'text/csv;charset=utf-8'});
+  var a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download = filename+'_'+new Date().toLocaleDateString('he-IL').replace(/\//g,'-')+'.csv';
+  a.click(); URL.revokeObjectURL(a.href);
+  showToast('📊 הקובץ יורד...');
+}
 
+function renderExportPage(){
+  var et = document.getElementById('ex-tickets-count'); if(et) et.textContent = tickets.length + ' רשומות';
+  var em = document.getElementById('ex-maint-count'); if(em) em.textContent = maintRecords.length + ' רשומות';
+  var er = document.getElementById('ex-recurring-count'); if(er) er.textContent = recurringExpenses.length + ' רשומות';
+  var ei = document.getElementById('ex-invest-count'); if(ei) ei.textContent = maintRecords.filter(function(r){return r.budgetType==='C'}).length + ' רשומות';
+}
+
+// ── TENANT CODE SYSTEM - patch tenant login ──
+// Patch enterAs for tenant role to request property code
+var _origEnterAs = enterAs;
+enterAs = function(role){
+  if(role !== 'tenant'){ _origEnterAs(role); return; }
+  // Show property selector + code input
+  var props = ALL_PROPS;
+  var dlg = '<div style="text-align:center;padding:16px 0">'
+    +'<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:20px">בחר נכס והזן קוד גישה</div>'
+    +'<select id="tenant-prop-sel" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-family:Heebo;font-size:14px;margin-bottom:14px">'
+    +props.map(function(p){return'<option style="color:#000">'+p+'</option>'}).join('')+'</select>'
+    +'<input type="text" id="tenant-code-input" maxlength="4" placeholder="קוד גישה 4 ספרות" style="width:100%;padding:12px;border-radius:8px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-family:Heebo;font-size:18px;text-align:center;letter-spacing:8px;margin-bottom:16px"/>'
+    +'<button onclick="verifyTenantCode()" style="width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy);border:none;padding:12px;border-radius:8px;font-family:Heebo;font-size:15px;font-weight:700;cursor:pointer">כניסה ›</button>'
+    +'<div id="tenant-code-err" style="color:#ff8a8a;font-size:12px;margin-top:10px;display:none">קוד שגוי — פנה לניהול הבניין</div>'
+    +'</div>';
+  // Replace login grid temporarily
+  var grid = document.getElementById('login-users-grid');
+  grid.innerHTML = dlg;
+};
+
+function verifyTenantCode(){
+  var prop = document.getElementById('tenant-prop-sel').value;
+  var code = document.getElementById('tenant-code-input').value.trim();
+  var storedCode = getTenantCode(prop);
+  // If no code set yet, allow any 4-digit code (for demo)
+  if(!storedCode && code.length === 4){
+    _enterAsTenant(prop); return;
+  }
+  if(storedCode && code === storedCode){
+    _enterAsTenant(prop); return;
+  }
+  document.getElementById('tenant-code-err').style.display='block';
+}
+
+function _enterAsTenant(prop){
+  currentRole = 'tenant';
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('user-name').textContent='דייר';
+  document.getElementById('topbar-av').textContent='ד';
+  var badge=document.getElementById('role-badge');badge.textContent='דייר';badge.className='role-badge role-tenant';
+  document.getElementById('nav-manager').style.display='none';
+  document.getElementById('nav-engineer').style.display='none';
+  document.getElementById('nav-tenant').style.display='block';
+  // Pre-select the property in tenant form
+  fillPropSelects();
+  setTimeout(function(){
+    var sel=document.getElementById('t-property');if(sel)sel.value=prop;
+  },100);
+  var firstNav=document.querySelector('#nav-tenant .nav-item');
+  showPage('tenant',firstNav);
+}
+
+// ── MANAGE CODES IN USERS PAGE ──
+function renderUsersPage(){
+  var avSt={manager:'background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy)',engineer:'background:#e0f5ed;color:var(--green)',tenant:'background:#e3f0ff;color:var(--blue)'};
+  ['manager','engineer','tenant'].forEach(function(role){
+    var el=document.getElementById('ul-'+role); if(!el) return;
+    var ru=users.filter(function(u){return u.role===role});
+    if(!ru.length){el.innerHTML='<div style="color:var(--g400);font-size:13px;padding:8px 0">אין משתמשים</div>';return}
+    el.innerHTML=ru.map(function(u){return'<div class="ucard"><div class="uav" style="'+avSt[u.role]+'">'+u.name[0]+'</div><div style="flex:1"><div class="uname">'+u.name+'</div><div class="urole">'+(u.phone||'אין טלפון')+'</div>'+(u.role==='engineer'?'<div class="uprops">'+u.props.map(function(p){return'<span class="pchip">'+p+'</span>'}).join('')+'</div>':'')+'</div><div style="display:flex;gap:6px;flex-shrink:0"><button class="btn-ghost" style="font-size:11px;padding:4px 10px" onclick="openEditUser(''+u.id+'')">✏️ ערוך</button>'+(u.id!=='u1'?'<button class="btn-danger" style="font-size:11px;padding:4px 10px" onclick="deleteUser(''+u.id+'')">🗑️</button>':'')+'</div></div>'}).join('');
+  });
+  // Access codes section
+  var codesEl = document.getElementById('ul-codes');
+  if(codesEl){
+    codesEl.innerHTML = ALL_PROPS.map(function(prop){
+      var code = getTenantCode(prop);
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--g200)">'
+        +'<div><div style="font-size:13px;font-weight:600;color:var(--navy)">'+prop+'</div></div>'
+        +'<div style="display:flex;align-items:center;gap:10px">'
+        +(code?'<span class="access-code-badge">'+code+'</span>':'<span style="font-size:12px;color:var(--g400)">ללא קוד</span>')
+        +'<button class="edit-btn" onclick="setNewCode(''+prop+'')">🔑 '+(code?'שנה':'הגדר')+'</button>'
+        +'</div></div>';
+    }).join('');
+  }
+}
+function setNewCode(prop){
+  var newCode = prompt('הזן קוד גישה חדש לנכס "'+prop+'" (4 ספרות):');
+  if(!newCode) return;
+  newCode = newCode.trim();
+  if(!/^\d{4}$/.test(newCode)){showToast('⚠️ קוד חייב להיות 4 ספרות',true);return}
+  setTenantCode(prop,newCode);
+  renderUsersPage();
+  showToast('✅ קוד גישה עודכן לנכס');
+}
+
+// Override saveMaintRecord to include budget type
+var _origSaveMaint = saveMaintRecord;
+saveMaintRecord = function(){
+  var budgetSel = document.getElementById('mf-budget-type');
+  var budgetType = budgetSel ? budgetSel.value : 'A';
+  // call original
+  var property = document.getElementById('mf-property').value;
+  var date = document.getElementById('mf-date').value;
+  if(!property){showToast('⚠️ בחר נכס', true);return}
+  if(!selectedMaintTopics.length){showToast('⚠️ בחר לפחות נושא אחד', true);return}
+  if(!date){showToast('⚠️ בחר תאריך', true);return}
+  var topicNames = selectedMaintTopics.map(function(id){
+    var t = topicBank.find(function(x){return x.id === id});
+    return t ? t.name : id;
+  });
+  var atts = getAttachmentsForSave('mf-attachments');
+  var rec = {
+    id: 'MR-' + String(Date.now()).slice(-5),
+    property: property, date: date, topics: topicNames,
+    cost: parseFloat(document.getElementById('mf-cost').value) || 0,
+    vendor: document.getElementById('mf-vendor').value.trim(),
+    invoice: document.getElementById('mf-invoice').value.trim(),
+    notes: document.getElementById('mf-notes').value.trim(),
+    fileNames: atts.map(function(a){return a.name}),
+    attachments: atts,
+    budgetType: budgetType,
+    createdAt: nowStr()
+  };
+  maintRecords.unshift(rec);
+  saveAll();
+  closeModal('maint-form-modal');
+  renderMaintPage();
+  updateDashKpis();
+  showToast('✅ רשומה נשמרה: ' + rec.id);
+};
+
+
+function viewAttachmentDirect(attJson, idx, ctx){
+  // Called from detail modal where we pass att inline
+  // Better: look up from maintRecords
+  var att = null;
+  maintRecords.forEach(function(r){
+    if(r.attachments) r.attachments.forEach(function(a){
+      if(a.id && attJson.indexOf(a.id)>=0) att=a;
+    });
+  });
+  if(!att) return;
+  _currentViewerAtt = att;
+  document.getElementById('fv-title').textContent = att.name;
+  var body = document.getElementById('fv-body');
+  if(att.type === 'application/pdf'){
+    body.innerHTML = '<iframe src="'+att.data+'" style="width:100%;height:75vh;border:none"></iframe>';
+  } else {
+    body.innerHTML = '<img src="'+att.data+'" style="max-width:100%;max-height:75vh;display:block"/>';
+  }
+  document.getElementById('file-viewer-modal').classList.add('open');
+}
+
+// ── MOBILE SIDEBAR TOGGLE ──
+function toggleSidebar(){
+  var sb=document.getElementById('sidebar');
+  var ov=document.getElementById('sidebar-overlay');
+  var isOpen=sb.classList.contains('open');
+  if(isOpen){
+    sb.classList.remove('open');
+    ov.classList.remove('show');
+  } else {
+    sb.classList.add('open');
+    ov.classList.add('show');
+  }
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+// Close sidebar when a nav item is clicked on mobile
+document.querySelectorAll('.nav-item').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    if(window.innerWidth <= 768) closeSidebar();
+  });
+});
+
+// ── INIT ──
 renderLoginScreen();
+renderNotifs();
 </script>
 </body>
 </html>
