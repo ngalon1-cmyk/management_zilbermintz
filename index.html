@@ -232,7 +232,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 .ucard{background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:16px 20px;box-shadow:var(--sh-sm);display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;transition:box-shadow .2s}
 .ucard:hover{box-shadow:var(--sh-md)}
 .uav{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0}
-.uname覆{font-size:15px;font-weight:700;color:var(--navy)}
+.uname{font-size:15px;font-weight:700;color:var(--navy)}
 .urole{font-size:12px;color:var(--g400);margin-top:2px}
 .uprops{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
 .pchip{background:var(--g100);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--g600);font-weight:500}
@@ -573,10 +573,10 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   </div>
 </div>
 
-<!-- MAINTENANCE FORM MODAL -->
+<!-- MAINTENANCE FORM MODAL (HANDLES BOTH NEW & EDIT MODES) -->
 <div class="modal-ov" id="maint-form-modal" onclick="closeModalOv(event,'maint-form-modal')">
   <div class="modal" style="max-width:700px">
-    <div class="modal-hdr"><h3>🏗️ רישום טיפול תחזוקה</h3><button class="modal-close" onclick="closeModal('maint-form-modal')">✕</button></div>
+    <div class="modal-hdr"><h3 id="maint-form-modal-title">🏗️ רישום טיפול תחזוקה</h3><button class="modal-close" onclick="closeModal('maint-form-modal')">✕</button></div>
     <div class="modal-bdy">
       <div class="fg">
         <label>נכס <span class="req">*</span></label>
@@ -585,17 +585,25 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
         </select>
       </div>
 
-      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px">בחר נושאי טיפול (ניתן לסמן כמה) <span class="req">*</span></div>
-      <div class="maint-bank-grid" id="maint-bank-grid"></div>
+      <div id="topics-selection-area">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px">בחר נושאי טיפול (ניתן לסמן כמה) <span class="req">*</span></div>
+        <div class="maint-bank-grid" id="maint-bank-grid"></div>
 
-      <div class="add-topic-wrap">
-        <input type="text" id="new-topic-input" placeholder="הוסף נושא חדש למאגר..."/>
-        <button class="btn-ghost" onclick="addCustomTopic()">+ הוסף</button>
+        <div class="add-topic-wrap">
+          <input type="text" id="new-topic-input" placeholder="הוסף נושא חדש למאגר..."/>
+          <button class="btn-ghost" onclick="addCustomTopic()">+ הוסף</button>
+        </div>
+
+        <div class="selected-items-wrap" id="sel-items-wrap">
+          <div class="selected-items-title">נושאים שנבחרו:</div>
+          <div id="sel-items-list"></div>
+        </div>
       </div>
 
-      <div class="selected-items-wrap" id="sel-items-wrap">
-        <div class="selected-items-title">נושאים שנבחרו:</div>
-        <div id="sel-items-list"></div>
+      <!-- IN EDIT MODE, TOPICS SHOW AS SIMPLE INPUT -->
+      <div class="fg" id="edit-mode-topic-field" style="display:none">
+          <label>נושא הטיפול</label>
+          <input type="text" id="mf-edit-topic-string" placeholder="שם המשימה"/>
       </div>
 
       <div class="form-grid">
@@ -607,18 +615,18 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
       </div>
 
       <div class="fg">
-        <label>קבצים (חשבוניות, תמונות, דוחות)</label>
+        <label>קבצים ותמונות (חשבוניות, צילום תקלה מהשטח, דוחות PDF)</label>
         <label class="file-upload-zone" for="mf-files">
           <input type="file" id="mf-files" multiple accept="image/*,.pdf,.doc,.docx" onchange="handleMaintFiles(this)" style="display:none">
           <div style="font-size:24px;margin-bottom:6px">📎</div>
-          <div style="font-size:13px;color:var(--g600)"><strong>לחץ להעלאת קבצים</strong> — תמונות, PDF, מסמכים</div>
+          <div style="font-size:13px;color:var(--g600)"><strong>לחץ להעלאת קבצים או צילום ישיר מהמצלמה</strong></div>
         </label>
         <div class="uploaded-files" id="mf-files-list"></div>
       </div>
 
       <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
         <button class="btn-ghost" onclick="closeModal('maint-form-modal')">ביטול</button>
-        <button class="btn-primary" onclick="saveMaintRecord()">✅ שמור רשומה</button>
+        <button class="btn-primary" onclick="saveMaintRecord()">✅ שמור שינויים</button>
       </div>
     </div>
   </div>
@@ -673,8 +681,8 @@ var selectedCat = '';
 var selectedMaintTopics = [];
 var maintFiles = [];
 var currentPage = 'dashboard';
+var editingMaintID = null; // מזהה הרשומה הנערכת בתחזוקה
 
-// PREVENTIVE MAINTENANCE BASE DATA
 var defaultPreventiveTasks = [
     {id: 'p1', name: 'בדיקת תקינות גנרטור חירום והנעה ידנית', cat: 'חשמל', property: 'שלם 3 רמת גן', cost: 150},
     {id: 'p2', name: 'בדיקת לחצים במשאבות מים ואיטום', cat: 'אינסטלציה', property: 'מודיעין 5 בלוד', cost: 0},
@@ -830,7 +838,7 @@ function updateBadges(){
   var kpi = document.getElementById('kpi-open'); if(kpi) kpi.textContent = open;
 }
 
-// ── TENANT WORKFLOWS ──
+// ── TENANT AREA ──
 function selectCat(btn){
   document.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('selected')});
   btn.classList.add('selected');
@@ -946,22 +954,7 @@ function openTicketDetail(id){
   document.getElementById('ticket-detail-modal').classList.add('open');
 }
 
-function changeTicketStatus(id, status){
-  var t = tickets.find(function(tk){return tk.id === id});
-  if(!t) return;
-  t.status = status;
-  var label = {open:'נפתחה',inprogress:'בטיפול',done:'טופל'}[status] || status;
-  t.timeline = t.timeline || [];
-  t.timeline.push({action:label, time:nowStr()});
-  if(status === 'done') addNotif('קריאה '+t.id+' טופלה', t.cat + ' — ' + t.property, t.id);
-  saveAll();
-  closeModal('ticket-detail-modal');
-  renderPageFull(currentPage);
-  updateBadges();
-  showToast('✅ סטטוס עודכן');
-}
-
-// ── 1. דיווח מהיר מהשטח (מצלמה/קובץ) ──
+// ── דיווח מהיר מהשטח (מצלמה) ──
 function quickFieldReport(input){
     var file = input.files[0]; if(!file) return;
     showToast("📸 ה-AI מפענח את תמונת התקלה מהשטח...");
@@ -988,7 +981,7 @@ function quickFieldReport(input){
     }, 2000);
 }
 
-// ── 2. ניהול ותצוגת תחזוקה מונעת (PREVENTIVE HUB) ──
+// ── ניהול תחזוקה מונעת ──
 function addNewPreventiveTaskHub(){
     var name = document.getElementById('p-new-name').value.trim();
     var prop = document.getElementById('p-new-prop').value;
@@ -1020,7 +1013,6 @@ function renderPreventiveTasks(){
     var up = getUserProps();
     var filterProp = (document.getElementById('maint-filter-prop') || {}).value || '';
     
-    // סינון הרשאות פלוס סינן עמוד
     var activeTasks = preventiveTasks.filter(function(t){ 
         var hasAccess = up.indexOf(t.property) !== -1;
         var matchesFilter = filterProp ? t.property === filterProp : true;
@@ -1068,7 +1060,7 @@ function executePreventive(taskId){
     showToast("✅ המשימה בוצעה, תועדה בהיסטוריה וקודמה בתקציב!");
 }
 
-// ── 3. דשבורד פיננסי, תקציבים וגרפים ──
+// ── דשבורד, תקציב וגרפים פנימיים ──
 function renderMaintFiltered(){
   var up = getUserProps(), isMgr = currentUser && currentUser.role === 'manager';
   var all = isMgr ? maintRecords : maintRecords.filter(function(r){return up.indexOf(r.property) !== -1});
@@ -1114,13 +1106,11 @@ function updateDashKpis(){
       if(pct >= 90) bar.classList.add('danger');
       else if(pct >= 70) bar.classList.add('warning');
   }
-  
   renderCategoryChart(all);
 }
 
 function renderCategoryChart(records) {
     var chartBox = document.getElementById('dash-category-chart'); if(!chartBox) return;
-    
     var categories = { 'מעלית': 0, 'מיזוג אוויר': 0, 'חשמל': 0, 'אינסטלציה': 0, 'אחר/כללי': 0 };
     var total = 0;
     
@@ -1155,7 +1145,7 @@ function renderCategoryChart(records) {
     chartBox.innerHTML = html;
 }
 
-// ── FORM WORKFLOWS ──
+// ── טופס ומאגר נושאי טיפול ──
 function renderTopicBank(){
   var grid = document.getElementById('maint-bank-grid'); if(!grid) return;
   grid.innerHTML = topicBank.map(function(topic){
@@ -1168,82 +1158,124 @@ function renderTopicBank(){
   }).join('');
 }
 
-function toggleMaintTopic(id){
-  var idx = selectedMaintTopics.indexOf(id);
-  if(idx === -1) selectedMaintTopics.push(id);
-  else selectedMaintTopics.splice(idx, 1);
-  renderTopicBank();
-  renderSelectedTopics();
-}
-
-function renderSelectedTopics(){
-  var wrap = document.getElementById('sel-items-wrap');
-  var list = document.getElementById('sel-items-list');
-  if(!selectedMaintTopics.length){wrap.classList.remove('show');return}
-  wrap.classList.add('show');
-  list.innerHTML = selectedMaintTopics.map(function(id){
-    var t = topicBank.find(function(x){return x.id === id});
-    if(!t) return '';
-    return '<span class="sel-tag">'+t.icon+' '+t.name+'<button onclick="toggleMaintTopic(\''+id+'\')">✕</button></span>';
-  }).join('');
-}
-
-function addCustomTopic(){
-  var input = document.getElementById('new-topic-input');
-  var val = input.value.trim(); if(!val) return;
-  var newId = 'tc-' + Date.now();
-  topicBank.push({id:newId, icon:'📌', name:val, cat:'מותאם'});
-  saveAll();
-  input.value = '';
-  renderTopicBank();
-  showToast('✅ נושא נוסף למאגר');
-}
-
 function handleMaintFiles(input){
   var list = document.getElementById('mf-files-list');
-  maintFiles = Array.from(input.files);
-  list.innerHTML = maintFiles.map(function(f,i){
-    return '<div class="file-chip">📎 '+f.name.slice(0,22)+(f.name.length>22?'…':'')+'<button onclick="removeFile('+i+')">✕</button></div>';
+  var newFiles = Array.from(input.files);
+  // שומר על קבצים קיימים ומשרשר קבצים חדשים
+  maintFiles = maintFiles.concat(newFiles.map(function(f){return f.name}));
+  renderFileList();
+}
+
+function renderFileList(){
+  var list = document.getElementById('mf-files-list'); if(!list) return;
+  list.innerHTML = maintFiles.map(function(name, i){
+    return '<div class="file-chip">📎 '+name.slice(0,22)+(name.length>22?'…':'')+'<button onclick="removeFile('+i+')">✕</button></div>';
   }).join('');
 }
 
 function removeFile(i){
   maintFiles.splice(i,1);
-  var list = document.getElementById('mf-files-list');
-  list.innerHTML = maintFiles.map(function(f,j){
-    return '<div class="file-chip">📎 '+f.name.slice(0,22)+(f.name.length>22?'…':'')+'<button onclick="removeFile('+j+')">✕</button></div>';
-  }).join('');
+  renderFileList();
 }
 
-// ── CORE STORAGE LOGIC ──
+// ── 🛠️ פונקציות עריכה מתקדמות והוספת קבצים (השדרוג המבוקש) ──
+function openMaintForm(){
+  editingMaintID = null; // מצב רישום חדש
+  document.getElementById('maint-form-modal-title').textContent = '🏗️ רישום טיפול תחזוקה';
+  document.getElementById('topics-selection-area').style.display = 'block';
+  document.getElementById('edit-mode-topic-field').style.display = 'none';
+  
+  selectedMaintTopics = []; maintFiles = [];
+  document.getElementById('mf-property').value = '';
+  document.getElementById('mf-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('mf-cost').value = '';
+  document.getElementById('mf-vendor').value = '';
+  document.getElementById('mf-invoice').value = '';
+  document.getElementById('mf-notes').value = '';
+  document.getElementById('mf-files-list').innerHTML = '';
+  renderTopicBank();
+  renderSelectedTopics();
+  document.getElementById('maint-form-modal').classList.add('open');
+}
+
+function openEditMaintForm(id){
+    var r = maintRecords.find(function(x){return x.id === id}); if(!r) return;
+    editingMaintID = id; // מעביר למצב עריכה
+    closeModal('maint-detail-modal');
+    
+    document.getElementById('maint-form-modal-title').textContent = '✏️ עריכת רשומת תחזוקה: ' + id;
+    document.getElementById('topics-selection-area').style.display = 'none';
+    document.getElementById('edit-mode-topic-field').style.display = 'block';
+    
+    document.getElementById('mf-property').value = r.property;
+    document.getElementById('mf-date').value = r.date;
+    document.getElementById('mf-cost').value = r.cost || '';
+    document.getElementById('mf-vendor').value = r.vendor || '';
+    document.getElementById('mf-invoice').value = r.invoice || '';
+    document.getElementById('mf-notes').value = r.notes || '';
+    document.getElementById('mf-edit-topic-string').value = r.topics.join(', ');
+    
+    maintFiles = r.fileNames ? [].concat(r.fileNames) : [];
+    renderFileList();
+    
+    document.getElementById('maint-form-modal').classList.add('open');
+}
+
 function saveMaintRecord(){
   var property = document.getElementById('mf-property').value;
   var date = document.getElementById('mf-date').value;
   if(!property){showToast('⚠️ בחר נכס', true);return}
-  if(!selectedMaintTopics.length){showToast('⚠️ בחר לפחות נושא אחד', true);return}
   if(!date){showToast('⚠️ בחר תאריך', true);return}
-  var topicNames = selectedMaintTopics.map(function(id){
-    var t = topicBank.find(function(x){return x.id === id});
-    return t ? t.name : id;
-  });
-  var rec = {
-    id: 'MR-' + String(Date.now()).slice(-5),
-    property: property,
-    date: date,
-    topics: topicNames,
-    cost: parseFloat(document.getElementById('mf-cost').value) || 0,
-    vendor: document.getElementById('mf-vendor').value.trim(),
-    invoice: document.getElementById('mf-invoice').value.trim(),
-    notes: document.getElementById('mf-notes').value.trim(),
-    fileNames: maintFiles.map(function(f){return f.name}),
-    createdAt: nowStr()
-  };
-  maintRecords.unshift(rec);
+  
+  var topicNames = [];
+  if(editingMaintID) {
+      // במצב עריכה שואבים את שם המשימה מהאינפוט הישיר
+      topicNames = [document.getElementById('mf-edit-topic-string').value.trim() || 'טיפול מעודכן'];
+  } else {
+      // במצב חדש שואבים מהצ'קבוקסים
+      if(!selectedMaintTopics.length){showToast('⚠️ בחר לפחות נושא אחד', true);return}
+      topicNames = selectedMaintTopics.map(function(id){
+        var t = topicBank.find(function(x){return x.id === id});
+        return t ? t.name : id;
+      });
+  }
+
+  if(editingMaintID) {
+      // עדכון רשומה קיימת בהיסטוריה
+      var r = maintRecords.find(function(x){return x.id === editingMaintID});
+      if(r) {
+          r.property = property;
+          r.date = date;
+          r.topics = topicNames;
+          r.cost = parseFloat(document.getElementById('mf-cost').value) || 0;
+          r.vendor = document.getElementById('mf-vendor').value.trim();
+          r.invoice = document.getElementById('mf-invoice').value.trim();
+          r.notes = document.getElementById('mf-notes').value.trim();
+          r.fileNames = maintFiles;
+      }
+      showToast('✏️ הרשומה עודכנה ונשמרה בהצלחה!');
+  } else {
+      // יצירת רשומה חדשה לחלוטין
+      var rec = {
+        id: 'MR-' + String(Date.now()).slice(-5),
+        property: property,
+        date: date,
+        topics: topicNames,
+        cost: parseFloat(document.getElementById('mf-cost').value) || 0,
+        vendor: document.getElementById('mf-vendor').value.trim(),
+        invoice: document.getElementById('mf-invoice').value.trim(),
+        notes: document.getElementById('mf-notes').value.trim(),
+        fileNames: maintFiles,
+        createdAt: nowStr()
+      };
+      maintRecords.unshift(rec);
+      showToast('✅ רשומה חדשה נשמרה: ' + rec.id);
+  }
+  
   saveAll();
   closeModal('maint-form-modal');
   renderMaintFiltered();
   updateDashKpis();
-  showToast('✅ רשומה נשמרה: ' + rec.id);
 }
 
 function openMaintDetail(id){
@@ -1257,19 +1289,22 @@ function openMaintDetail(id){
     (r.cost?'<div class="detail-row"><span class="dk">עלות</span><span class="dv">₪'+Number(r.cost).toLocaleString('he-IL')+'</span></div>':'')+
     '<div class="detail-row"><span class="dk">נושאים</span><span class="dv">'+r.topics.join(', ')+'</span></div>'+
     (r.notes?'<div class="detail-row"><span class="dk">הערות</span><span class="dv">'+r.notes+'</span></div>':'')+
-    (r.fileNames&&r.fileNames.length?'<div class="detail-row"><span class="dk">קבצים</span><span class="dv">'+r.fileNames.map(function(f){return'<div style="font-size:12px;color:var(--blue)">📎 '+f+'</div>'}).join('')+'</span></div>':'')+
-    '<div style="display:flex;gap:8px;margin-top:16px">'+
-    '<button class="btn-danger" style="font-size:12px" onclick="deleteMaintRecord(\''+r.id+'\')">🗑️ מחק רשומה</button>'+
+    (r.fileNames&&r.fileNames.length?'<div class="detail-row"><span class="dk">קבצים ותמונות</span><span class="dv">'+r.fileNames.map(function(f){return'<div style="font-size:12px;color:var(--blue); margin-top:4px;">📎 '+f+'</div>'}).join('')+'</span></div>':'')+
+    '<div style="display:flex;gap:8px;margin-top:20px; justify-content:space-between; width:100%">'+
+    '<button class="btn-primary" style="font-size:12px; padding:6px 14px;" onclick="openEditMaintForm(\''+r.id+'\')">✏️ ערוך והוסף קבצים</button>'+
+    '<button class="btn-danger" style="font-size:12px; padding:6px 14px;" onclick="deleteMaintRecord(\''+r.id+'\')">🗑️ מחק</button>'+
     '</div>';
   document.getElementById('maint-detail-modal').classList.add('open');
 }
 
 function deleteMaintRecord(id){
+  if(!confirm('האם אתה בטוח שברצונך למחוק רשומה זו?')) return;
   maintRecords = maintRecords.filter(function(r){return r.id !== id});
   saveAll();
   closeModal('maint-detail-modal');
   renderMaintFiltered();
   updateDashKpis();
+  showToast('🗑️ הרשומה נמחקה מהמערכת');
 }
 
 // ── DASHBOARD RENDERING ──
