@@ -160,7 +160,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 
 /* PREVENTIVE MAINTENANCE LIST */
 .preventive-list{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px}
-.preventive-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r-sm);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--sh-sm)}
+.preventive-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r-sm);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--sh-sm);margin-bottom:8px}
 .preventive-info{display:flex;align-items:center;gap:12px}
 .preventive-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:12px;background:var(--gold-pale);color:#9a6f20}
 
@@ -232,7 +232,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 .ucard{background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:16px 20px;box-shadow:var(--sh-sm);display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;transition:box-shadow .2s}
 .ucard:hover{box-shadow:var(--sh-md)}
 .uav{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0}
-.uname{font-size:15px;font-weight:700;color:var(--navy)}
+.uname覆{font-size:15px;font-weight:700;color:var(--navy)}
 .urole{font-size:12px;color:var(--g400);margin-top:2px}
 .uprops{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
 .pchip{background:var(--g100);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--g600);font-weight:500}
@@ -443,7 +443,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
     <div style="font-size:15px;font-weight:700;color:var(--navy)">🏗️ תחזוקה, שבר ומשימות מונעות</div>
     <div style="display:flex;gap:8px">
-      <label class="btn-ghost" style="background:#eef2f9;color:var(--blue);border-color:var(--blue);padding:8px 14px;font-weight:700;display:flex;align-items:center;gap:6px">
+      <label class="btn-ghost" style="background:#eef2f9;color:var(--blue);border-color:var(--blue);padding:8px 14px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer">
          📸 דיווח מהיר מהשטח
          <input type="file" accept="image/*" capture="environment" style="display:none" onchange="quickFieldReport(this)">
       </label>
@@ -464,9 +464,27 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 
   <div class="prop-select-wrap">
     <label>סנן לפי נכס:</label>
-    <select id="maint-filter-prop" onchange="renderMaintFiltered()">
+    <select id="maint-filter-prop" onchange="renderMaintFiltered(); renderPreventiveTasks();">
       <option value="">כל הנכסים</option>
     </select>
+  </div>
+
+  <!-- MANAGER ONLY: ADD PREVENTIVE TASK HUB -->
+  <div class="card" id="mgr-preventive-hub" style="margin-bottom:24px; display:none;">
+      <div class="card-head" style="background:var(--g100)"><h3>➕ הקצאת משימה מונעת (Preventive) חדשה ללוח</h3></div>
+      <div class="card-body form-grid" style="padding:14px 18px">
+          <div class="fg"><label>תיאור המשימה המונעת</label><input type="text" id="p-new-name" placeholder="לדוגמא: בדיקת משאבות לחץ מים קומה מינוס 1"/></div>
+          <div class="fg"><label>נכס יעד</label><select id="p-new-prop"></select></div>
+          <div class="fg"><label>עלות משוערת (₪)</label><input type="number" id="p-new-cost" placeholder="0"/></div>
+          <div class="fg"><label>קטגוריה</label>
+              <select id="p-new-cat">
+                  <option>חשמל</option><option>אינסטלציה</option><option>מיזוג</option><option>מעלית</option><option>בטיחות</option><option>כללי</option>
+              </select>
+          </div>
+          <div style="grid-column:1/-1; display:flex; justify-content:flex-end">
+              <button class="btn-primary" style="font-size:12px" onclick="addNewPreventiveTaskHub()">🚀 הוסף ללוח אב הבית</button>
+          </div>
+      </div>
   </div>
 
   <div class="dash-row" style="margin-bottom:20px">
@@ -475,7 +493,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
           <div class="card-body" id="preventive-tasks-container"></div>
       </div>
       <div class="card">
-          <div class="card-head"><h3>¼ היסטוריית טיפולים שבוצעו</h3></div>
+          <div class="card-head"><h3>📜 היסטוריית טיפולים שבוצעו</h3></div>
           <div class="card-body" id="maint-records-list" style="padding:0"></div>
       </div>
   </div>
@@ -725,7 +743,7 @@ function renderPageFull(id){
   if(id === 'dashboard') renderDashboard();
   else if(id === 'tickets') renderTicketsFiltered();
   else if(id === 'mytickets') renderMyTickets();
-  else if(id === 'maintenance') { renderMaintFiltered(); renderPreventiveTasks(); }
+  else if(id === 'maintenance') { renderMaintFiltered(); renderPreventiveTasks(); toggleManagerPreventiveHub(); }
   else if(id === 'users') renderUsersPage();
   else if(id === 'pdfpage') renderPdfHist();
 }
@@ -757,6 +775,7 @@ function loginAsUser(uid){
   var sr=document.getElementById('sb-role-txt'); if(sr) sr.textContent=rl[u.role]||u.role;
   ['manager','engineer','tenant'].forEach(function(r){ document.getElementById('nav-'+r).style.display = u.role===r?'block':'none'; });
   fillPropSelects();
+  fillPreventiveAddSelect();
   var defaultPage={manager:'dashboard',engineer:'maintenance',tenant:'tenant'}[u.role]||'dashboard';
   var firstNav=document.querySelector('#nav-'+u.role+' .nav-item');
   showPage(defaultPage, firstNav);
@@ -776,6 +795,16 @@ function fillPropSelects(){
     var el=document.getElementById(s[0]); if(!el) return;
     el.innerHTML=s[1]+p.map(function(v){return'<option>'+v+'</option>'}).join('');
   });
+}
+
+function fillPreventiveAddSelect(){
+    var el = document.getElementById('p-new-prop'); if(!el) return;
+    el.innerHTML = ALL_PROPS.map(function(v){return '<option>'+v+'</option>'}).join('');
+}
+
+function toggleManagerPreventiveHub(){
+    var hub = document.getElementById('mgr-preventive-hub'); if(!hub) return;
+    hub.style.display = (currentUser && currentUser.role === 'manager') ? 'block' : 'none';
 }
 
 // ── UTILITIES & TOAST ──
@@ -800,33 +829,6 @@ function updateBadges(){
   var b2 = document.getElementById('open-badge2'); if(b2) b2.textContent = open;
   var kpi = document.getElementById('kpi-open'); if(kpi) kpi.textContent = open;
 }
-
-// ── NOTIFICATIONS ──
-function addNotif(title, sub, ticketId){
-  notifs.unshift({id:Date.now(), title:title, sub:sub, ticketId:ticketId, read:false});
-  saveAll();
-  renderNotifs();
-}
-function renderNotifs(){
-  var unread = notifs.filter(function(n){return !n.read}).length;
-  var dot = document.getElementById('notif-dot'); if(dot) dot.classList.toggle('show', unread > 0);
-  var cnt = document.getElementById('notif-count');
-  if(cnt) {
-    cnt.textContent = unread || '';
-    cnt.style.display = unread ? 'inline' : 'none';
-  }
-  var list = document.getElementById('notif-list'); if(!list) return;
-  if(!notifs.length){list.innerHTML='<div style="padding:24px;text-align:center;color:var(--g400);font-size:13px">אין התראות</div>';return;}
-  list.innerHTML = notifs.map(function(n){
-    return '<div class="notif-item '+(n.read?'':'unread')+'" onclick="clickNotif('+n.id+')">'
-      +'<div class="notif-item-title">'+n.title+'</div>'
-      +'<div class="notif-item-sub">'+(n.sub||'')+'</div></div>';
-  }).join('');
-}
-function clickNotif(nid){var n=notifs.find(function(x){return x.id===nid});if(n)n.read=true;saveAll();renderNotifs();}
-function clearNotifs(){notifs=[];saveAll();renderNotifs();}
-function toggleNotifPanel(){document.getElementById('notif-panel').classList.toggle('open')}
-document.addEventListener('click',function(e){if(!e.target.closest('#notif-bell-wrap'))document.getElementById('notif-panel').classList.remove('open')});
 
 // ── TENANT WORKFLOWS ──
 function selectCat(btn){
@@ -888,7 +890,7 @@ function filterMyTickets(f, btn){
   renderMyTickets();
 }
 
-// ── TICKETS LIST ──
+// ── TICKETS MANAGEMENT ──
 function renderTicketsFiltered(){
   updateBadges();
   var up = getUserProps(), isMgr = currentUser && currentUser.role === 'manager';
@@ -959,7 +961,7 @@ function changeTicketStatus(id, status){
   showToast('✅ סטטוס עודכן');
 }
 
-// ── 1. דיווח מהיר מהשטח באמצעות ה-AI ──
+// ── 1. דיווח מהיר מהשטח (מצלמה/קובץ) ──
 function quickFieldReport(input){
     var file = input.files[0]; if(!file) return;
     showToast("📸 ה-AI מפענח את תמונת התקלה מהשטח...");
@@ -986,14 +988,47 @@ function quickFieldReport(input){
     }, 2000);
 }
 
-// ── 2. תחזוקה מונעת ──
+// ── 2. ניהול ותצוגת תחזוקה מונעת (PREVENTIVE HUB) ──
+function addNewPreventiveTaskHub(){
+    var name = document.getElementById('p-new-name').value.trim();
+    var prop = document.getElementById('p-new-prop').value;
+    var cost = parseFloat(document.getElementById('p-new-cost').value) || 0;
+    var cat = document.getElementById('p-new-cat').value;
+    
+    if(!name){showToast('⚠️ הזן תיאור משימה מונעת', true); return;}
+    
+    var newTask = {
+        id: 'p-' + Date.now(),
+        name: name,
+        cat: cat,
+        property: prop,
+        cost: cost
+    };
+    
+    preventiveTasks.push(newTask);
+    saveAll();
+    
+    document.getElementById('p-new-name').value = '';
+    document.getElementById('p-new-cost').value = '';
+    
+    renderPreventiveTasks();
+    showToast('🚀 משימה מונעת חדשה התווספה והוקצתה ללוח השבועי!');
+}
+
 function renderPreventiveTasks(){
     var container = document.getElementById('preventive-tasks-container'); if(!container) return;
     var up = getUserProps();
-    var activeTasks = preventiveTasks.filter(function(t){ return up.indexOf(t.property) !== -1; });
+    var filterProp = (document.getElementById('maint-filter-prop') || {}).value || '';
+    
+    // סינון הרשאות פלוס סינן עמוד
+    var activeTasks = preventiveTasks.filter(function(t){ 
+        var hasAccess = up.indexOf(t.property) !== -1;
+        var matchesFilter = filterProp ? t.property === filterProp : true;
+        return hasAccess && matchesFilter; 
+    });
     
     if(!activeTasks.length){
-        container.innerHTML = '<div style="color:var(--g600);font-size:13px;text-align:center;padding:16px">אין משימות מונעות פתוחות השבוע לנכסים שלך.</div>';
+        container.innerHTML = '<div style="color:var(--g600);font-size:13px;text-align:center;padding:16px">אין משימות מונעות פתוחות השבוע לנכסים המסוננים.</div>';
         return;
     }
     container.innerHTML = activeTasks.map(function(t){
@@ -1133,6 +1168,110 @@ function renderTopicBank(){
   }).join('');
 }
 
+function toggleMaintTopic(id){
+  var idx = selectedMaintTopics.indexOf(id);
+  if(idx === -1) selectedMaintTopics.push(id);
+  else selectedMaintTopics.splice(idx, 1);
+  renderTopicBank();
+  renderSelectedTopics();
+}
+
+function renderSelectedTopics(){
+  var wrap = document.getElementById('sel-items-wrap');
+  var list = document.getElementById('sel-items-list');
+  if(!selectedMaintTopics.length){wrap.classList.remove('show');return}
+  wrap.classList.add('show');
+  list.innerHTML = selectedMaintTopics.map(function(id){
+    var t = topicBank.find(function(x){return x.id === id});
+    if(!t) return '';
+    return '<span class="sel-tag">'+t.icon+' '+t.name+'<button onclick="toggleMaintTopic(\''+id+'\')">✕</button></span>';
+  }).join('');
+}
+
+function addCustomTopic(){
+  var input = document.getElementById('new-topic-input');
+  var val = input.value.trim(); if(!val) return;
+  var newId = 'tc-' + Date.now();
+  topicBank.push({id:newId, icon:'📌', name:val, cat:'מותאם'});
+  saveAll();
+  input.value = '';
+  renderTopicBank();
+  showToast('✅ נושא נוסף למאגר');
+}
+
+function handleMaintFiles(input){
+  var list = document.getElementById('mf-files-list');
+  maintFiles = Array.from(input.files);
+  list.innerHTML = maintFiles.map(function(f,i){
+    return '<div class="file-chip">📎 '+f.name.slice(0,22)+(f.name.length>22?'…':'')+'<button onclick="removeFile('+i+')">✕</button></div>';
+  }).join('');
+}
+
+function removeFile(i){
+  maintFiles.splice(i,1);
+  var list = document.getElementById('mf-files-list');
+  list.innerHTML = maintFiles.map(function(f,j){
+    return '<div class="file-chip">📎 '+f.name.slice(0,22)+(f.name.length>22?'…':'')+'<button onclick="removeFile('+j+')">✕</button></div>';
+  }).join('');
+}
+
+// ── CORE STORAGE LOGIC ──
+function saveMaintRecord(){
+  var property = document.getElementById('mf-property').value;
+  var date = document.getElementById('mf-date').value;
+  if(!property){showToast('⚠️ בחר נכס', true);return}
+  if(!selectedMaintTopics.length){showToast('⚠️ בחר לפחות נושא אחד', true);return}
+  if(!date){showToast('⚠️ בחר תאריך', true);return}
+  var topicNames = selectedMaintTopics.map(function(id){
+    var t = topicBank.find(function(x){return x.id === id});
+    return t ? t.name : id;
+  });
+  var rec = {
+    id: 'MR-' + String(Date.now()).slice(-5),
+    property: property,
+    date: date,
+    topics: topicNames,
+    cost: parseFloat(document.getElementById('mf-cost').value) || 0,
+    vendor: document.getElementById('mf-vendor').value.trim(),
+    invoice: document.getElementById('mf-invoice').value.trim(),
+    notes: document.getElementById('mf-notes').value.trim(),
+    fileNames: maintFiles.map(function(f){return f.name}),
+    createdAt: nowStr()
+  };
+  maintRecords.unshift(rec);
+  saveAll();
+  closeModal('maint-form-modal');
+  renderMaintFiltered();
+  updateDashKpis();
+  showToast('✅ רשומה נשמרה: ' + rec.id);
+}
+
+function openMaintDetail(id){
+  var r = maintRecords.find(function(x){return x.id === id}); if(!r) return;
+  document.getElementById('md-title').textContent = 'רשומת תחזוקה ' + r.id;
+  document.getElementById('md-body').innerHTML =
+    '<div class="detail-row"><span class="dk">נכס</span><span class="dv">'+r.property+'</span></div>'+
+    '<div class="detail-row"><span class="dk">תאריך</span><span class="dv">'+r.date+'</span></div>'+
+    (r.vendor?'<div class="detail-row"><span class="dk">ספק</span><span class="dv">'+r.vendor+'</span></div>':'')+
+    (r.invoice?'<div class="detail-row"><span class="dk">חשבונית</span><span class="dv">'+r.invoice+'</span></div>':'')+
+    (r.cost?'<div class="detail-row"><span class="dk">עלות</span><span class="dv">₪'+Number(r.cost).toLocaleString('he-IL')+'</span></div>':'')+
+    '<div class="detail-row"><span class="dk">נושאים</span><span class="dv">'+r.topics.join(', ')+'</span></div>'+
+    (r.notes?'<div class="detail-row"><span class="dk">הערות</span><span class="dv">'+r.notes+'</span></div>':'')+
+    (r.fileNames&&r.fileNames.length?'<div class="detail-row"><span class="dk">קבצים</span><span class="dv">'+r.fileNames.map(function(f){return'<div style="font-size:12px;color:var(--blue)">📎 '+f+'</div>'}).join('')+'</span></div>':'')+
+    '<div style="display:flex;gap:8px;margin-top:16px">'+
+    '<button class="btn-danger" style="font-size:12px" onclick="deleteMaintRecord(\''+r.id+'\')">🗑️ מחק רשומה</button>'+
+    '</div>';
+  document.getElementById('maint-detail-modal').classList.add('open');
+}
+
+function deleteMaintRecord(id){
+  maintRecords = maintRecords.filter(function(r){return r.id !== id});
+  saveAll();
+  closeModal('maint-detail-modal');
+  renderMaintFiltered();
+  updateDashKpis();
+}
+
 // ── DASHBOARD RENDERING ──
 function renderDashboard(){
   updateBadges();
@@ -1191,7 +1330,7 @@ function renderPropCG(sel){
 
 function togglePropSec(){
   var r=document.getElementById('um-role').value;
-  document.getElementById('prop-access-sec').style.display=r==='engineer'?'block':'none';
+  var sec = document.getElementById('prop-access-sec'); if(sec) sec.style.display=r==='engineer'?'block':'none';
 }
 
 function getCheckedP(){ return Array.from(document.querySelectorAll('#prop-cg input:checked')).map(function(cb){return cb.value}); }
