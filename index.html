@@ -944,20 +944,31 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 
 <!-- BUDGET PAGE -->
 <div class="page" id="page-budget">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-    <div style="font-size:15px;font-weight:700;color:var(--navy)">💰 תקציב לפי נכסים</div>
-    <div style="display:flex;gap:8px">
-      <button class="btn-ghost" onclick="showPage('export',null)" style="font-size:12px">📊 ייצוא לאקסל</button>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div>
+      <div style="font-size:20px;font-weight:800;color:var(--navy)">💰 תקציב נכסים</div>
+      <div style="font-size:12px;color:var(--g400);margin-top:3px">מעקב הוצאות לפי קטגוריה ונכס</div>
     </div>
+    <button class="btn-ghost" onclick="showPage('export',null)" style="font-size:12px">📊 ייצוא לאקסל</button>
   </div>
-  <div class="budget-tabs" id="budget-tabs">
-    <button class="budget-tab active" onclick="setBudgetType('A',this)"><span class="bt-icon">🔧</span>תקלות שוטפות<span class="bt-val" id="bt-total-A">₪0</span></button>
-    <button class="budget-tab" onclick="setBudgetType('B',this)"><span class="bt-icon">🔄</span>טיפולים קבועים<span class="bt-val" id="bt-total-B">₪0</span></button>
-    <button class="budget-tab" onclick="setBudgetType('C',this)"><span class="bt-icon">🏗️</span>השקעות בעלים<span class="bt-val" id="bt-total-C">₪0</span></button>
+
+  <!-- Budget Summary Cards -->
+  <div class="kgrid" style="margin-bottom:24px">
+    <div class="kcard"><div class="kicon icr">🔧</div><div class="klabel">תקלות שוטפות</div><div class="kval" id="bt-total-A">₪0</div><div class="ksub">קריאות ותיקונים</div></div>
+    <div class="kcard"><div class="kicon icb">🔄</div><div class="klabel">טיפולים קבועים</div><div class="kval" id="bt-total-B">₪0</div><div class="ksub">חשמל, מים, שמירה</div></div>
+    <div class="kcard"><div class="kicon icg">🏗️</div><div class="klabel">השקעות בעלים</div><div class="kval" id="bt-total-C">₪0</div><div class="ksub">שיפוצים והשקעות</div></div>
+    <div class="kcard"><div class="kicon ico">💰</div><div class="klabel">סה"כ כולל</div><div class="kval" id="bt-total-all">₪0</div><div class="ksub">כל הקטגוריות</div></div>
   </div>
+
+  <!-- Tabs -->
+  <div class="budget-tabs" id="budget-tabs" style="margin-bottom:24px">
+    <button class="budget-tab active" onclick="setBudgetType('A',this)"><span class="bt-icon">🔧</span>תקלות שוטפות</button>
+    <button class="budget-tab" onclick="setBudgetType('B',this)"><span class="bt-icon">🔄</span>טיפולים קבועים</button>
+    <button class="budget-tab" onclick="setBudgetType('C',this)"><span class="bt-icon">🏗️</span>השקעות בעלים</button>
+  </div>
+
   <div id="budget-content"></div>
 </div>
-
 <!-- EXPORT PAGE -->
 <div class="page" id="page-export">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
@@ -2276,96 +2287,149 @@ function deleteRecurring(id){
 
 // ── BUDGET PAGE ──
 var currentBudgetType = 'A';
+
+function tProp(t){ return t.property||t.prop||''; }
+function tCat(t){ return t.cat||t.c||''; }
+function tDesc(t){ return t.desc||t.d||''; }
+function tStatus(t){ return t.status||t.s||'open'; }
+function tDate(t){ return t.date||t.dt||''; }
+function tName(t){ return t.name||t.n||''; }
+
 function setBudgetType(type, btn){
   currentBudgetType = type;
   document.querySelectorAll('.budget-tab').forEach(function(b){b.classList.remove('active')});
-  btn.classList.add('active');
+  if(btn) btn.classList.add('active');
   renderBudgetContent();
 }
 
 function renderBudgetPage(){
-  // update tab totals
-  var totA = maintRecords.filter(function(r){return (r.budgetType||'A')==='A'}).reduce(function(a,r){return a+(r.cost||0)},0)
-           + tickets.filter(function(t){return t.status==='done'}).length * 0; // tickets no cost tracked here
+  var totA = maintRecords.filter(function(r){return (r.budgetType||'A')==='A'}).reduce(function(a,r){return a+(r.cost||0)},0);
   var totB = recurringExpenses.reduce(function(a,r){return a+(r.amount||0)},0)
            + maintRecords.filter(function(r){return r.budgetType==='B'}).reduce(function(a,r){return a+(r.cost||0)},0);
-  var totC = investmentRecords.reduce(function(a,r){return a+(r.cost||0)},0)
-           + maintRecords.filter(function(r){return r.budgetType==='C'}).reduce(function(a,r){return a+(r.cost||0)},0);
-  var ta = document.getElementById('bt-total-A'); if(ta) ta.textContent='₪'+totA.toLocaleString('he-IL');
-  var tb = document.getElementById('bt-total-B'); if(tb) tb.textContent='₪'+totB.toLocaleString('he-IL');
-  var tc2 = document.getElementById('bt-total-C'); if(tc2) tc2.textContent='₪'+totC.toLocaleString('he-IL');
+  var totC = maintRecords.filter(function(r){return r.budgetType==='C'}).reduce(function(a,r){return a+(r.cost||0)},0);
+  var setEl = function(id,val){ var el=document.getElementById(id); if(el) el.textContent='₪'+val.toLocaleString('he-IL'); };
+  setEl('bt-total-A', totA);
+  setEl('bt-total-B', totB);
+  setEl('bt-total-C', totC);
+  setEl('bt-total-all', totA+totB+totC);
   renderBudgetContent();
 }
 
 function renderBudgetContent(){
   var container = document.getElementById('budget-content'); if(!container) return;
-  var html2 = '';
-  var props = ALL_PROPS;
 
   if(currentBudgetType === 'A'){
-    // Ticket costs + maint type A per property
-    html2 = props.map(function(prop){
-      var propMaintA = maintRecords.filter(function(r){return r.property===prop&&(r.budgetType||'A')==='A'});
-      var propTickets = tickets.filter(function(t){return t.property===prop});
-      var total = propMaintA.reduce(function(a,r){return a+(r.cost||0)},0);
-      if(!propMaintA.length && !propTickets.length) return '';
+    // Tally per property: maint type A + open tickets
+    var rows = ALL_PROPS.map(function(prop){
+      var mA = maintRecords.filter(function(r){return (r.property||r.p||'')=== prop && (r.budgetType||'A')==='A'});
+      var tk = tickets.filter(function(t){return tProp(t)===prop});
+      if(!mA.length && !tk.length) return '';
+      var total = mA.reduce(function(a,r){return a+(r.cost||0)},0);
+      var openCount = tk.filter(function(t){return tStatus(t)!=='done'}).length;
+      var doneCount = tk.filter(function(t){return tStatus(t)==='done'}).length;
       return '<div class="prop-budget-card">'
-        +'<div class="pbc-header"><span class="pbc-title">🏢 '+prop+'</span><span class="pbc-total">₪'+total.toLocaleString('he-IL')+'</span></div>'
+        +'<div class="pbc-header">'
+          +'<div><div class="pbc-title">🏢 '+prop+'</div>'
+          +'<div style="font-size:11px;opacity:.65;margin-top:2px">'+tk.length+' קריאות | '+mA.length+' תיקונים</div></div>'
+          +'<span class="pbc-total">₪'+total.toLocaleString('he-IL')+'</span>'
+        +'</div>'
         +'<div style="padding:14px 18px">'
-        +'<div style="font-size:12px;font-weight:700;color:var(--g400);margin-bottom:8px">🔧 קריאות שירות ('+propTickets.length+')</div>'
-        +propTickets.slice(0,5).map(function(t){return'<div class="recurring-item"><div><div class="ri-name">'+t.cat+' — '+t.desc.slice(0,40)+'</div><div class="ri-meta">'+t.date+' • '+t.name+'</div></div>'+statusBadge(t.status)+'</div>'}).join('')
-        +(propTickets.length>5?'<div style="font-size:12px;color:var(--g400);padding:8px 14px">ועוד '+(propTickets.length-5)+' קריאות...</div>':'')
-        +(propMaintA.length?'<div style="font-size:12px;font-weight:700;color:var(--g400);margin:12px 0 8px">🏗️ תחזוקה שוטפת</div>'+propMaintA.map(function(r){return'<div class="recurring-item"><div><div class="ri-name">'+r.topics.slice(0,2).join(', ')+'</div><div class="ri-meta">'+r.date+(r.vendor?' • '+r.vendor:'')+'</div></div><span class="cost-badge">₪'+Number(r.cost||0).toLocaleString('he-IL')+'</span></div>'}).join(''):'')
-        +'</div></div>';
-    }).filter(Boolean).join('') || '<div class="empty"><div class="empty-icon">🔧</div><div class="empty-txt">אין נתונים</div></div>';
+          // Ticket summary chips
+          +(tk.length?'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">'
+            +'<span style="background:#fde8e6;color:var(--red);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">🚨 פתוח: '+openCount+'</span>'
+            +'<span style="background:#e0f5ed;color:var(--green);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">✅ טופל: '+doneCount+'</span>'
+          +'</div>':'')
+          // Last 3 tickets
+          +(tk.length?'<div style="font-size:11px;font-weight:700;color:var(--g400);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">קריאות אחרונות</div>'
+          +tk.slice(0,3).map(function(t){
+            return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--g100)">'
+              +'<div><div style="font-size:13px;font-weight:600;color:var(--navy)">'+tCat(t)+'</div>'
+              +'<div style="font-size:11px;color:var(--g400)">'+tDesc(t).slice(0,50)+(tDesc(t).length>50?'…':'')+'</div></div>'
+              +statusBadge(tStatus(t))
+            +'</div>';
+          }).join(''):'')
+          // Maint records
+          +(mA.length?'<div style="font-size:11px;font-weight:700;color:var(--g400);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px">תיקונים</div>'
+          +mA.slice(0,3).map(function(r){
+            var topics=r.topics||r.tn||[];
+            return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--g100)">'
+              +'<div style="font-size:13px;color:var(--navy)">'+topics.slice(0,2).join(', ')+'</div>'
+              +'<span class="cost-badge">₪'+(r.cost||0).toLocaleString('he-IL')+'</span>'
+            +'</div>';
+          }).join(''):'')
+        +'</div>'
+      +'</div>';
+    }).filter(Boolean).join('');
+    container.innerHTML = rows || '<div class="empty"><div class="empty-icon">🔧</div><div class="empty-txt">אין נתונים עדיין</div></div>';
 
   } else if(currentBudgetType === 'B'){
-    // Recurring + maint type B per property
-    html2 = props.map(function(prop){
-      var propRec = recurringExpenses.filter(function(r){return r.property===prop});
-      var propMaintB = maintRecords.filter(function(r){return r.property===prop&&r.budgetType==='B'});
-      var total = propRec.reduce(function(a,r){return a+(r.amount||0)},0) + propMaintB.reduce(function(a,r){return a+(r.cost||0)},0);
-      if(!propRec.length && !propMaintB.length) return '';
+    var rows2 = ALL_PROPS.map(function(prop){
+      var rec = recurringExpenses.filter(function(r){return r.property===prop});
+      var mB = maintRecords.filter(function(r){return (r.property||r.p||'')=== prop && r.budgetType==='B'});
+      if(!rec.length && !mB.length) return '';
+      var total2 = rec.reduce(function(a,r){return a+(r.amount||0)},0) + mB.reduce(function(a,r){return a+(r.cost||0)},0);
+      var periodLbl = {monthly:'חודשי',quarterly:'רבעוני',yearly:'שנתי',once:'חד פעמי'};
       return '<div class="prop-budget-card">'
-        +'<div class="pbc-header"><span class="pbc-title">🏢 '+prop+'</span><span class="pbc-total">₪'+total.toLocaleString('he-IL')+'</span></div>'
+        +'<div class="pbc-header">'
+          +'<div><div class="pbc-title">🏢 '+prop+'</div>'
+          +'<div style="font-size:11px;opacity:.65;margin-top:2px">'+rec.length+' הוצאות קבועות</div></div>'
+          +'<span class="pbc-total">₪'+total2.toLocaleString('he-IL')+'</span>'
+        +'</div>'
         +'<div style="padding:14px 18px">'
-        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
-        +'<div style="font-size:12px;font-weight:700;color:var(--g400)">🔄 הוצאות קבועות</div>'
-        +'<button class="btn-primary" style="font-size:11px;padding:4px 10px" onclick="openAddRecurring(\''+prop+'\')">+ הוסף</button></div>'
-        +propRec.map(function(r){
-          var periodLbl = {monthly:'חודשי',quarterly:'רבעוני',yearly:'שנתי',once:'חד פעמי'}[r.period]||r.period;
-          return'<div class="recurring-item"><div><div class="ri-name">'+r.name+'</div><div class="ri-meta">'+(r.vendor?r.vendor+' • ':'')+periodLbl+'</div></div>'
-            +'<div style="display:flex;align-items:center;gap:8px"><span class="cost-badge">₪'+Number(r.amount||0).toLocaleString('he-IL')+'</span>'
-            +'<button class="edit-btn" onclick="openEditRecurring(\''+r.id+'\')">✏️</button>'
-            +'<button class="edit-btn" style="color:var(--red)" onclick="deleteRecurring(\''+r.id+'\')">✕</button></div></div>';
-        }).join('')
-        +(propMaintB.length?'<div style="font-size:12px;font-weight:700;color:var(--g400);margin:12px 0 8px">🏗️ טיפולים קבועים</div>'+propMaintB.map(function(r){return'<div class="recurring-item"><div><div class="ri-name">'+r.topics.slice(0,2).join(', ')+'</div><div class="ri-meta">'+r.date+'</div></div><span class="cost-badge">₪'+Number(r.cost||0).toLocaleString('he-IL')+'</span></div>'}).join(''):'')
-        +'</div></div>';
-    }).filter(Boolean).join('')
-    + '<div style="margin-top:16px"><button class="btn-primary" onclick="openAddRecurring(\'\')">+ הוסף הוצאה קבועה לנכס</button></div>';
-    if(!recurringExpenses.length && !maintRecords.filter(function(r){return r.budgetType==='B'}).length){
-      html2 = '<div class="empty"><div class="empty-icon">🔄</div><div class="empty-txt">אין הוצאות קבועות</div></div><div style="margin-top:16px"><button class="btn-primary" onclick="openAddRecurring(\'\')">+ הוסף הוצאה קבועה</button></div>';
-    }
+          +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
+            +'<span style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.5px">הוצאות קבועות</span>'
+            +'<button class="btn-primary" style="font-size:11px;padding:4px 12px" data-prop="'+prop+'" onclick="openAddRecurring(this.dataset.prop)">+ הוסף</button>'
+          +'</div>'
+          +rec.map(function(r){
+            return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--g100)">'
+              +'<div><div style="font-size:13px;font-weight:600;color:var(--navy)">'+r.name+'</div>'
+              +'<div style="font-size:11px;color:var(--g400)">'+(r.vendor||'')+(r.vendor&&r.period?' • ':'')+((periodLbl[r.period])||r.period||'')+'</div></div>'
+              +'<div style="display:flex;align-items:center;gap:8px">'
+                +'<span class="cost-badge">₪'+(r.amount||0).toLocaleString('he-IL')+'</span>'
+                +'<button class="edit-btn" data-id="'+r.id+'" onclick="openEditRecurring(this.dataset.id)">✏️</button>'
+                +'<button class="edit-btn" style="color:var(--red)" data-id="'+r.id+'" onclick="deleteRecurring(this.dataset.id)">✕</button>'
+              +'</div></div>';
+          }).join('')
+          +(mB.length?'<div style="font-size:11px;font-weight:700;color:var(--g400);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px">טיפולים קבועים</div>'
+          +mB.map(function(r){var topics=r.topics||r.tn||[];return'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--g100)"><div style="font-size:13px;color:var(--navy)">'+topics.join(', ')+'</div><span class="cost-badge">₪'+(r.cost||0).toLocaleString('he-IL')+'</span></div>'}).join(''):'')
+        +'</div>'
+      +'</div>';
+    }).filter(Boolean).join('');
+    container.innerHTML = (rows2 || '<div class="empty"><div class="empty-icon">🔄</div><div class="empty-txt">אין הוצאות קבועות — לחץ "+ הוסף" על נכס</div></div>')
+      +'<div style="margin-top:16px"><button class="btn-primary" onclick="openAddRecurring(\'\')">+ הוסף הוצאה קבועה לנכס</button></div>';
 
   } else if(currentBudgetType === 'C'){
-    var maintC = maintRecords.filter(function(r){return r.budgetType==='C'});
-    html2 = '<div style="display:flex;justify-content:flex-end;margin-bottom:16px">'
+    var mC = maintRecords.filter(function(r){return r.budgetType==='C'});
+    var rows3 = ALL_PROPS.map(function(prop){
+      var propC = mC.filter(function(r){return (r.property||r.p||'')=== prop});
+      if(!propC.length) return '';
+      var totC2 = propC.reduce(function(a,r){return a+(r.cost||0)},0);
+      return '<div class="prop-budget-card">'
+        +'<div class="pbc-header">'
+          +'<div><div class="pbc-title">🏢 '+prop+'</div>'
+          +'<div style="font-size:11px;opacity:.65;margin-top:2px">'+propC.length+' פרויקטים</div></div>'
+          +'<span class="pbc-total">₪'+totC2.toLocaleString('he-IL')+'</span>'
+        +'</div>'
+        +'<div style="padding:14px 18px">'
+        +propC.map(function(r){
+          var topics=r.topics||r.tn||[];
+          return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--g100)">'
+            +'<div><div style="font-size:13px;font-weight:600;color:var(--navy)">'+topics.join(', ')+'</div>'
+            +'<div style="font-size:11px;color:var(--g400)">'+(r.date||r.d||'')+(r.notes?' • '+r.notes.slice(0,30):'')+'</div></div>'
+            +'<div style="display:flex;align-items:center;gap:8px">'
+              +'<span class="cost-badge">₪'+(r.cost||0).toLocaleString('he-IL')+'</span>'
+              +'<button class="edit-btn" data-id="'+r.id+'" onclick="openEditMaint(this.dataset.id)">✏️</button>'
+            +'</div></div>';
+        }).join('')
+        +'</div>'
+      +'</div>';
+    }).filter(Boolean).join('');
+    container.innerHTML = '<div style="display:flex;justify-content:flex-end;margin-bottom:16px">'
       +'<button class="btn-primary" onclick="openMaintFormWithType(\'C\')">+ רשום השקעה / שיפוץ</button></div>'
-      +props.map(function(prop){
-        var propC = maintC.filter(function(r){return r.property===prop});
-        if(!propC.length) return '';
-        var total = propC.reduce(function(a,r){return a+(r.cost||0)},0);
-        return '<div class="prop-budget-card">'
-          +'<div class="pbc-header"><span class="pbc-title">🏢 '+prop+'</span><span class="pbc-total">₪'+total.toLocaleString('he-IL')+'</span></div>'
-          +'<div style="padding:14px 18px">'
-          +propC.map(function(r){return'<div class="recurring-item"><div><div class="ri-name">'+r.topics.join(', ')+'</div><div class="ri-meta">'+r.date+(r.notes?' • '+r.notes.slice(0,40):'')+'</div></div>'
-            +'<div style="display:flex;gap:8px;align-items:center"><span class="cost-badge">₪'+Number(r.cost||0).toLocaleString('he-IL')+'</span><button class="edit-btn" onclick="openEditMaint(\''+r.id+'\')">✏️</button></div></div>'}).join('')
-          +'</div></div>';
-      }).filter(Boolean).join('')
-    +(maintC.length===0?'<div class="empty"><div class="empty-icon">🏗️</div><div class="empty-txt">אין השקעות רשומות</div></div>':'');
+      +(rows3 || '<div class="empty"><div class="empty-icon">🏗️</div><div class="empty-txt">אין השקעות רשומות</div></div>');
   }
-  container.innerHTML = html2;
 }
+
 
 function openMaintFormWithType(type){
   openMaintForm();
