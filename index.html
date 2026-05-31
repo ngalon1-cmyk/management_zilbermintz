@@ -450,6 +450,73 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   .topbar-right{gap:8px}
 }
 </style>
+
+<!-- FIREBASE SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJ1dbRc0_4UHUdExIxEocTJpRaDcZO2Ao",
+    authDomain: "zilbermintz-1938c.firebaseapp.com",
+    projectId: "zilbermintz-1938c",
+    storageBucket: "zilbermintz-1938c.firebasestorage.app",
+    messagingSenderId: "350076498890",
+    appId: "1:350076498890:web:2fcfd143d10f6572c55533",
+    measurementId: "G-7VWJQECYBC"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // ── CLOUD SAVE / DELETE helpers ──
+  window.cloudSave   = async (col, id, data) => { try { await setDoc(doc(db, col, id), data); } catch(e){ console.error('cloudSave',e); } };
+  window.cloudDelete = async (col, id)       => { try { await deleteDoc(doc(db, col, id));    } catch(e){ console.error('cloudDelete',e); } };
+
+  // ── COLLECTIONS MAP ──
+  // tickets, maintenance, recurring, investments, users_config, topics, codes, notifs
+
+  function attachListener(col, setter, afterCb){
+    onSnapshot(collection(db, col), snap => {
+      setter(snap.docs.map(d => d.data()));
+      if(typeof afterCb === 'function') afterCb();
+    });
+  }
+
+  // Wait for DOM + app JS to be ready before attaching
+  window.addEventListener('load', () => {
+    // Tickets
+    attachListener('tickets', data => { window.tickets = data; }, () => {
+      window.updateBadges && window.updateBadges();
+      if(window.currentPage === 'tickets' || window.currentPage === 'mytickets' || window.currentPage === 'dashboard') window.renderPageFull && window.renderPageFull(window.currentPage);
+    });
+    // Maintenance
+    attachListener('maintenance', data => { window.maintRecords = data; }, () => {
+      if(window.currentPage === 'maintenance' || window.currentPage === 'dashboard' || window.currentPage === 'budget') window.renderPageFull && window.renderPageFull(window.currentPage);
+    });
+    // Recurring expenses
+    attachListener('recurring', data => { window.recurringExpenses = data; }, () => {
+      if(window.currentPage === 'budget') window.renderPageFull && window.renderPageFull(window.currentPage);
+    });
+    // Users config
+    attachListener('users_config', data => {
+      if(data.length > 0){ window.users = data; window.renderLoginScreen && window.renderLoginScreen(); if(window.currentPage === 'users') window.renderUsersPage && window.renderUsersPage(); }
+    });
+    // Topics (maint bank)
+    attachListener('topics', data => { if(data.length > 0) window.topicBank = data; });
+    // Notifs
+    attachListener('notifs', data => { window.notifs = data.sort((a,b) => b.id - a.id); window.renderNotifs && window.renderNotifs(); });
+    // Codes
+    attachListener('prop_codes', data => {
+      var codes = {};
+      data.forEach(d => { codes[d.prop] = d.code; });
+      window.propAccessCodes = codes;
+    });
+  });
+
+  window._fbReady = true;
+</script>
+
 </head>
 <body>
 
@@ -558,6 +625,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 <div class="content">
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:12px">
+    <div id="cloud-sync-dot" title="נתונים מסונכרנים לענן" style="width:8px;height:8px;border-radius:50%;background:var(--green);opacity:0;transition:opacity .5s;flex-shrink:0"></div>
     <button class="hamburger" id="hamburger-btn" onclick="toggleSidebar()" aria-label="תפריט">
       <span></span><span></span><span></span>
     </button>
@@ -1155,10 +1223,12 @@ function renderPage(id){
 }
 
 // ── NOTIFICATIONS ──
-function addNotif(title, sub, ticketId){
-  notifs.unshift({id:Date.now(), title:title, sub:sub, ticketId:ticketId, read:false});
+function addNotif(t,s){
+  var n={id:Date.now(),t:t,s:s,r:false};
+  notifs.unshift(n);
+  fbSaveNotif(n);
   save();
-  renderNotifs();
+  rNotifs();
 }
 function renderNotifs(){
   var unread = notifs.filter(function(n){return !n.read}).length;
@@ -1228,6 +1298,7 @@ function submitTenantTicket(){
     timeline: [{action:'נפתחה', time: nowStr()}]
   };
   tickets.unshift(t);
+  fbSaveTicket(t);
   addNotif('קריאה חדשה: '+t.id, selectedCat+' — '+property, t.id);
   save();
   updateBadges();
@@ -1355,7 +1426,7 @@ function saveEditTicket(){
     t.timeline = t.timeline||[];
     t.timeline.push({action:{open:'נפתחה',inprogress:'בטיפול',done:'טופל'}[newStatus]||newStatus, time:nowStr()});
   }
-  saveAll(); closeModal('edit-ticket-modal'); renderPage(currentPage); updateBadges();
+  fbSaveTicket(t); saveAll(); closeModal('edit-ticket-modal'); renderPage(currentPage); updateBadges();
   showToast('✅ קריאה עודכנה');
 }
 
@@ -1413,7 +1484,8 @@ function addCustomTopic(){
   var val = input.value.trim();
   if(!val) return;
   var newId = 'tc-' + Date.now();
-  topicBank.push({id:newId, icon:'📌', name:val, cat:'מותאם'});
+  var _nt={id:newId, icon:'📌', name:val, cat:'מותאם'};
+  topicBank.push(_nt); fbSaveTopic && fbSaveTopic(_nt);
   save();
   input.value = '';
   renderTopicBank();
@@ -1876,7 +1948,7 @@ function saveUserFromModal(){
 
 function deleteUser(uid){
   if(!confirm('למחוק משתמש זה?')) return;
-  users=users.filter(function(u){return u.id!==uid}); saveAll(); renderUsersPage(); renderLoginScreen(); showToast('🗑️ משתמש נמחק');
+  users=users.filter(function(u){return u.id!==uid}); fbDeleteUser(uid); saveAll(); renderUsersPage(); renderLoginScreen(); showToast('🗑️ משתמש נמחק');
 }
 
 // ── PDF AI ──
@@ -1936,7 +2008,7 @@ function getPdfVals(){var ks=['vendor','property','date','amount','invoiceNumber
 function savePdfAsMaint(){
   var d=getPdfVals();
   var r={id:'MR-'+String(Date.now()).slice(-5),property:d.property||'לא צוין',date:d.date||new Date().toISOString().split('T')[0],topics:[d.docTypeLabel||'מסמך'+(d.invoiceNumber?' #'+d.invoiceNumber:'')],cost:parseFloat(d.amount)||0,vendor:d.vendor||'',invoice:d.invoiceNumber||'',notes:d.summary||'',fileNames:[d.fileName],createdAt:nowStr()};
-  maintRecords.unshift(r);
+  maintRecords.unshift(r); fbSaveMaint(r);
   pdfHistArr.unshift({dt:d.analyzedAt,type:d.docTypeLabel||'מסמך',vendor:d.vendor||'—',prop:d.property||'—',amount:d.amount||0});
   if(pdfHistArr.length>20)pdfHistArr.pop();
   saveAll(); updateDashKpis(); showToast('✅ נשמר כרשומת תחזוקה!');
@@ -2022,7 +2094,7 @@ function saveEditMaint(){
   var existing = r.attachments || [];
   r.attachments = existing.concat(newAtts.filter(function(a){ return !existing.find(function(e){return e.id===a.id}); }));
   r.fileNames = r.attachments.map(function(a){return a.name});
-  saveAll(); closeModal('edit-maint-modal'); renderMaintPage(); updateDashKpis();
+  fbSaveMaint(r); saveAll(); closeModal('edit-maint-modal'); renderMaintPage(); updateDashKpis();
   showToast('✅ רשומה עודכנה');
 }
 
@@ -2033,6 +2105,7 @@ var propAccessCodes = JSON.parse(localStorage.getItem('zb_codes_v1') || '{}');
 var editingRecurringId = null;
 
 function saveAll(){
+  // Always save to localStorage as fallback/cache
   localStorage.setItem('zb_tickets_v4', JSON.stringify(tickets));
   localStorage.setItem('zb_maint_v2', JSON.stringify(maintRecords));
   localStorage.setItem('zb_notifs_v2', JSON.stringify(notifs));
@@ -2042,6 +2115,71 @@ function saveAll(){
   localStorage.setItem('zb_recurring_v1', JSON.stringify(recurringExpenses));
   localStorage.setItem('zb_invest_v1', JSON.stringify(investmentRecords));
   localStorage.setItem('zb_codes_v1', JSON.stringify(propAccessCodes));
+  // No-op: individual cloudSave calls handle Firebase writes
+}
+
+// ── FIREBASE WRITE HELPERS ──
+// Called after each mutation so Firebase stays in sync
+
+function fbSaveTicket(t){
+  if(!window.cloudSave) return;
+  window.cloudSave('tickets', t.id, t).then ? window.cloudSave('tickets', t.id, t) : null;
+  flashSync();
+}
+function flashSync(){
+  var dot = document.getElementById('cloud-sync-dot');
+  if(!dot) return;
+  dot.style.opacity='1';
+  dot.style.background='var(--green)';
+  setTimeout(function(){ dot.style.opacity='0'; }, 1500);
+}
+function fbDeleteTicket(id){
+  if(!window.cloudDelete) return;
+  window.cloudDelete('tickets', id);
+}
+function fbSaveMaint(r){
+  if(!window.cloudSave) return;
+  // Firebase can't store undefined — strip base64 attachments for Firestore
+  // (keep them in localStorage only — Firestore has 1MB doc limit)
+  var r2 = Object.assign({}, r);
+  if(r2.attachments){ r2.attachments = r2.attachments.map(function(a){ return {id:a.id,name:a.name,type:a.type}; }); }
+  window.cloudSave('maintenance', r2.id, r2);
+}
+function fbDeleteMaint(id){
+  if(!window.cloudDelete) return;
+  window.cloudDelete('maintenance', id);
+}
+function fbSaveRecurring(r){
+  if(!window.cloudSave) return;
+  window.cloudSave('recurring', r.id, r);
+}
+function fbDeleteRecurring(id){
+  if(!window.cloudDelete) return;
+  window.cloudDelete('recurring', id);
+}
+function fbSaveUser(u){
+  if(!window.cloudSave) return;
+  window.cloudSave('users_config', u.id, u);
+}
+function fbDeleteUser(id){
+  if(!window.cloudDelete) return;
+  window.cloudDelete('users_config', id);
+}
+function fbSaveCode(prop, code){
+  if(!window.cloudSave) return;
+  window.cloudSave('prop_codes', prop.replace(/[^a-zA-Z0-9]/g,'_'), {prop:prop, code:code});
+}
+function fbSaveNotif(n){
+  if(!window.cloudSave) return;
+  window.cloudSave('notifs', String(n.id), n);
+}
+function fbClearNotifs(){
+  if(!window.cloudDelete) return;
+  notifs.forEach(function(n){ window.cloudDelete('notifs', String(n.id)); });
+}
+function fbSaveTopic(t){
+  if(!window.cloudSave) return;
+  window.cloudSave('topics', t.id, t);
 }
 
 function openAddRecurring(prop){
@@ -2082,11 +2220,11 @@ function saveRecurring(){
   } else {
     recurringExpenses.push({id:'RC-'+Date.now(),name:name,amount:amount,property:property,vendor:document.getElementById('rec-vendor').value.trim(),period:document.getElementById('rec-period').value,notes:document.getElementById('rec-notes').value.trim(),createdAt:nowStr()});
   }
-  saveAll(); closeModal('recurring-modal'); renderBudgetPage(); showToast('✅ הוצאה נשמרה');
+  fbSaveRecurring(recurringExpenses[recurringExpenses.length-1]); saveAll(); closeModal('recurring-modal'); renderBudgetPage(); showToast('✅ הוצאה נשמרה');
 }
 function deleteRecurring(id){
   recurringExpenses = recurringExpenses.filter(function(r){return r.id!==id});
-  saveAll(); renderBudgetPage(); showToast('🗑️ הוצאה נמחקה');
+  fbDeleteRecurring(id); saveAll(); renderBudgetPage(); showToast('🗑️ הוצאה נמחקה');
 }
 
 // ── BUDGET PAGE ──
@@ -2195,6 +2333,7 @@ function getTenantCode(prop){
 }
 function setTenantCode(prop, code){
   propAccessCodes[prop] = code;
+  fbSaveCode(prop, code);
   saveAll();
 }
 function generateCode(){
@@ -2380,6 +2519,7 @@ saveMaintRecord = function(){
     createdAt: nowStr()
   };
   maintRecords.unshift(rec);
+  fbSaveMaint(rec);
   saveAll();
   closeModal('maint-form-modal');
   renderMaintPage();
@@ -2394,6 +2534,32 @@ function viewStoredAttachment(recordId, idx){
   openFileViewer(r.attachments[idx]);
 }
 function viewAttachmentDirect(attJson, idx, ctx){}
+
+// ── FIREBASE SEED (first run) ──
+function seedFirebaseIfEmpty(){
+  if(!window.cloudSave) { setTimeout(seedFirebaseIfEmpty, 800); return; }
+  // Seed default users if none in Firebase
+  getDocs_compat('users_config', function(count){
+    if(count === 0){
+      DEFAULT_USERS.forEach(function(u){ window.cloudSave('users_config', u.id, u); });
+    }
+  });
+  // Seed default topics if none
+  getDocs_compat('topics', function(count){
+    if(count === 0){
+      topicBank.forEach(function(t){ window.cloudSave('topics', t.id, t); });
+    }
+  });
+}
+// helper to count docs (uses onSnapshot result)
+function getDocs_compat(col, cb){
+  // We already have listeners — just check current state after delay
+  setTimeout(function(){
+    if(col==='users_config') cb(window.users && window.users.length > 0 ? window.users.length : 0);
+    if(col==='topics') cb(window.topicBank && window.topicBank.length > 0 ? window.topicBank.length : 0);
+  }, 2000);
+}
+setTimeout(seedFirebaseIfEmpty, 1500);
 
 // ── MOBILE SIDEBAR TOGGLE ──
 function toggleSidebar(){
