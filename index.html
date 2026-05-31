@@ -20,27 +20,63 @@
 body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);min-height:100vh;direction:rtl}
 
 /* LOGIN */
-#login-screen{position:fixed;inset:0;background:var(--navy);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
-.login-card{text-align:center;max-width:480px;width:100%;animation:fadeIn .4s ease}
-.login-logo{width:70px;height:70px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:var(--navy);margin:0 auto 20px}
-.login-title{color:#fff;font-size:26px;font-weight:800;margin-bottom:6px}
-.login-sub{color:var(--gold);font-size:14px;margin-bottom:48px}
-.login-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.login-btn{border:none;border-radius:14px;padding:28px 16px;cursor:pointer;font-family:'Heebo',sans-serif;transition:all .2s}
-.login-btn:hover{transform:translateY(-3px)}
-.login-btn-manager{background:linear-gradient(135deg,var(--gold),var(--gold-light));box-shadow:0 8px 24px rgba(201,168,76,.3)}
-.login-btn-engineer{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2)}
-.login-btn-tenant{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12)}
-.login-btn-icon{font-size:36px;margin-bottom:10px}
-.login-btn-title{font-size:15px;font-weight:800}
-.login-btn-manager .login-btn-title{color:var(--navy)}
-.login-btn-engineer .login-btn-title,.login-btn-tenant .login-btn-title{color:#fff}
-.login-btn-desc{font-size:11px;margin-top:4px}
-.login-btn-manager .login-btn-desc{color:var(--navy-light);opacity:.7}
-.login-btn-engineer .login-btn-desc,.login-btn-tenant .login-btn-desc{color:rgba(255,255,255,.5)}
-.login-footer{margin-top:32px;color:rgba(255,255,255,.2);font-size:11px}
-
-/* LAYOUT */
+/* ── LOGIN SPLIT DESIGN ── */
+#login-screen{
+  position:fixed;inset:0;background:var(--navy);z-index:9999;
+  display:flex;align-items:stretch;overflow:hidden;
+}
+.login-left{
+  flex:1;background:linear-gradient(155deg,#0d1c38 0%,#0f1f3d 70%,#142545 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:48px 44px;border-left:1px solid rgba(255,255,255,.07);position:relative;overflow:hidden;
+}
+.login-left::before{content:'';position:absolute;top:-100px;right:-100px;width:360px;height:360px;background:radial-gradient(circle,rgba(201,168,76,.07) 0%,transparent 70%);pointer-events:none}
+.login-left::after{content:'';position:absolute;bottom:-80px;left:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(26,95,159,.09) 0%,transparent 70%);pointer-events:none}
+.login-right{
+  flex:1;background:linear-gradient(155deg,#09152a 0%,#0c1830 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:48px 44px;position:relative;overflow:hidden;
+}
+.login-right::before{content:'';position:absolute;top:-80px;left:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(201,168,76,.04) 0%,transparent 70%);pointer-events:none}
+.login-brand{text-align:center;margin-bottom:44px;position:relative;z-index:1}
+.login-logo{width:80px;height:80px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:38px;font-weight:900;color:var(--navy);margin:0 auto 16px;box-shadow:0 10px 32px rgba(201,168,76,.32)}
+.login-title{color:#fff;font-size:28px;font-weight:800;margin-bottom:4px}
+.login-sub{color:var(--gold);font-size:13px;font-weight:500;opacity:.8}
+.login-divider{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:1px;height:55%;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.1),transparent);z-index:2;pointer-events:none}
+.login-side-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:2.5px;margin-bottom:22px;text-align:center;position:relative;z-index:1}
+.tenant-cta{width:100%;max-width:310px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;border-radius:18px;padding:24px 28px;cursor:pointer;font-family:'Heebo',sans-serif;display:flex;align-items:center;gap:16px;text-align:right;box-shadow:0 10px 32px rgba(201,168,76,.28);transition:all .22s ease;position:relative;z-index:1}
+.tenant-cta:hover{transform:translateY(-3px);box-shadow:0 16px 44px rgba(201,168,76,.42)}
+.tenant-cta-icon{width:52px;height:52px;background:rgba(15,31,61,.14);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.tenant-cta-title{font-size:19px;font-weight:800;color:var(--navy);line-height:1.15}
+.tenant-cta-sub{font-size:12px;color:rgba(15,31,61,.55);margin-top:3px}
+.tenant-note{margin-top:16px;font-size:11px;color:rgba(255,255,255,.22);text-align:center;max-width:270px;line-height:1.5;position:relative;z-index:1}
+.staff-btn{width:100%;max-width:310px;border:1.5px solid rgba(255,255,255,.11);border-radius:14px;padding:18px 22px;cursor:pointer;font-family:'Heebo',sans-serif;background:rgba(255,255,255,.04);transition:all .2s;display:flex;align-items:center;gap:14px;text-align:right;margin-bottom:12px;position:relative;z-index:1}
+.staff-btn:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.25);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.staff-btn:last-child{margin-bottom:0}
+.staff-btn-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.staff-btn-title{font-size:16px;font-weight:700;color:#fff}
+.staff-btn-sub{font-size:11px;color:rgba(255,255,255,.38);margin-top:2px}
+.staff-btn-arrow{margin-right:auto;color:rgba(255,255,255,.18);font-size:18px;flex-shrink:0}
+.eng-picker-wrap{width:100%;max-width:310px;animation:slideUp .22s ease;position:relative;z-index:1}
+.eng-picker-back{background:none;border:none;color:rgba(255,255,255,.38);font-size:12px;font-weight:600;cursor:pointer;font-family:'Heebo',sans-serif;padding:0 0 16px;display:flex;align-items:center;gap:5px;transition:color .15s}
+.eng-picker-back:hover{color:rgba(255,255,255,.7)}
+.eng-user-btn{width:100%;border:1.5px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 16px;cursor:pointer;font-family:'Heebo',sans-serif;background:rgba(255,255,255,.04);transition:all .18s;display:flex;align-items:center;gap:12px;text-align:right;margin-bottom:8px}
+.eng-user-btn:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.22);transform:translateY(-1px)}
+.eng-user-btn:last-child{margin-bottom:0}
+.eng-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;background:rgba(26,127,90,.28);color:#4fc99a}
+.eng-user-name{font-size:14px;font-weight:700;color:#fff}
+.eng-user-props{font-size:11px;color:rgba(255,255,255,.32);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.login-footer{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.13);font-size:10px;white-space:nowrap;z-index:3}
+@media(max-width:680px){
+  #login-screen{flex-direction:column-reverse}
+  .login-left,.login-right{padding:36px 24px;flex:none;min-height:48vh}
+  .login-right{border-bottom:1px solid rgba(255,255,255,.07)}
+  .login-divider{display:none}
+  .login-brand{margin-bottom:26px}
+  .login-logo{width:60px;height:60px;font-size:28px;border-radius:16px}
+  .login-title{font-size:22px}
+  .tenant-cta,.staff-btn,.eng-picker-wrap{max-width:100%}
+}
 .layout{display:flex;min-height:100vh}
 .sidebar{width:220px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;right:0;height:100vh;z-index:200;overflow-y:auto}
 .sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
@@ -419,13 +455,61 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 
 <!-- LOGIN -->
 <div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo">Z</div>
-    <div class="login-title">זילברמינץ</div>
-    <div class="login-sub">מערכת ניהול נכסים</div>
-    <div id="login-users-grid" style="display:grid;gap:10px;max-width:440px;margin:0 auto"></div>
-    <div class="login-footer">© זילברמינץ ניהול נכסים</div>
+  <!-- LEFT: Tenant portal -->
+  <div class="login-left">
+    <div class="login-brand">
+      <div class="login-logo">Z</div>
+      <div class="login-title">זילברמינץ</div>
+      <div class="login-sub">מערכת ניהול נכסים</div>
+    </div>
+    <div class="login-side-label">פורטל דיירים</div>
+    <button class="tenant-cta" onclick="enterAsTenant()">
+      <div class="tenant-cta-icon">🏠</div>
+      <div>
+        <div class="tenant-cta-title">פתיחת קריאת שירות</div>
+        <div class="tenant-cta-sub">דיווח על תקלה או בקשה בבניין</div>
+      </div>
+    </button>
+    <div class="tenant-note">יש להזין קוד גישה של הבניין שלך</div>
   </div>
+
+  <!-- Vertical divider (desktop) -->
+  <div class="login-divider"></div>
+
+  <!-- RIGHT: Staff login -->
+  <div class="login-right">
+    <div class="login-side-label">כניסת צוות ניהול</div>
+
+    <!-- Main staff buttons -->
+    <div id="staff-main-btns" style="display:flex;flex-direction:column;align-items:center;gap:0;width:100%">
+      <button class="staff-btn" onclick="loginAsUser('u1')">
+        <div class="staff-btn-icon" style="background:rgba(201,168,76,.15)">⚙️</div>
+        <div>
+          <div class="staff-btn-title">כניסת מנהל</div>
+          <div class="staff-btn-sub">דשבורד נכסים ובקרת מערכת</div>
+        </div>
+        <span class="staff-btn-arrow">›</span>
+      </button>
+      <button class="staff-btn" onclick="showEngPicker()">
+        <div class="staff-btn-icon" style="background:rgba(26,127,90,.2)">🔧</div>
+        <div>
+          <div class="staff-btn-title">כניסת אב בית</div>
+          <div class="staff-btn-sub">לוח משימות ותחזוקה שוטפת</div>
+        </div>
+        <span class="staff-btn-arrow">›</span>
+      </button>
+    </div>
+
+    <!-- Engineer picker (hidden by default) -->
+    <div id="eng-picker-panel" style="display:none;width:100%;align-items:center;flex-direction:column">
+      <div class="eng-picker-wrap">
+        <button class="eng-picker-back" onclick="hideEngPicker()">› חזרה לתפריט הראשי</button>
+        <div id="eng-picker-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-footer">© זילברמינץ ניהול נכסים</div>
 </div>
 
 <div class="layout">
@@ -1630,14 +1714,39 @@ PAGE_TITLES['users'] = 'ניהול משתמשים';
 PAGE_TITLES['pdfpage'] = 'ניתוח מסמכים AI';
 
 function renderLoginScreen(){
-  var g = document.getElementById('login-users-grid'); if(!g) return;
-  g.innerHTML = users.map(function(u){
-    var avc = {manager:'lav-m', engineer:'lav-e', tenant:'lav-t'}[u.role]||'lav-t';
-    var rl = {manager:'מנהל — גישה לכל הנכסים', engineer:'אב בית — '+u.props.length+' נכסים', tenant:'דייר'}[u.role]||u.role;
-    var cls = u.role==='manager'?'lmgr':'';
-    return '<button class="lbtn '+cls+'" onclick="loginAsUser(\''+u.id+'\')"><div class="lav '+avc+'">'+u.name[0]+'</div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:#fff">'+u.name+'</div><div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">'+rl+'</div>'+(u.role==='engineer'?'<div style="font-size:11px;color:rgba(255,255,255,.28);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+u.props.slice(0,3).join(' • ')+(u.props.length>3?' ועוד…':'')+'</div>':'')+'</div><span style="margin-right:auto;color:rgba(255,255,255,.2);font-size:20px">›</span></button>';
+  // Populate engineer picker
+  var list = document.getElementById('eng-picker-list');
+  if(!list) return;
+  var engineers = users.filter(function(u){return u.role==='engineer'});
+  list.innerHTML = engineers.map(function(u){
+    var propLabel = u.props.slice(0,2).join(' • ') + (u.props.length>2?' +'+( u.props.length-2):'');
+    return '<button class="eng-user-btn" data-uid="'+u.id+'" onclick="loginAsUser(this.dataset.uid)">'
+      +'<div class="eng-av">'+u.name[0]+'</div>'
+      +'<div><div class="eng-user-name">'+u.name+'</div>'
+      +'<div class="eng-user-props">'+propLabel+'</div></div>'
+    +'</button>';
   }).join('');
 }
+
+function showEngPicker(){
+  document.getElementById('staff-main-btns').style.display='none';
+  var panel = document.getElementById('eng-picker-panel');
+  panel.style.display='flex';
+}
+function hideEngPicker(){
+  document.getElementById('staff-main-btns').style.display='flex';
+  document.getElementById('eng-picker-panel').style.display='none';
+}
+
+function enterAsTenant(){
+  // Use the existing tenant flow via enterAs
+  if(typeof _origEnterAs === 'function'){
+    _origEnterAs('tenant');
+  } else if(typeof enterAs === 'function'){
+    enterAs('tenant');
+  }
+}
+
 
 function loginAsUser(uid){
   var u = users.find(function(x){return x.id===uid}); if(!u) return;
@@ -1662,6 +1771,7 @@ function loginAsUser(uid){
 
 function doLogout(){
   currentUser=null;
+  hideEngPicker();
   document.getElementById('login-screen').style.display='flex';
   renderLoginScreen();
 }
