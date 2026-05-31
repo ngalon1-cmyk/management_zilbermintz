@@ -1032,6 +1032,24 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
         </div>
         <div class="fg full"><label>פירוט</label><textarea id="et-desc"></textarea></div>
       </div>
+      <!-- קבצים מצורפים -->
+      <div class="fg">
+        <label>קבצים מצורפים (תמונות + PDF)</label>
+        <label class="file-upload-zone" for="et-files"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleFileDrop(event,'et-attachments')">
+          <input type="file" id="et-files" multiple accept="image/*,.pdf" onchange="handleFileSelect(this,'et-attachments')" style="display:none">
+          <div class="fuz-icon">📎</div>
+          <div class="fuz-txt">לחץ או גרור תמונות / PDF</div>
+          <div class="fuz-sub">עד 3MB לקובץ</div>
+        </label>
+        <div class="attachments-grid" id="et-attachments"></div>
+        <div class="storage-bar-wrap" id="et-storage-bar">
+          <div class="storage-bar-bg"><div class="storage-bar-fill" id="et-bar-fill" style="background:var(--green)"></div></div>
+          <div class="storage-bar-txt" id="et-bar-txt"></div>
+        </div>
+      </div>
       <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
         <button class="btn-ghost" onclick="closeModal('edit-ticket-modal')">ביטול</button>
         <button class="btn-primary" onclick="saveEditTicket()">✅ שמור שינויים</button>
@@ -1391,7 +1409,20 @@ function openTicketDetail(id){
     +'<div class="detail-row"><span class="dk">פירוט</span><span class="dv">'+(t.desc||'')+'</span></div>'
     +'<div class="detail-row"><span class="dk">תאריך</span><span class="dv">'+(t.date||'')+'</span></div>'
     + sb
-    +'<div class="tl"><div class="tl-ttl">היסטוריה</div>'+tl+'</div>';
+    +'<div class="tl"><div class="tl-ttl">היסטוריה</div>'+tl+'</div>'
+    +(t.attachments&&t.attachments.length
+      ? '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--g200)">'
+        +'<div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px">📎 קבצים מצורפים ('+t.attachments.length+')</div>'
+        +'<div class="attachments-grid">'
+        +t.attachments.map(function(att,i){
+          var thumb = att.type==='application/pdf'
+            ? '<div class="attach-pdf-thumb"><div class="pdf-icon">📄</div><div class="pdf-ext">PDF</div></div>'
+            : '<img class="attach-img-preview" src="'+att.data+'"/>';
+          return '<div class="attach-card" data-tid="'+t.id+'" data-idx="'+i+'" onclick="viewTicketAttachment(this.dataset.tid,this.dataset.idx)">'
+            +thumb+'<div class="attach-name">'+att.name.slice(0,18)+(att.name.length>18?'…':'')+'</div></div>';
+        }).join('')
+        +'</div></div>'
+      : '');
   document.getElementById('ticket-detail-modal').classList.add('open');
 }
 
@@ -1408,6 +1439,14 @@ function openEditTicket(id){
   var ps = document.getElementById('et-property');
   ps.innerHTML = ALL_PROPS.map(function(p){return'<option'+(p===t.property?' selected':'')+'>'+p+'</option>'}).join('');
   closeModal('ticket-detail-modal');
+  // load existing attachments
+  attachmentStores['et-attachments'] = [];
+  renderAttachmentsGrid('et-attachments');
+  var bw = document.getElementById('et-storage-bar'); if(bw) bw.classList.remove('show');
+  if(t.attachments && t.attachments.length){
+    loadAttachmentsToGrid('et-attachments', t.attachments);
+    updateStorageBar('et-attachments');
+  }
   document.getElementById('edit-ticket-modal').classList.add('open');
 }
 
@@ -1426,6 +1465,11 @@ function saveEditTicket(){
     t.timeline = t.timeline||[];
     t.timeline.push({action:{open:'נפתחה',inprogress:'בטיפול',done:'טופל'}[newStatus]||newStatus, time:nowStr()});
   }
+  // merge attachments
+  var newAtts = getAttachmentsForSave('et-attachments');
+  var existing = t.attachments || [];
+  t.attachments = existing.concat(newAtts.filter(function(a){ return !existing.find(function(e){return e.id===a.id}); }));
+  t.fileNames = t.attachments.map(function(a){return a.name});
   fbSaveTicket(t); saveAll(); closeModal('edit-ticket-modal'); renderPage(currentPage); updateBadges();
   showToast('✅ קריאה עודכנה');
 }
@@ -2561,6 +2605,12 @@ function getDocs_compat(col, cb){
 }
 setTimeout(seedFirebaseIfEmpty, 1500);
 
+
+function viewTicketAttachment(ticketId, idx){
+  var t = tickets.find(function(x){return x.id===ticketId});
+  if(!t || !t.attachments || !t.attachments[idx]) return;
+  openFileViewer(t.attachments[idx]);
+}
 // ── MOBILE SIDEBAR TOGGLE ──
 function toggleSidebar(){
   var sb=document.getElementById('sidebar');
