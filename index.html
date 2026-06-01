@@ -668,13 +668,35 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 
 <!-- ══ TICKETS (manager view) ══ -->
 <div class="page" id="page-tickets">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-    <div class="pills" id="ticket-pills">
-      <button class="pill active" onclick="filterTickets('all',this)">הכל</button>
-      <button class="pill" onclick="filterTickets('open',this)">פתוח</button>
-      <button class="pill" onclick="filterTickets('inprogress',this)">בטיפול</button>
-      <button class="pill" onclick="filterTickets('done',this)">טופל</button>
+  <!-- Filter bar -->
+  <div style="background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:14px 18px;margin-bottom:18px;box-shadow:var(--sh-sm)">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.5px">סטטוס</label>
+        <div class="pills" id="ticket-pills">
+          <button class="pill active" onclick="filterTickets('all',this)">הכל</button>
+          <button class="pill" onclick="filterTickets('open',this)">פתוח</button>
+          <button class="pill" onclick="filterTickets('inprogress',this)">בטיפול</button>
+          <button class="pill" onclick="filterTickets('done',this)">טופל</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.5px">נכס</label>
+        <select id="ticket-filter-prop" onchange="renderTicketsFiltered()" style="font-family:'Heebo',sans-serif;font-size:13px;padding:6px 12px;border:1.5px solid var(--g200);border-radius:20px;background:#fff;color:var(--g800);outline:none;cursor:pointer">
+          <option value="">כל הנכסים</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.5px">מתאריך</label>
+        <input type="date" id="ticket-date-from" onchange="renderTicketsFiltered()" style="font-family:'Heebo',sans-serif;font-size:13px;padding:6px 12px;border:1.5px solid var(--g200);border-radius:20px;background:#fff;color:var(--g800);outline:none;cursor:pointer">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.5px">עד תאריך</label>
+        <input type="date" id="ticket-date-to" onchange="renderTicketsFiltered()" style="font-family:'Heebo',sans-serif;font-size:13px;padding:6px 12px;border:1.5px solid var(--g200);border-radius:20px;background:#fff;color:var(--g800);outline:none;cursor:pointer">
+      </div>
+      <button class="btn-ghost" style="font-size:12px;padding:6px 14px;border-radius:20px" onclick="clearTicketFilters()">✕ נקה סינון</button>
     </div>
+    <div id="ticket-results-count" style="font-size:11px;color:var(--g400);margin-top:10px"></div>
   </div>
   <div class="card">
     <table class="tbl">
@@ -867,6 +889,26 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
     <div class="kpi-card"><div class="kpi-icon ic-blue">🔄</div><div class="kpi-label">טיפולים קבועים</div><div class="kpi-val" id="bt-total-B">₪0</div><div class="kpi-sub">חשמל, מים, שמירה</div></div>
     <div class="kpi-card"><div class="kpi-icon ic-green">🏗️</div><div class="kpi-label">השקעות בעלים</div><div class="kpi-val" id="bt-total-C">₪0</div><div class="kpi-sub">שיפוצים והשקעות</div></div>
     <div class="kpi-card"><div class="kpi-icon ic-orange">💰</div><div class="kpi-label">סה"כ כולל</div><div class="kpi-val" id="bt-total-all">₪0</div><div class="kpi-sub">כל הקטגוריות</div></div>
+  </div>
+  <!-- Budget filters -->
+  <div style="background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:14px 18px;margin-bottom:16px;box-shadow:var(--sh-sm)">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.5px">נכס</label>
+        <select id="budget-filter-prop" onchange="renderBudgetPage()" style="font-family:'Heebo',sans-serif;font-size:13px;padding:6px 12px;border:1.5px solid var(--g200);border-radius:20px;background:#fff;color:var(--g800);outline:none;cursor:pointer">
+          <option value="">כל הנכסים</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.5px">מתאריך</label>
+        <input type="date" id="budget-date-from" onchange="renderBudgetPage()" style="font-family:'Heebo',sans-serif;font-size:13px;padding:6px 12px;border:1.5px solid var(--g200);border-radius:20px;background:#fff;color:var(--g800);outline:none;cursor:pointer">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.5px">עד תאריך</label>
+        <input type="date" id="budget-date-to" onchange="renderBudgetPage()" style="font-family:'Heebo',sans-serif;font-size:13px;padding:6px 12px;border:1.5px solid var(--g200);border-radius:20px;background:#fff;color:var(--g800);outline:none;cursor:pointer">
+      </div>
+      <button class="btn-ghost" style="font-size:12px;padding:6px 14px;border-radius:20px" onclick="clearBudgetFilters()">✕ נקה סינון</button>
+    </div>
   </div>
   <div class="budget-tabs" id="budget-tabs" style="margin-bottom:20px">
     <button class="budget-tab active" onclick="setBudgetType('A',this)"><span class="bt-icon">🔧</span>תקלות שוטפות</button>
@@ -1945,11 +1987,86 @@ function renderPageFull(id){
 function renderTicketsFiltered(){
   updateBadges();
   var up=getUserProps(), isMgr=currentUser&&currentUser.role==='manager';
-  var all=tickets.filter(function(t){return isMgr||up.indexOf(t.property)!==-1});
-  var fl=ticketFilter==='all'?all:all.filter(function(t){return t.status===ticketFilter});
+  var filterProp = (document.getElementById('ticket-filter-prop')||{}).value||'';
+  var dateFrom = (document.getElementById('ticket-date-from')||{}).value||'';
+  var dateTo = (document.getElementById('ticket-date-to')||{}).value||'';
+
+  var all=tickets.filter(function(t){
+    var prop=t.property||t.prop||'';
+    return isMgr||up.indexOf(prop)!==-1;
+  });
+  // status filter
+  var fl=ticketFilter==='all'?all:all.filter(function(t){return (t.status||t.s)===ticketFilter});
+  // property filter
+  if(filterProp) fl=fl.filter(function(t){return (t.property||t.prop||'')===filterProp});
+  // date filter — normalize date string for comparison
+  if(dateFrom) fl=fl.filter(function(t){
+    var d=normalizeDate(t.date||t.dt||'');
+    return d && d>=dateFrom;
+  });
+  if(dateTo) fl=fl.filter(function(t){
+    var d=normalizeDate(t.date||t.dt||'');
+    return d && d<=dateTo;
+  });
+
+  // fill prop select if needed
+  fillTicketPropSelect();
+
   var tbody=document.getElementById('tickets-tbody'), empty=document.getElementById('tickets-empty');
+  var cnt=document.getElementById('ticket-results-count');
+  if(cnt) cnt.textContent = fl.length+' תוצאות'+(fl.length!==tickets.length?' (מסוננות מתוך '+tickets.length+')':'');
   if(!fl.length){tbody.innerHTML='';empty.style.display='';return} empty.style.display='none';
-  tbody.innerHTML=fl.map(function(t){return'<tr onclick="openTicketDetail(\''+t.id+'\')"><td><span class="tid">'+t.id+'</span></td><td>'+t.cat+'</td><td style="font-size:12px;color:var(--g600)">'+(t.property||'')+'</td><td style="font-size:12px">'+(t.unit||'')+'</td><td style="font-size:12px;color:var(--g600);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(t.desc||'')+'</td><td style="font-size:12px">'+(t.date||'')+'</td><td>'+statusBadge(t.status)+'</td></tr>'}).join('');
+  tbody.innerHTML=fl.map(function(t){
+    var prop=t.property||t.prop||'';
+    var cat=t.cat||t.c||'';
+    var desc=t.desc||t.d||'';
+    var date=t.date||t.dt||'';
+    var unit=t.unit||t.u||'';
+    var status=t.status||t.s||'open';
+    return'<tr onclick="openTicketDetail(\''+t.id+'\')"><td><span class="tid">'+t.id+'</span></td><td>'+cat+'</td><td style="font-size:12px;color:var(--g600)">'+prop+'</td><td style="font-size:12px">'+unit+'</td><td style="font-size:12px;color:var(--g600);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+desc+'</td><td style="font-size:12px">'+date+'</td><td>'+statusBadge(status)+'</td></tr>';
+  }).join('');
+}
+
+function normalizeDate(d){
+  if(!d) return '';
+  // Handle dd/mm/yyyy -> yyyy-mm-dd
+  var parts = d.split('/');
+  if(parts.length===3 && parts[2].length===4){
+    return parts[2]+'-'+parts[1].padStart(2,'0')+'-'+parts[0].padStart(2,'0');
+  }
+  // Already yyyy-mm-dd or similar
+  return d.slice(0,10);
+}
+
+function fillTicketPropSelect(){
+  var sel=document.getElementById('ticket-filter-prop'); if(!sel) return;
+  if(sel.options.length>1) return; // already filled
+  var props=getUserProps();
+  props.forEach(function(p){ var o=document.createElement('option'); o.value=p; o.textContent=p; sel.appendChild(o); });
+}
+
+function fillBudgetPropSelect(){
+  var sel=document.getElementById('budget-filter-prop'); if(!sel) return;
+  if(sel.options.length>1) return;
+  var props=getUserProps();
+  props.forEach(function(p){ var o=document.createElement('option'); o.value=p; o.textContent=p; sel.appendChild(o); });
+}
+
+function clearTicketFilters(){
+  var tf=document.getElementById('ticket-filter-prop'); if(tf) tf.value='';
+  var df=document.getElementById('ticket-date-from'); if(df) df.value='';
+  var dt=document.getElementById('ticket-date-to'); if(dt) dt.value='';
+  ticketFilter='all';
+  document.querySelectorAll('#ticket-pills .pill').forEach(function(b){b.classList.remove('active')});
+  var first=document.querySelector('#ticket-pills .pill'); if(first) first.classList.add('active');
+  renderTicketsFiltered();
+}
+
+function clearBudgetFilters(){
+  var tf=document.getElementById('budget-filter-prop'); if(tf) tf.value='';
+  var df=document.getElementById('budget-date-from'); if(df) df.value='';
+  var dt=document.getElementById('budget-date-to'); if(dt) dt.value='';
+  renderBudgetPage();
 }
 
 function renderMaintFiltered(){
@@ -2306,10 +2423,25 @@ function setBudgetType(type, btn){
 }
 
 function renderBudgetPage(){
-  var totA = maintRecords.filter(function(r){return (r.budgetType||'A')==='A'}).reduce(function(a,r){return a+(r.cost||0)},0);
-  var totB = recurringExpenses.reduce(function(a,r){return a+(r.amount||0)},0)
-           + maintRecords.filter(function(r){return r.budgetType==='B'}).reduce(function(a,r){return a+(r.cost||0)},0);
-  var totC = maintRecords.filter(function(r){return r.budgetType==='C'}).reduce(function(a,r){return a+(r.cost||0)},0);
+  fillBudgetPropSelect();
+  var filterProp = (document.getElementById('budget-filter-prop')||{}).value||'';
+  var dateFrom = (document.getElementById('budget-date-from')||{}).value||'';
+  var dateTo = (document.getElementById('budget-date-to')||{}).value||'';
+
+  var fMaint = maintRecords.filter(function(r){
+    if(filterProp && (r.property||r.p||'')!==filterProp) return false;
+    if(dateFrom||dateTo){ var d=normalizeDate(r.date||r.d||''); if(dateFrom&&d<dateFrom) return false; if(dateTo&&d>dateTo) return false; }
+    return true;
+  });
+  var fRecurring = recurringExpenses.filter(function(r){
+    if(filterProp && r.property!==filterProp) return false;
+    return true;
+  });
+
+  var totA = fMaint.filter(function(r){return (r.budgetType||'A')==='A'}).reduce(function(a,r){return a+(r.cost||0)},0);
+  var totB = fRecurring.reduce(function(a,r){return a+(r.amount||0)},0)
+           + fMaint.filter(function(r){return r.budgetType==='B'}).reduce(function(a,r){return a+(r.cost||0)},0);
+  var totC = fMaint.filter(function(r){return r.budgetType==='C'}).reduce(function(a,r){return a+(r.cost||0)},0);
   var setEl = function(id,val){ var el=document.getElementById(id); if(el) el.textContent='₪'+val.toLocaleString('he-IL'); };
   setEl('bt-total-A', totA);
   setEl('bt-total-B', totB);
@@ -2320,10 +2452,15 @@ function renderBudgetPage(){
 
 function renderBudgetContent(){
   var container = document.getElementById('budget-content'); if(!container) return;
+  var filterProp = (document.getElementById('budget-filter-prop')||{}).value||'';
+  var dateFrom = (document.getElementById('budget-date-from')||{}).value||'';
+  var dateTo = (document.getElementById('budget-date-to')||{}).value||'';
+  var props = filterProp ? [filterProp] : ALL_PROPS;
+  var inDateRange = function(d){ d=normalizeDate(d||''); if(dateFrom&&d<dateFrom) return false; if(dateTo&&d>dateTo) return false; return true; };
 
   if(currentBudgetType === 'A'){
     // Tally per property: maint type A + open tickets
-    var rows = ALL_PROPS.map(function(prop){
+    var rows = props.map(function(prop){
       var mA = maintRecords.filter(function(r){return (r.property||r.p||'')=== prop && (r.budgetType||'A')==='A'});
       var tk = tickets.filter(function(t){return tProp(t)===prop});
       if(!mA.length && !tk.length) return '';
@@ -2404,7 +2541,7 @@ function renderBudgetContent(){
   } else if(currentBudgetType === 'C'){
     var mC = maintRecords.filter(function(r){return r.budgetType==='C'});
     var rows3 = ALL_PROPS.map(function(prop){
-      var propC = mC.filter(function(r){return (r.property||r.p||'')=== prop});
+      var propC = mC.filter(function(r){return (r.property||r.p||'')=== prop&&inDateRange(r.date||r.d)});
       if(!propC.length) return '';
       var totC2 = propC.reduce(function(a,r){return a+(r.cost||0)},0);
       return '<div class="prop-budget-card">'
