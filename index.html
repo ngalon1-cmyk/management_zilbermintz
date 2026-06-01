@@ -852,6 +852,63 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   </div>
 </div>
 
+
+<!-- BUDGET PAGE -->
+<div class="page" id="page-budget">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div>
+      <div style="font-size:20px;font-weight:800;color:var(--navy)">💰 תקציב נכסים</div>
+      <div style="font-size:12px;color:var(--g400);margin-top:3px">מעקב הוצאות לפי קטגוריה ונכס</div>
+    </div>
+    <button class="btn-ghost" onclick="showPage('export',null)" style="font-size:12px">📊 ייצוא לאקסל</button>
+  </div>
+  <div class="kpi-grid" style="margin-bottom:20px">
+    <div class="kpi-card"><div class="kpi-icon ic-red">🔧</div><div class="kpi-label">תקלות שוטפות</div><div class="kpi-val" id="bt-total-A">₪0</div><div class="kpi-sub">קריאות ותיקונים</div></div>
+    <div class="kpi-card"><div class="kpi-icon ic-blue">🔄</div><div class="kpi-label">טיפולים קבועים</div><div class="kpi-val" id="bt-total-B">₪0</div><div class="kpi-sub">חשמל, מים, שמירה</div></div>
+    <div class="kpi-card"><div class="kpi-icon ic-green">🏗️</div><div class="kpi-label">השקעות בעלים</div><div class="kpi-val" id="bt-total-C">₪0</div><div class="kpi-sub">שיפוצים והשקעות</div></div>
+    <div class="kpi-card"><div class="kpi-icon ic-orange">💰</div><div class="kpi-label">סה"כ כולל</div><div class="kpi-val" id="bt-total-all">₪0</div><div class="kpi-sub">כל הקטגוריות</div></div>
+  </div>
+  <div class="budget-tabs" id="budget-tabs" style="margin-bottom:20px">
+    <button class="budget-tab active" onclick="setBudgetType('A',this)"><span class="bt-icon">🔧</span>תקלות שוטפות</button>
+    <button class="budget-tab" onclick="setBudgetType('B',this)"><span class="bt-icon">🔄</span>טיפולים קבועים</button>
+    <button class="budget-tab" onclick="setBudgetType('C',this)"><span class="bt-icon">🏗️</span>השקעות בעלים</button>
+  </div>
+  <div id="budget-content"></div>
+</div>
+<!-- EXPORT PAGE -->
+<div class="page" id="page-export">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+    <button class="btn-ghost" onclick="showPage('budget',null)" style="font-size:12px">← חזרה</button>
+    <div style="font-size:15px;font-weight:700;color:var(--navy)">📊 ייצוא נתונים לאקסל</div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h3>בחר מה לייצא</h3></div>
+    <div class="card-body">
+      <div class="export-row">
+        <div><div class="export-label">🔧 קריאות שירות דיירים</div><div class="export-sub" id="ex-tickets-count">0 רשומות</div></div>
+        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('tickets')">⬇️ ייצא</button>
+      </div>
+      <div class="export-row">
+        <div><div class="export-label">🏗️ רשומות תחזוקה שוטפת</div><div class="export-sub" id="ex-maint-count">0 רשומות</div></div>
+        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('maint')">⬇️ ייצא</button>
+      </div>
+      <div class="export-row">
+        <div><div class="export-label">🔄 הוצאות קבועות (חשמל/מים/שמירה)</div><div class="export-sub" id="ex-recurring-count">0 רשומות</div></div>
+        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('recurring')">⬇️ ייצא</button>
+      </div>
+      <div class="export-row">
+        <div><div class="export-label">🏗️ השקעות בעלים ושיפוצים</div><div class="export-sub" id="ex-invest-count">0 רשומות</div></div>
+        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('investments')">⬇️ ייצא</button>
+      </div>
+      <div class="export-row">
+        <div><div class="export-label">💰 סיכום תקציב לפי נכסים</div><div class="export-sub">כל 3 תקציבים מאוחדים</div></div>
+        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('budget_summary')">⬇️ ייצא</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 </div><!-- /content -->
 </div><!-- /layout -->
 
@@ -938,62 +995,6 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   <div class="modal" style="max-width:580px">
     <div class="modal-hdr"><h3 id="md-title">פרטי טיפול</h3><button class="modal-close" onclick="closeModal('maint-detail-modal')">✕</button></div>
     <div class="modal-bdy" id="md-body"></div>
-  </div>
-</div>
-
-
-<!-- BUDGET PAGE -->
-<div class="page" id="page-budget">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-    <div>
-      <div style="font-size:20px;font-weight:800;color:var(--navy)">💰 תקציב נכסים</div>
-      <div style="font-size:12px;color:var(--g400);margin-top:3px">מעקב הוצאות לפי קטגוריה ונכס</div>
-    </div>
-    <button class="btn-ghost" onclick="showPage('export',null)" style="font-size:12px">📊 ייצוא לאקסל</button>
-  </div>
-  <div class="kpi-grid" style="margin-bottom:20px">
-    <div class="kpi-card"><div class="kpi-icon ic-red">🔧</div><div class="kpi-label">תקלות שוטפות</div><div class="kpi-val" id="bt-total-A">₪0</div><div class="kpi-sub">קריאות ותיקונים</div></div>
-    <div class="kpi-card"><div class="kpi-icon ic-blue">🔄</div><div class="kpi-label">טיפולים קבועים</div><div class="kpi-val" id="bt-total-B">₪0</div><div class="kpi-sub">חשמל, מים, שמירה</div></div>
-    <div class="kpi-card"><div class="kpi-icon ic-green">🏗️</div><div class="kpi-label">השקעות בעלים</div><div class="kpi-val" id="bt-total-C">₪0</div><div class="kpi-sub">שיפוצים והשקעות</div></div>
-    <div class="kpi-card"><div class="kpi-icon ic-orange">💰</div><div class="kpi-label">סה"כ כולל</div><div class="kpi-val" id="bt-total-all">₪0</div><div class="kpi-sub">כל הקטגוריות</div></div>
-  </div>
-  <div class="budget-tabs" id="budget-tabs" style="margin-bottom:20px">
-    <button class="budget-tab active" onclick="setBudgetType('A',this)"><span class="bt-icon">🔧</span>תקלות שוטפות</button>
-    <button class="budget-tab" onclick="setBudgetType('B',this)"><span class="bt-icon">🔄</span>טיפולים קבועים</button>
-    <button class="budget-tab" onclick="setBudgetType('C',this)"><span class="bt-icon">🏗️</span>השקעות בעלים</button>
-  </div>
-  <div id="budget-content"></div>
-</div>
-<!-- EXPORT PAGE -->
-<div class="page" id="page-export">
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
-    <button class="btn-ghost" onclick="showPage('budget',null)" style="font-size:12px">← חזרה</button>
-    <div style="font-size:15px;font-weight:700;color:var(--navy)">📊 ייצוא נתונים לאקסל</div>
-  </div>
-  <div class="card">
-    <div class="card-head"><h3>בחר מה לייצא</h3></div>
-    <div class="card-body">
-      <div class="export-row">
-        <div><div class="export-label">🔧 קריאות שירות דיירים</div><div class="export-sub" id="ex-tickets-count">0 רשומות</div></div>
-        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('tickets')">⬇️ ייצא</button>
-      </div>
-      <div class="export-row">
-        <div><div class="export-label">🏗️ רשומות תחזוקה שוטפת</div><div class="export-sub" id="ex-maint-count">0 רשומות</div></div>
-        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('maint')">⬇️ ייצא</button>
-      </div>
-      <div class="export-row">
-        <div><div class="export-label">🔄 הוצאות קבועות (חשמל/מים/שמירה)</div><div class="export-sub" id="ex-recurring-count">0 רשומות</div></div>
-        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('recurring')">⬇️ ייצא</button>
-      </div>
-      <div class="export-row">
-        <div><div class="export-label">🏗️ השקעות בעלים ושיפוצים</div><div class="export-sub" id="ex-invest-count">0 רשומות</div></div>
-        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('investments')">⬇️ ייצא</button>
-      </div>
-      <div class="export-row">
-        <div><div class="export-label">💰 סיכום תקציב לפי נכסים</div><div class="export-sub">כל 3 תקציבים מאוחדים</div></div>
-        <button class="btn-primary" style="font-size:12px" onclick="exportToExcel('budget_summary')">⬇️ ייצא</button>
-      </div>
-    </div>
   </div>
 </div>
 
