@@ -944,30 +944,24 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 
 <!-- BUDGET PAGE -->
 <div class="page" id="page-budget">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
     <div>
       <div style="font-size:20px;font-weight:800;color:var(--navy)">💰 תקציב נכסים</div>
       <div style="font-size:12px;color:var(--g400);margin-top:3px">מעקב הוצאות לפי קטגוריה ונכס</div>
     </div>
     <button class="btn-ghost" onclick="showPage('export',null)" style="font-size:12px">📊 ייצוא לאקסל</button>
   </div>
-
-  <!-- Budget Summary Cards -->
-  <div class="kpi-grid" style="margin-bottom:24px">
+  <div class="kpi-grid" style="margin-bottom:20px">
     <div class="kpi-card"><div class="kpi-icon ic-red">🔧</div><div class="kpi-label">תקלות שוטפות</div><div class="kpi-val" id="bt-total-A">₪0</div><div class="kpi-sub">קריאות ותיקונים</div></div>
     <div class="kpi-card"><div class="kpi-icon ic-blue">🔄</div><div class="kpi-label">טיפולים קבועים</div><div class="kpi-val" id="bt-total-B">₪0</div><div class="kpi-sub">חשמל, מים, שמירה</div></div>
     <div class="kpi-card"><div class="kpi-icon ic-green">🏗️</div><div class="kpi-label">השקעות בעלים</div><div class="kpi-val" id="bt-total-C">₪0</div><div class="kpi-sub">שיפוצים והשקעות</div></div>
     <div class="kpi-card"><div class="kpi-icon ic-orange">💰</div><div class="kpi-label">סה"כ כולל</div><div class="kpi-val" id="bt-total-all">₪0</div><div class="kpi-sub">כל הקטגוריות</div></div>
-  </div><div class="kpi-sub">כל הקטגוריות</div></div>
   </div>
-
-  <!-- Tabs -->
-  <div class="budget-tabs" id="budget-tabs" style="margin-bottom:24px">
+  <div class="budget-tabs" id="budget-tabs" style="margin-bottom:20px">
     <button class="budget-tab active" onclick="setBudgetType('A',this)"><span class="bt-icon">🔧</span>תקלות שוטפות</button>
     <button class="budget-tab" onclick="setBudgetType('B',this)"><span class="bt-icon">🔄</span>טיפולים קבועים</button>
     <button class="budget-tab" onclick="setBudgetType('C',this)"><span class="bt-icon">🏗️</span>השקעות בעלים</button>
   </div>
-
   <div id="budget-content"></div>
 </div>
 <!-- EXPORT PAGE -->
@@ -1082,6 +1076,13 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
         <div class="fg"><label>עלות (₪)</label><input type="number" id="em-cost"/></div>
         <div class="fg"><label>ספק</label><input type="text" id="em-vendor"/></div>
         <div class="fg"><label>חשבונית</label><input type="text" id="em-invoice"/></div>
+        <div class="fg"><label>סוג תקציב</label>
+          <select id="em-budget-type">
+            <option value="A">🔧 תקלות שוטפות</option>
+            <option value="B">🔄 טיפולים קבועים</option>
+            <option value="C">🏗️ השקעות בעלים</option>
+          </select>
+        </div>
         <div class="fg"><label>סוג תקציב</label>
           <select id="em-budget-type">
             <option value="A">🔧 תקלות שוטפות</option>
