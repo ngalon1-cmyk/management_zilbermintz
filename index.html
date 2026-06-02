@@ -449,6 +449,24 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
   .cat-grid{grid-template-columns:repeat(2,1fr)}
   .topbar-right{gap:8px}
 }
+
+/* ══ REMINDERS MODULE CSS ══ */
+#reminders-dashboard-banner {
+  display: none;
+  background: linear-gradient(135deg, #fff8e1, #fff3cd);
+  border: 2px solid var(--gold);
+  border-radius: var(--r);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--sh-sm);
+}
+.rem-topic-chip:hover {
+  border-color: var(--gold) !important;
+  background: var(--gold-pale) !important;
+  transform: translateY(-1px);
+}
+#reminders-popup-modal .modal { max-width: 540px; }
+
 </style>
 
 <!-- FIREBASE SDK -->
@@ -597,6 +615,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
     <button class="nav-item" onclick="showPage('pdfpage',this)"><span class="ni">📄</span>ניתוח מסמכים AI</button>
     <button class="nav-item" onclick="showPage('budget',this)"><span class="ni">💰</span>תקציב נכסים</button>
     <div class="nav-section">הגדרות</div>
+    <button class="nav-item" onclick="showPage('reminders',this)"><span class="ni">🔔</span>תזכורות תחזוקה</button>
     <button class="nav-item" onclick="showPage('users',this)"><span class="ni">👥</span>ניהול משתמשים</button>
   </div>
 
@@ -605,6 +624,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
     <button class="nav-item" onclick="showPage('maintenance',this)"><span class="ni">🏗️</span>תחזוקה ושבר</button>
     <button class="nav-item" onclick="showPage('tickets',this)"><span class="ni">🔧</span>קריאות דיירים<span class="badge-nav" id="open-badge2">0</span></button>
     <button class="nav-item" onclick="showPage('pdfpage',this)"><span class="ni">📄</span>ניתוח חשבוניות AI</button>
+    <button class="nav-item" onclick="showPage('reminders',this)"><span class="ni">🔔</span>תזכורות שלי</button>
   </div>
 
   <div id="nav-tenant" style="display:none">
@@ -648,6 +668,7 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 
 <!-- ══ DASHBOARD (manager) ══ -->
 <div class="page" id="page-dashboard">
+  <div id="reminders-dashboard-banner"></div>
   <div class="kpi-grid">
     <div class="kpi-card"><div class="kpi-icon ic-blue">🏠</div><div class="kpi-label">סה"כ נכסים</div><div class="kpi-val">8</div><div class="kpi-sub">פעילים</div></div>
     <div class="kpi-card"><div class="kpi-icon ic-red">🚨</div><div class="kpi-label">קריאות פתוחות</div><div class="kpi-val" id="kpi-open">0</div><div class="kpi-sub">דיירים</div></div>
@@ -951,6 +972,12 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
 </div>
 
 
+
+<!-- ══ REMINDERS PAGE ══ -->
+<div class="page" id="page-reminders">
+  <!-- rendered dynamically by renderRemindersPage() -->
+</div>
+
 </div><!-- /content -->
 </div><!-- /layout -->
 
@@ -1212,6 +1239,87 @@ body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--g800);mi
       <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
         <button class="btn-ghost" onclick="closeModal('user-modal')">ביטול</button>
         <button class="btn-primary" onclick="saveUserFromModal()">✅ שמור משתמש</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ REMINDER ADD/EDIT MODAL ══ -->
+<div class="modal-ov" id="reminder-modal" onclick="if(event.target===this)closeModal('reminder-modal')">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-hdr"><h3 id="rem-modal-title">הוסף תזכורת תחזוקה</h3><button class="modal-close" onclick="closeModal('reminder-modal')">✕</button></div>
+    <div class="modal-bdy">
+      <input type="hidden" id="rem-id"/>
+      <div style="margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">⚡ בחר מהמאגר (לחץ לבחירה מהירה)</div>
+        <div id="rem-topic-grid" style="display:flex;flex-wrap:wrap;gap:4px;max-height:120px;overflow-y:auto"></div>
+      </div>
+      <div class="form-grid">
+        <div class="fg full">
+          <label>שם הטיפול <span class="req">*</span></label>
+          <div style="display:flex;gap:8px">
+            <input type="text" id="rem-topic-icon" style="width:54px;font-size:22px;text-align:center;padding:8px 6px;border:1.5px solid var(--g200);border-radius:var(--r-sm);outline:none" placeholder="🔧"/>
+            <input type="text" id="rem-topic-name" placeholder="לדוגמה: טיפול שנתי מעלית" style="flex:1;font-family:Heebo,sans-serif;font-size:14px;padding:10px 13px;border:1.5px solid var(--g200);border-radius:var(--r-sm);outline:none"/>
+          </div>
+        </div>
+        <div class="fg"><label>נכס <span class="req">*</span></label><select id="rem-property"></select></div>
+        <div class="fg"><label>שייך לאב בית</label><select id="rem-assignee"></select></div>
+        <div class="fg">
+          <label>מחזוריות <span class="req">*</span></label>
+          <select id="rem-period" onchange="toggleCustomDate()">
+            <option value="monthly">חודשי (כל חודש)</option>
+            <option value="bimonthly">כל חודשיים</option>
+            <option value="quarterly">רבעוני (כל 3 חודשים)</option>
+            <option value="biannual">חצי שנתי (כל 6 חודשים)</option>
+            <option value="annual" selected>שנתי</option>
+            <option value="custom">תאריך קבוע</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>התראה לפני הטיפול</label>
+          <select id="rem-alert-days">
+            <option value="3">3 ימים לפני</option>
+            <option value="7" selected>שבוע לפני</option>
+            <option value="14">שבועיים לפני</option>
+            <option value="30">חודש לפני</option>
+          </select>
+        </div>
+        <div class="fg" id="rem-custom-date-wrap" style="display:none">
+          <label>תאריך קבוע <span class="req">*</span></label>
+          <input type="date" id="rem-custom-date"/>
+        </div>
+        <div class="fg">
+          <label>תאריך התחלה / תאריך אחרון שבוצע</label>
+          <input type="date" id="rem-start-date"/>
+        </div>
+        <div class="fg full">
+          <label>📧 אימייל להתראות (אופציונלי)</label>
+          <input type="email" id="rem-email" placeholder="example@email.com — יישלח מייל בעת שמירה"/>
+        </div>
+        <div class="fg full"><label>הערות</label><textarea id="rem-notes" placeholder="פרטים נוספים לגבי הטיפול..."></textarea></div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+        <button class="btn-ghost" onclick="closeModal('reminder-modal')">ביטול</button>
+        <button class="btn-primary" onclick="saveReminderFromModal()">✅ שמור תזכורת</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REMINDERS STARTUP POPUP ══ -->
+<div class="modal-ov" id="reminders-popup-modal" onclick="if(event.target===this)closeModal('reminders-popup-modal')" style="z-index:550">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hdr" style="background:linear-gradient(135deg,#c97a1a,#e8903a)">
+      <h3>🔔 תזכורות תחזוקה דורשות תשומת לב — <span id="reminders-popup-count">0</span></h3>
+      <button class="modal-close" onclick="closeModal('reminders-popup-modal')">✕</button>
+    </div>
+    <div class="modal-bdy" id="reminders-popup-body" style="max-height:65vh;overflow-y:auto;padding:16px"></div>
+    <div style="padding:14px 20px;border-top:1px solid var(--g200);display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:12px;color:var(--g400)">ניתן לסגור ולטפל מאוחר יותר</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn-ghost" style="font-size:12px" onclick="closeModal('reminders-popup-modal')">אחר כך</button>
+        <button class="btn-primary" style="font-size:12px" onclick="closeModal('reminders-popup-modal');showPage('reminders',null)">לדף התזכורות ›</button>
       </div>
     </div>
   </div>
@@ -2846,5 +2954,567 @@ document.querySelectorAll('.nav-item').forEach(function(btn){
 renderLoginScreen();
 renderNotifs();
 </script>
+
+<script>
+// ══════════════════════════════════════════════════════
+// מודול תזכורות תחזוקה — REMINDERS MODULE
+// ══════════════════════════════════════════════════════
+
+var reminders = JSON.parse(localStorage.getItem('zb_reminders_v1') || '[]');
+var reminderEmailMap = JSON.parse(localStorage.getItem('zb_rem_emails_v1') || '{}'); // userId -> email
+
+PAGE_TITLES['reminders'] = 'תזכורות תחזוקה';
+
+// ── FIREBASE HELPERS ──
+function fbSaveReminder(r){
+  if(!window.cloudSave) return;
+  window.cloudSave('reminders', r.id, r);
+}
+function fbDeleteReminder(id){
+  if(!window.cloudDelete) return;
+  window.cloudDelete('reminders', id);
+}
+
+// Listen to Firebase reminders
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    if(window.onSnapshot && window._fbReady){
+      // will be handled by attachListener in main script
+    }
+  }, 2000);
+});
+
+// Attach Firebase listener for reminders
+if(window._fbListenReminders !== true){
+  window._fbListenReminders = true;
+  window.addEventListener('load', function(){
+    setTimeout(function(){
+      if(!window.cloudSave) return;
+      // Use the same pattern as other collections
+      try {
+        var { getFirestore, collection, onSnapshot } = window._fbModules || {};
+        // fallback: just use localStorage if Firebase not available for reminders
+      } catch(e){}
+    }, 2000);
+  });
+}
+
+// ── PERIOD HELPERS ──
+var PERIOD_LABELS = {
+  monthly: 'חודשי (כל חודש)',
+  bimonthly: 'כל חודשיים',
+  quarterly: 'רבעוני (כל 3 חודשים)',
+  biannual: 'חצי שנתי (כל 6 חודשים)',
+  annual: 'שנתי',
+  custom: 'תאריך קבוע'
+};
+
+var PERIOD_DAYS = {
+  monthly: 30,
+  bimonthly: 60,
+  quarterly: 90,
+  biannual: 180,
+  annual: 365
+};
+
+function calcNextDue(reminder) {
+  if (reminder.period === 'custom') {
+    return reminder.customDate || '';
+  }
+  var lastDone = reminder.lastCompleted;
+  var base;
+  if (lastDone) {
+    base = new Date(lastDone);
+  } else {
+    base = reminder.startDate ? new Date(reminder.startDate) : new Date();
+  }
+  var days = PERIOD_DAYS[reminder.period] || 365;
+  var next = new Date(base.getTime() + days * 24 * 60 * 60 * 1000);
+  return next.toISOString().split('T')[0];
+}
+
+function daysUntilDue(reminder) {
+  var due = calcNextDue(reminder);
+  if (!due) return 999;
+  var now = new Date();
+  now.setHours(0,0,0,0);
+  var dueDate = new Date(due);
+  return Math.round((dueDate - now) / (24 * 60 * 60 * 1000));
+}
+
+function getReminderStatus(reminder) {
+  if (reminder.status === 'snoozed') return 'snoozed';
+  var days = daysUntilDue(reminder);
+  if (days < 0) return 'overdue';
+  if (days <= (reminder.alertDaysBefore || 7)) return 'due-soon';
+  return 'ok';
+}
+
+function reminderStatusBadge(reminder) {
+  var st = getReminderStatus(reminder);
+  var days = daysUntilDue(reminder);
+  if (st === 'overdue') return '<span class="badge" style="background:#fde8e6;color:var(--red)">🚨 באיחור (' + Math.abs(days) + ' ימים)</span>';
+  if (st === 'due-soon') return '<span class="badge" style="background:#fff3e0;color:var(--orange)">⏰ בקרוב (' + days + ' ימים)</span>';
+  if (st === 'snoozed') return '<span class="badge" style="background:#e3f0ff;color:var(--blue)">😴 נדחתה</span>';
+  return '<span class="badge" style="background:#e0f5ed;color:var(--green)">✅ בסדר (' + days + ' ימים)</span>';
+}
+
+// ── GET ACTIVE REMINDERS (for popup / dashboard) ──
+function getActiveReminders() {
+  var userProps = getUserProps();
+  var isMgr = currentUser && currentUser.role === 'manager';
+  return reminders.filter(function(r) {
+    if (r.status === 'closed') return false;
+    if (!isMgr && userProps.indexOf(r.property) === -1) return false;
+    var st = getReminderStatus(r);
+    return st === 'overdue' || st === 'due-soon';
+  });
+}
+
+// ── STARTUP POPUP ──
+function checkRemindersOnLogin() {
+  setTimeout(function() {
+    var active = getActiveReminders();
+    if (!active.length) return;
+    showRemindersPopup(active);
+  }, 800);
+}
+
+function showRemindersPopup(activeList) {
+  var modal = document.getElementById('reminders-popup-modal');
+  if (!modal) return;
+  var html = activeList.map(function(r) {
+    var days = daysUntilDue(r);
+    var isOver = days < 0;
+    var bg = isOver ? '#fde8e6' : '#fff3e0';
+    var col = isOver ? 'var(--red)' : 'var(--orange)';
+    return '<div style="border:1.5px solid '+col+';border-radius:10px;padding:14px 16px;margin-bottom:10px;background:'+bg+'">'
+      + '<div style="display:flex;justify-content:space-between;align-items:flex-start">'
+      + '<div>'
+      + '<div style="font-size:14px;font-weight:700;color:var(--navy)">'+r.topicName+'</div>'
+      + '<div style="font-size:12px;color:var(--g400);margin-top:2px">🏢 '+r.property+' • '+(PERIOD_LABELS[r.period]||r.period)+'</div>'
+      + '<div style="font-size:12px;color:'+col+';margin-top:4px;font-weight:600">'+(isOver ? '🚨 באיחור של '+Math.abs(days)+' ימים' : '⏰ יש לבצע בעוד '+days+' ימים')+'</div>'
+      + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:6px;margin-right:8px">'
+      + '<button class="btn-primary" style="font-size:11px;padding:5px 12px;white-space:nowrap" data-rid="'+r.id+'" onclick="markReminderDone(this.dataset.rid,true)">✅ בוצע</button>'
+      + '<button class="btn-ghost" style="font-size:11px;padding:5px 12px;white-space:nowrap" data-rid="'+r.id+'" onclick="snoozeReminder(this.dataset.rid)">😴 דחה שבוע</button>'
+      + '</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+
+  document.getElementById('reminders-popup-body').innerHTML = html;
+  document.getElementById('reminders-popup-count').textContent = activeList.length;
+  modal.classList.add('open');
+}
+
+// ── DASHBOARD BANNER ──
+function renderRemindersBanner() {
+  var banner = document.getElementById('reminders-dashboard-banner');
+  if (!banner) return;
+  var active = getActiveReminders();
+  if (!active.length) { banner.style.display = 'none'; return; }
+
+  var overdue = active.filter(function(r){ return daysUntilDue(r) < 0; }).length;
+  var soon = active.length - overdue;
+  banner.style.display = 'block';
+  banner.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">'
+    + '<div style="display:flex;align-items:center;gap:12px">'
+    + '<span style="font-size:28px">🔔</span>'
+    + '<div>'
+    + '<div style="font-size:14px;font-weight:700;color:var(--navy)">יש ' + active.length + ' תזכורות תחזוקה פעילות</div>'
+    + '<div style="font-size:12px;color:var(--g600);margin-top:2px">'
+    + (overdue ? '<span style="color:var(--red);font-weight:700">'+overdue+' באיחור</span>' : '')
+    + (overdue && soon ? ' • ' : '')
+    + (soon ? '<span style="color:var(--orange);font-weight:600">'+soon+' קרובות</span>' : '')
+    + '</div></div></div>'
+    + '<button class="btn-primary" style="font-size:12px" onclick="showPage(\'reminders\',null)">צפה בתזכורות</button>'
+    + '</div>';
+}
+
+// ── MARK DONE ──
+function markReminderDone(rid, fromPopup) {
+  var r = reminders.find(function(x){ return x.id === rid; });
+  if (!r) return;
+  r.lastCompleted = new Date().toISOString().split('T')[0];
+  r.status = 'active'; // stays active for next cycle
+  r.snoozedUntil = null;
+  // Auto-open maintenance form
+  fbSaveReminder(r);
+  saveAllWithReminders();
+  if (fromPopup) {
+    closeModal('reminders-popup-modal');
+    // Open maint form pre-filled
+    setTimeout(function(){
+      openMaintFormFromReminder(r);
+    }, 300);
+  } else {
+    renderRemindersPage();
+    renderRemindersBanner();
+    openMaintFormFromReminder(r);
+  }
+}
+
+function openMaintFormFromReminder(r) {
+  openMaintForm();
+  setTimeout(function(){
+    var propSel = document.getElementById('mf-property');
+    if (propSel) propSel.value = r.property;
+    // Pre-check the matching topic
+    var matchTopic = topicBank.find(function(t){ return t.name === r.topicName; });
+    if (matchTopic) {
+      selectedMaintTopics = [matchTopic.id];
+      renderTopicBank();
+      renderSelectedTopics();
+    }
+    document.getElementById('mf-notes').value = 'בוצע על פי תזכורת מחזורית: ' + r.topicName;
+    showToast('📋 טופס תחזוקה נפתח לתיעוד הטיפול');
+  }, 100);
+}
+
+// ── SNOOZE ──
+function snoozeReminder(rid) {
+  var r = reminders.find(function(x){ return x.id === rid; });
+  if (!r) return;
+  var snoozeDate = new Date();
+  snoozeDate.setDate(snoozeDate.getDate() + 7);
+  r.status = 'snoozed';
+  r.snoozedUntil = snoozeDate.toISOString().split('T')[0];
+  fbSaveReminder(r);
+  saveAllWithReminders();
+  // Remove from popup
+  var item = document.querySelector('[data-rid="'+rid+'"]');
+  if (item) item.closest('div[style*="border:1.5px"]').remove();
+  var active = getActiveReminders();
+  if (!active.length) closeModal('reminders-popup-modal');
+  renderRemindersPage && renderRemindersPage();
+  showToast('😴 תזכורת נדחתה לשבוע');
+}
+
+// Un-snooze reminders whose snooze date has passed
+function processSnoozes() {
+  var today = new Date().toISOString().split('T')[0];
+  reminders.forEach(function(r){
+    if (r.status === 'snoozed' && r.snoozedUntil && r.snoozedUntil <= today) {
+      r.status = 'active';
+      r.snoozedUntil = null;
+    }
+  });
+}
+
+// ── SAVE ──
+function saveAllWithReminders() {
+  localStorage.setItem('zb_reminders_v1', JSON.stringify(reminders));
+  if (typeof saveAll === 'function') saveAll();
+}
+
+// ── REMINDERS PAGE ──
+function renderRemindersPage() {
+  processSnoozes();
+  var container = document.getElementById('page-reminders');
+  if (!container) return;
+
+  var userProps = getUserProps();
+  var isMgr = currentUser && currentUser.role === 'manager';
+  var myReminders = isMgr ? reminders : reminders.filter(function(r){
+    return userProps.indexOf(r.property) !== -1;
+  });
+  var active = myReminders.filter(function(r){ return r.status !== 'closed'; });
+  var closed = myReminders.filter(function(r){ return r.status === 'closed'; });
+
+  // Sort: overdue first, then due-soon, then ok
+  active.sort(function(a, b) { return daysUntilDue(a) - daysUntilDue(b); });
+
+  var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">'
+    + '<div><div style="font-size:20px;font-weight:800;color:var(--navy)">🔔 תזכורות תחזוקה</div>'
+    + '<div style="font-size:12px;color:var(--g400);margin-top:3px">ניהול טיפולים מחזוריים לפי לוח זמנים</div></div>'
+    + (isMgr ? '<button class="btn-primary" onclick="openAddReminderModal()">+ הוסף תזכורת</button>' : '')
+    + '</div>';
+
+  // KPI row
+  var overdue = active.filter(function(r){ return daysUntilDue(r) < 0; }).length;
+  var dueSoon = active.filter(function(r){ var d=daysUntilDue(r); return d>=0 && d<=(7); }).length;
+  var ok = active.filter(function(r){ return daysUntilDue(r) > 7; }).length;
+
+  html += '<div class="kpi-grid" style="margin-bottom:20px">'
+    + '<div class="kpi-card"><div class="kpi-icon ic-red">🚨</div><div class="kpi-label">באיחור</div><div class="kpi-val" style="color:var(--red)">'+overdue+'</div><div class="kpi-sub">טעונות טיפול מיידי</div></div>'
+    + '<div class="kpi-card"><div class="kpi-icon ic-orange">⏰</div><div class="kpi-label">קרובות</div><div class="kpi-val" style="color:var(--orange)">'+dueSoon+'</div><div class="kpi-sub">בשבוע הקרוב</div></div>'
+    + '<div class="kpi-card"><div class="kpi-icon ic-green">✅</div><div class="kpi-label">בסדר</div><div class="kpi-val" style="color:var(--green)">'+ok+'</div><div class="kpi-sub">לא דורשות פעולה</div></div>'
+    + '<div class="kpi-card"><div class="kpi-icon ic-blue">📋</div><div class="kpi-label">סה"כ פעילות</div><div class="kpi-val">'+active.length+'</div><div class="kpi-sub">תזכורות מחזוריות</div></div>'
+    + '</div>';
+
+  // Active reminders
+  if (!active.length) {
+    html += '<div class="empty"><div class="empty-icon">🔔</div><div class="empty-txt">אין תזכורות פעילות — לחץ "+ הוסף תזכורת"</div></div>';
+  } else {
+    html += active.map(function(r) {
+      var days = daysUntilDue(r);
+      var st = getReminderStatus(r);
+      var borderColor = st === 'overdue' ? 'var(--red)' : st === 'due-soon' ? 'var(--orange)' : 'var(--g200)';
+      var nextDue = calcNextDue(r);
+      return '<div style="background:#fff;border-radius:var(--r);border:2px solid '+borderColor+';padding:16px 20px;margin-bottom:12px;box-shadow:var(--sh-sm)">'
+        + '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">'
+        + '<div style="flex:1">'
+        + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">'
+        + '<span style="font-size:22px">'+(r.topicIcon||'🔧')+'</span>'
+        + '<div>'
+        + '<div style="font-size:15px;font-weight:700;color:var(--navy)">'+r.topicName+'</div>'
+        + '<div style="font-size:12px;color:var(--g400)">🏢 '+r.property+'</div>'
+        + '</div>'
+        + '</div>'
+        + '<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">'
+        + reminderStatusBadge(r)
+        + '<span style="background:var(--g100);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--g600)">🔄 '+(PERIOD_LABELS[r.period]||r.period)+'</span>'
+        + '<span style="background:var(--g100);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--g600)">📅 מועד הבא: '+(nextDue||'—')+'</span>'
+        + (r.lastCompleted?'<span style="background:#e0f5ed;border-radius:20px;padding:3px 10px;font-size:11px;color:var(--green)">✅ בוצע לאחרונה: '+r.lastCompleted+'</span>':'')
+        + (r.assignee?'<span style="background:var(--g100);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--g600)">👤 '+r.assignee+'</span>':'')
+        + '</div>'
+        + (r.notes?'<div style="font-size:12px;color:var(--g600);margin-top:8px;font-style:italic">📝 '+r.notes+'</div>':'')
+        + '</div>'
+        + '<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">'
+        + '<button class="btn-primary" style="font-size:12px;padding:7px 14px;white-space:nowrap" data-rid="'+r.id+'" onclick="markReminderDone(this.dataset.rid,false)">✅ בוצע — תעד טיפול</button>'
+        + (st !== 'snoozed' ? '<button class="btn-ghost" style="font-size:12px;padding:7px 14px;white-space:nowrap" data-rid="'+r.id+'" onclick="snoozeReminder(this.dataset.rid)">😴 דחה שבוע</button>' : '')
+        + (isMgr ? '<button class="btn-ghost" style="font-size:12px;padding:7px 14px;white-space:nowrap" data-rid="'+r.id+'" onclick="editReminderModal(this.dataset.rid)">✏️ ערוך</button>' : '')
+        + (isMgr ? '<button class="btn-danger" style="font-size:12px;padding:7px 14px;white-space:nowrap" data-rid="'+r.id+'" onclick="deleteReminder(this.dataset.rid)">🗑️ מחק</button>' : '')
+        + '</div>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  // Closed / completed section
+  if (closed.length) {
+    html += '<div style="margin-top:28px"><div class="sec-title">📦 תזכורות סגורות ('+closed.length+')</div>'
+      + closed.map(function(r){
+        return '<div style="background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:12px 16px;margin-bottom:8px;opacity:.6;display:flex;justify-content:space-between;align-items:center">'
+          + '<div><div style="font-size:13px;font-weight:600;color:var(--g600)">'+r.topicName+'</div>'
+          + '<div style="font-size:11px;color:var(--g400)">'+r.property+' • נסגרה</div></div>'
+          + (isMgr?'<button class="btn-ghost" style="font-size:11px" data-rid="'+r.id+'" onclick="reopenReminder(this.dataset.rid)">↩️ פתח מחדש</button>':'')
+          + '</div>';
+      }).join('') + '</div>';
+  }
+
+  container.innerHTML = html;
+}
+
+function reopenReminder(rid) {
+  var r = reminders.find(function(x){ return x.id === rid; });
+  if (r) { r.status = 'active'; fbSaveReminder(r); saveAllWithReminders(); renderRemindersPage(); showToast('✅ תזכורת נפתחה מחדש'); }
+}
+
+function deleteReminder(rid) {
+  if (!confirm('למחוק תזכורת זו?')) return;
+  reminders = reminders.filter(function(r){ return r.id !== rid; });
+  fbDeleteReminder(rid);
+  saveAllWithReminders();
+  renderRemindersPage();
+  showToast('🗑️ תזכורת נמחקה');
+}
+
+// ── ADD / EDIT REMINDER MODAL ──
+var editingReminderId = null;
+
+function openAddReminderModal() {
+  editingReminderId = null;
+  document.getElementById('rem-modal-title').textContent = 'הוסף תזכורת תחזוקה';
+  document.getElementById('rem-id').value = '';
+  document.getElementById('rem-topic-name').value = '';
+  document.getElementById('rem-topic-icon').value = '🔧';
+  document.getElementById('rem-notes').value = '';
+  document.getElementById('rem-alert-days').value = '7';
+  document.getElementById('rem-period').value = 'annual';
+  document.getElementById('rem-custom-date-wrap').style.display = 'none';
+  document.getElementById('rem-start-date').value = new Date().toISOString().split('T')[0];
+  // fill prop
+  var ps = document.getElementById('rem-property');
+  ps.innerHTML = getUserProps().map(function(p){ return '<option>'+p+'</option>'; }).join('');
+  // fill assignee
+  var as = document.getElementById('rem-assignee');
+  var engineers = users.filter(function(u){ return u.role === 'engineer'; });
+  as.innerHTML = '<option value="">— ללא שיוך —</option>' + engineers.map(function(u){ return '<option value="'+u.name+'">'+u.name+'</option>'; }).join('');
+  // fill email
+  document.getElementById('rem-email').value = '';
+  // topic bank quick-pick
+  renderReminderTopicPicker();
+  document.getElementById('reminder-modal').classList.add('open');
+}
+
+function editReminderModal(rid) {
+  var r = reminders.find(function(x){ return x.id === rid; });
+  if (!r) return;
+  editingReminderId = rid;
+  document.getElementById('rem-modal-title').textContent = 'עריכת תזכורת';
+  document.getElementById('rem-id').value = r.id;
+  document.getElementById('rem-topic-name').value = r.topicName || '';
+  document.getElementById('rem-topic-icon').value = r.topicIcon || '🔧';
+  document.getElementById('rem-notes').value = r.notes || '';
+  document.getElementById('rem-alert-days').value = r.alertDaysBefore || 7;
+  document.getElementById('rem-period').value = r.period || 'annual';
+  document.getElementById('rem-start-date').value = r.startDate || new Date().toISOString().split('T')[0];
+  document.getElementById('rem-custom-date-wrap').style.display = r.period === 'custom' ? 'block' : 'none';
+  document.getElementById('rem-custom-date').value = r.customDate || '';
+  var ps = document.getElementById('rem-property');
+  ps.innerHTML = getUserProps().map(function(p){ return '<option'+(p===r.property?' selected':'')+'>'+p+'</option>'; }).join('');
+  var as = document.getElementById('rem-assignee');
+  var engineers = users.filter(function(u){ return u.role === 'engineer'; });
+  as.innerHTML = '<option value="">— ללא שיוך —</option>' + engineers.map(function(u){ return '<option value="'+u.name+'"'+(u.name===r.assignee?' selected':'')+'>'+u.name+'</option>'; }).join('');
+  document.getElementById('rem-email').value = r.notifyEmail || '';
+  renderReminderTopicPicker();
+  document.getElementById('reminder-modal').classList.add('open');
+}
+
+function renderReminderTopicPicker() {
+  var grid = document.getElementById('rem-topic-grid');
+  if (!grid) return;
+  grid.innerHTML = topicBank.map(function(t){
+    return '<div class="rem-topic-chip" onclick="selectReminderTopic(\''+t.name+'\',\''+t.icon+'\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border:1.5px solid var(--g200);border-radius:20px;background:#fff;cursor:pointer;font-size:12px;color:var(--navy);transition:all .15s;margin:3px">'
+      + t.icon + ' ' + t.name + '</div>';
+  }).join('');
+}
+
+function selectReminderTopic(name, icon) {
+  document.getElementById('rem-topic-name').value = name;
+  document.getElementById('rem-topic-icon').value = icon;
+}
+
+function toggleCustomDate() {
+  var period = document.getElementById('rem-period').value;
+  document.getElementById('rem-custom-date-wrap').style.display = period === 'custom' ? 'block' : 'none';
+}
+
+function saveReminderFromModal() {
+  var topicName = document.getElementById('rem-topic-name').value.trim();
+  var property = document.getElementById('rem-property').value;
+  var period = document.getElementById('rem-period').value;
+  var alertDays = parseInt(document.getElementById('rem-alert-days').value) || 7;
+  var startDate = document.getElementById('rem-start-date').value;
+  var customDate = document.getElementById('rem-custom-date').value;
+  var notifyEmail = document.getElementById('rem-email').value.trim();
+  var assignee = document.getElementById('rem-assignee').value;
+
+  if (!topicName) { showToast('⚠️ יש להזין שם טיפול', true); return; }
+  if (!property) { showToast('⚠️ יש לבחור נכס', true); return; }
+  if (period === 'custom' && !customDate) { showToast('⚠️ יש לבחור תאריך', true); return; }
+
+  var rem = {
+    id: editingReminderId || 'REM-' + String(Date.now()).slice(-6),
+    topicName: topicName,
+    topicIcon: document.getElementById('rem-topic-icon').value || '🔧',
+    property: property,
+    period: period,
+    customDate: period === 'custom' ? customDate : null,
+    startDate: startDate,
+    alertDaysBefore: alertDays,
+    notes: document.getElementById('rem-notes').value.trim(),
+    notifyEmail: notifyEmail,
+    assignee: assignee,
+    status: 'active',
+    lastCompleted: editingReminderId ? (reminders.find(function(r){return r.id===editingReminderId;})||{}).lastCompleted : null,
+    createdAt: nowStr()
+  };
+
+  if (editingReminderId) {
+    var idx = reminders.findIndex(function(r){ return r.id === editingReminderId; });
+    if (idx !== -1) reminders[idx] = rem;
+  } else {
+    reminders.unshift(rem);
+  }
+
+  fbSaveReminder(rem);
+  saveAllWithReminders();
+  closeModal('reminder-modal');
+  renderRemindersPage();
+  renderRemindersBanner();
+
+  // Send email notification if configured
+  if (notifyEmail) {
+    sendReminderEmail(rem);
+  }
+
+  showToast('✅ תזכורת ' + (editingReminderId ? 'עודכנה' : 'נוספה'));
+}
+
+// ── EMAIL NOTIFICATION ──
+function sendReminderEmail(r) {
+  var due = calcNextDue(r);
+  var subject = encodeURIComponent('[זילברמינץ] תזכורת תחזוקה: ' + r.topicName + ' — ' + r.property);
+  var body = encodeURIComponent(
+    'תזכורת תחזוקה נקבעה במערכת זילברמינץ:\n\n'
+    + 'נכס: ' + r.property + '\n'
+    + 'טיפול: ' + r.topicName + '\n'
+    + 'מחזוריות: ' + (PERIOD_LABELS[r.period] || r.period) + '\n'
+    + 'מועד הבא: ' + (due || '—') + '\n'
+    + 'התראה: ' + r.alertDaysBefore + ' ימים לפני\n'
+    + (r.assignee ? 'מוקצה ל: ' + r.assignee + '\n' : '')
+    + (r.notes ? 'הערות: ' + r.notes + '\n' : '')
+    + '\nלצפייה במערכת: https://ngalon1-cmyk.github.io/management_zilbermintz/'
+  );
+  window.open('mailto:' + r.notifyEmail + '?subject=' + subject + '&body=' + body);
+}
+
+// Also hook into renderPageFull
+var _origRenderPageFull = renderPageFull;
+renderPageFull = function(id) {
+  if (id === 'reminders') {
+    renderRemindersPage();
+    return;
+  }
+  if (id === 'dashboard') {
+    _origRenderPageFull(id);
+    renderRemindersBanner();
+    return;
+  }
+  _origRenderPageFull(id);
+};
+
+// Hook login to show popup
+var _origLoginAsUser = loginAsUser;
+loginAsUser = function(uid) {
+  _origLoginAsUser(uid);
+  setTimeout(function(){
+    processSnoozes();
+    checkRemindersOnLogin();
+    renderRemindersBanner();
+  }, 600);
+};
+
+// Load reminders from Firebase listener
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    if(window._fbReady && window.cloudSave){
+      // We use the existing attachListener pattern
+      try {
+        var importMap = {
+          getFirestore: null, collection: null, onSnapshot: null
+        };
+        // The Firebase module script already loaded — use dynamic import
+        import('https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js').then(function(mod){
+          var db = mod.getFirestore(window._fbApp || firebase.app());
+          mod.onSnapshot(mod.collection(db, 'reminders'), function(snap){
+            var data = snap.docs.map(function(d){ return d.data(); });
+            if(data.length) {
+              reminders = data;
+              processSnoozes();
+              if(currentPage === 'reminders') renderRemindersPage();
+              renderRemindersBanner();
+            }
+          });
+        }).catch(function(){});
+      } catch(e){}
+    }
+  }, 3000);
+});
+
+// Make reminders accessible via saveAll override
+var _origSaveAll = saveAll;
+saveAll = function(){
+  _origSaveAll();
+  localStorage.setItem('zb_reminders_v1', JSON.stringify(reminders));
+};
+
+console.log('✅ Reminders module loaded');
+
+</script>
+
 </body>
 </html>
